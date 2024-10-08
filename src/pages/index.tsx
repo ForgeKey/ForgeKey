@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
@@ -22,6 +21,8 @@ import {
   Download,
   Plus,
 } from 'lucide-react';
+
+import { copyToClipboard } from '@/utils/copy-to-clipboard';
 
 type Address = {
   label: string;
@@ -110,11 +111,6 @@ export default function Component() {
     } else {
       setSelectedKeystore(null);
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    // In a real app, you'd want to show a toast notification here
   };
 
   const handleAddAddress = () => {
@@ -401,174 +397,266 @@ export default function Component() {
 
   return (
     <div className="bg-background text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
-      <div className="h-[60px] bg-muted flex justify-between items-center px-4">
-        <h1 className="text-lg font-semibold">Cast Wallet</h1>
-        <div className="flex space-x-2">
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
+      <Header />
       <ScrollArea className="flex-grow">
         {selectedKeystore ? (
-          <div className="p-4">
-            <Button
-              variant="ghost"
-              onClick={handleBackClick}
-              className="mb-4 pl-0"
-            >
-              <ChevronLeft className="h-5 w-5 mr-1" />
-              <span className="text-sm">
-                {isAddingAddress ? 'Add New Address' : selectedKeystore.name}
-              </span>
-            </Button>
-            {isAddingAddress ? (
-              renderAddAddressContent()
-            ) : (
-              <>
-                {selectedKeystore.addresses.map((address, index) => (
-                  <div key={index} className="mb-2">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-medium text-sm">
-                          {address.label}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {address.address}
-                        </div>
-                      </div>
-                      <div className="flex space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => copyToClipboard(address.address)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleViewPrivateKey(address)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    {index < selectedKeystore.addresses.length - 1 && (
-                      <Separator className="my-2" />
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
+          <KeystoreView
+            selectedKeystore={selectedKeystore}
+            isAddingAddress={isAddingAddress}
+            handleBackClick={handleBackClick}
+            renderAddAddressContent={renderAddAddressContent}
+            handleViewPrivateKey={handleViewPrivateKey}
+          />
         ) : (
-          <div className="p-4">
-            {keystores.map((keystore, index) => (
-              <div key={index} className="mb-4 last:mb-0">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between text-left font-normal"
-                  onClick={() => handleKeystoreClick(keystore)}
-                >
-                  <span className="text-sm">{keystore.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {keystore.addresses.length} addresses
-                  </span>
-                </Button>
-                <Separator className="my-2" />
-              </div>
-            ))}
-            {isAddingKeystore && (
-              <div className="space-y-4 mt-4">
-                <Input
-                  placeholder="New Keystore Name"
-                  value={newKeystoreName}
-                  onChange={(e) => setNewKeystoreName(e.target.value)}
-                />
-                <Button onClick={handleAddKeystore} className="w-full">
-                  Add Keystore
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsAddingKeystore(false)}
-                  className="w-full"
-                >
-                  Cancel
-                </Button>
-              </div>
-            )}
-          </div>
+          <KeystoreList
+            keystores={keystores}
+            handleKeystoreClick={handleKeystoreClick}
+            isAddingKeystore={isAddingKeystore}
+            newKeystoreName={newKeystoreName}
+            setNewKeystoreName={setNewKeystoreName}
+            handleAddKeystore={handleAddKeystore}
+            setIsAddingKeystore={setIsAddingKeystore}
+          />
         )}
       </ScrollArea>
-      <div className="p-4 border-t">
-        {selectedKeystore ? (
-          <Button
-            className="w-full text-sm"
-            onClick={() => setIsAddingAddress(true)}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Address
-          </Button>
-        ) : (
-          <Button
-            className="w-full text-sm"
-            onClick={() => setIsAddingKeystore(true)}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Group
-          </Button>
-        )}
+      <Footer
+        selectedKeystore={selectedKeystore}
+        setIsAddingAddress={setIsAddingAddress}
+        setIsAddingKeystore={setIsAddingKeystore}
+      />
+      <PasswordDialog
+        isOpen={isPasswordDialogOpen}
+        setIsOpen={setIsPasswordDialogOpen}
+        password={password}
+        setPassword={setPassword}
+        handlePasswordSubmit={handlePasswordSubmit}
+      />
+      <PrivateKeyDialog
+        selectedAddress={selectedAddressForPrivateKey}
+        setSelectedAddress={setSelectedAddressForPrivateKey}
+      />
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <div className="h-[60px] bg-muted flex justify-between items-center px-4">
+      <h1 className="text-lg font-semibold">Cast Wallet</h1>
+      <div className="flex space-x-2">
+        <Button variant="ghost" size="icon">
+          <Settings className="h-5 w-5" />
+        </Button>
       </div>
-      <Dialog
-        open={isPasswordDialogOpen}
-        onOpenChange={setIsPasswordDialogOpen}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Password</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <Input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={handlePasswordSubmit}>View Private Key</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {selectedAddressForPrivateKey && !isPasswordDialogOpen && (
-        <Dialog
-          open={true}
-          onOpenChange={() => setSelectedAddressForPrivateKey(null)}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Private Key</DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-mono break-all">
-                  {selectedAddressForPrivateKey.privateKey}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() =>
-                    copyToClipboard(selectedAddressForPrivateKey.privateKey)
-                  }
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+    </div>
+  );
+}
+
+function KeystoreView({
+  selectedKeystore,
+  isAddingAddress,
+  handleBackClick,
+  renderAddAddressContent,
+  handleViewPrivateKey,
+}) {
+  return (
+    <div className="p-4">
+      <Button variant="ghost" onClick={handleBackClick} className="mb-4 pl-0">
+        <ChevronLeft className="h-5 w-5 mr-1" />
+        <span className="text-sm">
+          {isAddingAddress ? 'Add New Address' : selectedKeystore.name}
+        </span>
+      </Button>
+      {isAddingAddress ? (
+        renderAddAddressContent()
+      ) : (
+        <AddressList
+          addresses={selectedKeystore.addresses}
+          handleViewPrivateKey={handleViewPrivateKey}
+        />
       )}
     </div>
+  );
+}
+
+function AddressList({ addresses, handleViewPrivateKey }) {
+  return (
+    <>
+      {addresses.map((address, index) => (
+        <div key={index} className="mb-2">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="font-medium text-sm">{address.label}</div>
+              <div className="text-xs text-muted-foreground">
+                {address.address}
+              </div>
+            </div>
+            <div className="flex space-x-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => copyToClipboard(address.address)}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleViewPrivateKey(address)}
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          {index < addresses.length - 1 && <Separator className="my-2" />}
+        </div>
+      ))}
+    </>
+  );
+}
+
+function KeystoreList({
+  keystores,
+  handleKeystoreClick,
+  isAddingKeystore,
+  newKeystoreName,
+  setNewKeystoreName,
+  handleAddKeystore,
+  setIsAddingKeystore,
+}) {
+  return (
+    <div className="p-4">
+      {keystores.map((keystore, index) => (
+        <div key={index} className="mb-4 last:mb-0">
+          <Button
+            variant="ghost"
+            className="w-full justify-between text-left font-normal"
+            onClick={() => handleKeystoreClick(keystore)}
+          >
+            <span className="text-sm">{keystore.name}</span>
+            <span className="text-xs text-muted-foreground">
+              {keystore.addresses.length} addresses
+            </span>
+          </Button>
+          <Separator className="my-2" />
+        </div>
+      ))}
+      {isAddingKeystore && (
+        <AddKeystoreForm
+          newKeystoreName={newKeystoreName}
+          setNewKeystoreName={setNewKeystoreName}
+          handleAddKeystore={handleAddKeystore}
+          setIsAddingKeystore={setIsAddingKeystore}
+        />
+      )}
+    </div>
+  );
+}
+
+function AddKeystoreForm({
+  newKeystoreName,
+  setNewKeystoreName,
+  handleAddKeystore,
+  setIsAddingKeystore,
+}) {
+  return (
+    <div className="space-y-4 mt-4">
+      <Input
+        placeholder="New Keystore Name"
+        value={newKeystoreName}
+        onChange={(e) => setNewKeystoreName(e.target.value)}
+      />
+      <Button onClick={handleAddKeystore} className="w-full">
+        Add Keystore
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => setIsAddingKeystore(false)}
+        className="w-full"
+      >
+        Cancel
+      </Button>
+    </div>
+  );
+}
+
+function Footer({ selectedKeystore, setIsAddingAddress, setIsAddingKeystore }) {
+  return (
+    <div className="p-4 border-t">
+      {selectedKeystore ? (
+        <Button
+          className="w-full text-sm"
+          onClick={() => setIsAddingAddress(true)}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add Address
+        </Button>
+      ) : (
+        <Button
+          className="w-full text-sm"
+          onClick={() => setIsAddingKeystore(true)}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          New Group
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function PasswordDialog({
+  isOpen,
+  setIsOpen,
+  password,
+  setPassword,
+  handlePasswordSubmit,
+}) {
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Enter Password</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <Input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <DialogFooter>
+          <Button onClick={handlePasswordSubmit}>View Private Key</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PrivateKeyDialog({ selectedAddress, setSelectedAddress }) {
+  return (
+    selectedAddress && (
+      <Dialog open={true} onOpenChange={() => setSelectedAddress(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Private Key</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-mono break-all">
+                {selectedAddress.privateKey}
+              </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => copyToClipboard(selectedAddress.privateKey)}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   );
 }
