@@ -9,7 +9,7 @@ import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
 import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
-import { PasswordDialog } from '@/components/core/passport-dialog';
+import { PasswordDialog } from '@/components/core/password-dialog';
 import { PrivateKeyDialog } from '@/components/core/private-key-dialog';
 
 type Address = {
