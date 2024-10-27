@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
+import { Settings } from '@/components/core/settings';
 import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
 import { PasswordDialog } from '@/components/core/password-dialog';
@@ -63,6 +64,8 @@ export default function CastWallet() {
     },
   ]);
 
+  const [keystoreFolder, setKeystoreFolder] = useState('');
+
   const [selectedKeystore, setSelectedKeystore] = useState<Keystore | null>(
     null
   );
@@ -85,6 +88,7 @@ export default function CastWallet() {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [selectedAddressForPrivateKey, setSelectedAddressForPrivateKey] =
     useState<Address | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleKeystoreClick = (keystore: Keystore) => {
     setSelectedKeystore(keystore);
@@ -236,9 +240,18 @@ export default function CastWallet() {
 
   return (
     <div className="bg-background text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
-      <Header />
+      <Header
+        setIsSettingsOpen={setIsSettingsOpen}
+        isSettingsOpen={isSettingsOpen}
+      />
       <ScrollArea className="flex-grow">
-        {selectedKeystore ? (
+        {isSettingsOpen ? (
+          <Settings
+            setIsSettingsOpen={setIsSettingsOpen}
+            keystoreFolder={keystoreFolder}
+            setKeystoreFolder={setKeystoreFolder}
+          />
+        ) : selectedKeystore ? (
           <KeystoreView
             selectedKeystore={selectedKeystore}
             isAddingAddress={isAddingAddress}
@@ -262,6 +275,7 @@ export default function CastWallet() {
         selectedKeystore={selectedKeystore}
         setIsAddingAddress={setIsAddingAddress}
         setIsAddingKeystore={setIsAddingKeystore}
+        setIsSettingsOpen={setIsSettingsOpen}
       />
       <PasswordDialog
         isOpen={isPasswordDialogOpen}
