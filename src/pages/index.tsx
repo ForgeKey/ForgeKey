@@ -9,10 +9,11 @@ import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
 import { PasswordDialog } from '@/components/core/password-dialog';
 import { PrivateKeyDialog } from '@/components/core/private-key-dialog';
-import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { NewAddressForm } from '@/components/core/address/new-address-form';
+import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
+import { useKeystore } from '@/contexts/KeystoreContext';
 
 type Address = {
   label: string;
@@ -26,43 +27,7 @@ type Keystore = {
 };
 
 export default function CastWallet() {
-  const [keystores, setKeystores] = useState<Keystore[]>([
-    {
-      name: 'Main Keystore',
-      addresses: [
-        {
-          label: 'Primary',
-          address: '0x1234...7890',
-          privateKey: 'abcdef1234567890',
-        },
-        {
-          label: 'Savings',
-          address: '0x2345...8901',
-          privateKey: 'bcdef1234567890a',
-        },
-      ],
-    },
-    {
-      name: 'DeFi Keystore',
-      addresses: [
-        {
-          label: 'Trading',
-          address: '0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5',
-          privateKey: 'cdef1234567890ab',
-        },
-        {
-          label: 'Yield Farming',
-          address: '0x3456...9012',
-          privateKey: 'def1234567890abc',
-        },
-        {
-          label: 'Liquidity Pool',
-          address: '0x4567...0123',
-          privateKey: 'ef1234567890abcd',
-        },
-      ],
-    },
-  ]);
+  const { keystores, addKeystore, addAddress } = useKeystore();
 
   const [keystoreFolder, setKeystoreFolder] = useState('');
 
@@ -157,15 +122,7 @@ export default function CastWallet() {
           return;
       }
 
-      const updatedKeystores = keystores.map((keystore) =>
-        keystore.name === selectedKeystore.name
-          ? { ...keystore, addresses: [...keystore.addresses, address] }
-          : keystore
-      );
-      setKeystores(updatedKeystores);
-      setSelectedKeystore(
-        updatedKeystores.find((k) => k.name === selectedKeystore.name) || null
-      );
+      addAddress(selectedKeystore.name, address);
       setNewAddress({ label: '', address: '', privateKey: '' });
       setVanityOptions({ startWith: '', endWith: '' });
       setIsAddingAddress(false);
@@ -175,7 +132,7 @@ export default function CastWallet() {
 
   const handleAddKeystore = () => {
     if (newKeystoreName) {
-      setKeystores([...keystores, { name: newKeystoreName, addresses: [] }]);
+      addKeystore(newKeystoreName);
       setNewKeystoreName('');
       setIsAddingKeystore(false);
     }
@@ -239,7 +196,7 @@ export default function CastWallet() {
   };
 
   return (
-    <div className="bg-background text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
+    <div className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
       <Header
         setIsSettingsOpen={setIsSettingsOpen}
         isSettingsOpen={isSettingsOpen}
