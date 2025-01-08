@@ -18,7 +18,7 @@ interface KeystoreViewProps {
   selectedKeystore: Keystore;
   isAddingAddress: boolean;
   handleBackClick: () => void;
-  renderAddAddressContent: any;
+  renderAddAddressContent: () => React.ReactNode;
   handleViewPrivateKey: (address: Address) => void;
 }
 

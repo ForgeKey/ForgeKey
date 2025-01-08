@@ -8,21 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Copy } from 'lucide-react';
 import { copyToClipboard } from '@/utils/copy-to-clipboard';
 
+type Address = {
+  label: string;
+  address: string;
+  privateKey: string;
+};
+
 interface PrivateKeyDialogProps {
-  selectedAddress: {
-    privateKey: string;
-  } | null;
-  setSelectedAddress: (
-    address: {
-      privateKey: string;
-    } | null
-  ) => void;
+  selectedAddress: Address | null;
+  setSelectedAddress: React.Dispatch<React.SetStateAction<Address | null>>;
 }
 
-export const PrivateKeyDialog = ({
+export function PrivateKeyDialog({
   selectedAddress,
   setSelectedAddress,
-}: PrivateKeyDialogProps) => {
+}: PrivateKeyDialogProps) {
   return (
     selectedAddress && (
       <Dialog open={true} onOpenChange={() => setSelectedAddress(null)}>
@@ -47,4 +47,4 @@ export const PrivateKeyDialog = ({
       </Dialog>
     )
   );
-};
+}

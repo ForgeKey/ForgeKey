@@ -21,7 +21,7 @@ export function ImportAddressForm({
       <Input
         placeholder="Address Label"
         value={newAddress.label}
-        onChange={(e) =>
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({ ...newAddress, label: e.target.value })
         }
       />
@@ -29,7 +29,7 @@ export function ImportAddressForm({
         placeholder="Private Key"
         type="password"
         value={newAddress.privateKey}
-        onChange={(e) =>
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({ ...newAddress, privateKey: e.target.value })
         }
       />

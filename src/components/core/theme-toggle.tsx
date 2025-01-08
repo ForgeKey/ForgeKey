@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
 const ThemeToggle = () => {
-  const [darkMode, setDarkMode] = useState<boolean | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     // Check for OS preference

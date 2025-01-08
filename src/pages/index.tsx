@@ -229,10 +229,9 @@ export default function CastWallet() {
         )}
       </ScrollArea>
       <Footer
-        selectedKeystore={selectedKeystore}
+        selectedKeystore={!!selectedKeystore}
         setIsAddingAddress={setIsAddingAddress}
         setIsAddingKeystore={setIsAddingKeystore}
-        setIsSettingsOpen={setIsSettingsOpen}
       />
       <PasswordDialog
         isOpen={isPasswordDialogOpen}

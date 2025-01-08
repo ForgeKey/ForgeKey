@@ -19,10 +19,9 @@
         "fullscreen": false,
         "decorations": false,
         "theme": "Light",
-
         "windowEffects": {
           "effects": ["menu"],
-          "radius": 5
+          "radius": 1
         }
       }
     ],
