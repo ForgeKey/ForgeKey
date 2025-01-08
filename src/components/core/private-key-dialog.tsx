@@ -36,7 +36,6 @@ export const PrivateKeyDialog = ({
                 {selectedAddress.privateKey}
               </p>
               <Button
-                variant="ghost"
                 size="icon"
                 onClick={() => copyToClipboard(selectedAddress.privateKey)}
               >

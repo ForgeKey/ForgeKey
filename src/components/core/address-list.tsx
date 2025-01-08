@@ -5,9 +5,15 @@ import { Separator } from '@/components/ui/separator';
 
 import { copyToClipboard } from '@/utils/copy-to-clipboard';
 
+type Address = {
+  label: string;
+  address: string;
+  privateKey: string;
+};
+
 interface AddressListProps {
-  addresses: any[];
-  handleViewPrivateKey: (address: any) => void;
+  addresses: Address[];
+  handleViewPrivateKey: (address: Address) => void;
 }
 
 export const AddressList: React.FC<AddressListProps> = ({
@@ -20,7 +26,9 @@ export const AddressList: React.FC<AddressListProps> = ({
         <div key={index} className="mb-2">
           <div className="flex justify-between items-center">
             <div>
-              <div className="font-medium text-sm">{address.label}</div>
+              <div className="font-medium text-sm dark:text-white">
+                {address.label}
+              </div>
               <div className="text-xs text-muted-foreground">
                 {address.address}
               </div>

@@ -16,7 +16,7 @@ export const Footer: React.FC<FooterProps> = ({
     <div className="p-4 border-t">
       {selectedKeystore ? (
         <Button
-          className="w-full text-sm"
+          className="w-full text-sm dark:text-white dark:bg-zinc-800 dark:hover:bg-zinc-900 dark:hover:border"
           onClick={() => setIsAddingAddress(true)}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -24,7 +24,7 @@ export const Footer: React.FC<FooterProps> = ({
         </Button>
       ) : (
         <Button
-          className="w-full text-sm"
+          className="w-full text-sm dark:text-white dark:bg-zinc-800 dark:hover:bg-zinc-900 dark:hover:border"
           onClick={() => setIsAddingKeystore(true)}
         >
           <Plus className="mr-2 h-4 w-4" />

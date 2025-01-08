@@ -18,7 +18,12 @@
         "resizable": false,
         "fullscreen": false,
         "decorations": false,
-        "theme": "Light"
+        "theme": "Light",
+
+        "windowEffects": {
+          "effects": ["menu"],
+          "radius": 5
+        }
       }
     ],
     "security": {

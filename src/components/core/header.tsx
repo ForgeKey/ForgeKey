@@ -9,7 +9,7 @@ interface HeaderProps {
 export const Header = ({ setIsSettingsOpen, isSettingsOpen }: HeaderProps) => {
   return (
     <div className="h-[60px] flex justify-between items-center px-4">
-      <h1 className="text-lg font-semibold">Cast Wallet</h1>
+      <h1 className="text-lg dark:text-white font-semibold">Cast Wallet</h1>
       <div className="flex space-x-2">
         <Button variant="ghost" size="icon">
           <Settings

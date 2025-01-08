@@ -26,6 +26,7 @@ export function NewAddressForm({
         }
       />
       <Button
+        variant="secondary"
         className="w-full"
         onClick={handleAddAddress}
         disabled={!newAddress.label}
