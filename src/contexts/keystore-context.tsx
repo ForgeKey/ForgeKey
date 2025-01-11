@@ -29,12 +29,12 @@ export function KeystoreProvider({ children }: { children: ReactNode }) {
       addresses: [
         {
           label: 'Main 1',
-          address: '0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5',
+          address: '0x0affb0a96fbefaa97dce488dfd97512346cf3ab8',
           privateKey: 'abcdef1234567890',
         },
         {
           label: 'Main 2',
-          address: '0x1234567890abcdef1234567890abcdef12345678',
+          address: '0x518489F9ed41Fc35BCD23407C484F31897067ff0',
           privateKey: '1234567890abcdef',
         },
       ],
