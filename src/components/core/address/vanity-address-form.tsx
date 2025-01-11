@@ -11,7 +11,6 @@ type VanityAddressFormProps = {
     React.SetStateAction<{ label: string; address: string; privateKey: string }>
   >;
   handleAddAddress: () => void;
-  setAddAddressStep: (step: 'select' | 'new' | 'vanity' | 'import') => void;
 };
 
 export function VanityAddressForm({
@@ -20,7 +19,6 @@ export function VanityAddressForm({
   newAddress,
   setNewAddress,
   handleAddAddress,
-  setAddAddressStep,
 }: VanityAddressFormProps) {
   return (
     <div className="space-y-4">
@@ -47,6 +45,7 @@ export function VanityAddressForm({
       />
       <Button
         className="w-full"
+        variant="secondary"
         onClick={handleAddAddress}
         disabled={
           !newAddress.label ||
@@ -54,13 +53,6 @@ export function VanityAddressForm({
         }
       >
         Generate Vanity Address
-      </Button>
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={() => setAddAddressStep('select')}
-      >
-        Back
       </Button>
     </div>
   );

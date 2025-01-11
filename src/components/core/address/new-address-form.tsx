@@ -7,14 +7,12 @@ type NewAddressFormProps = {
     React.SetStateAction<{ label: string; address: string; privateKey: string }>
   >;
   handleAddAddress: () => void;
-  setAddAddressStep: (step: 'select' | 'new' | 'vanity' | 'import') => void;
 };
 
 export function NewAddressForm({
   newAddress,
   setNewAddress,
   handleAddAddress,
-  setAddAddressStep,
 }: NewAddressFormProps) {
   return (
     <div className="space-y-4">
@@ -27,18 +25,11 @@ export function NewAddressForm({
       />
       <Button
         variant="secondary"
-        className="w-full"
+        className="w-full dark:text-secondary"
         onClick={handleAddAddress}
         disabled={!newAddress.label}
       >
         Generate New Address
-      </Button>
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={() => setAddAddressStep('select')}
-      >
-        Back
       </Button>
     </div>
   );

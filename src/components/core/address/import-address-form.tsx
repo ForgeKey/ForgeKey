@@ -7,14 +7,12 @@ type ImportAddressFormProps = {
     React.SetStateAction<{ label: string; address: string; privateKey: string }>
   >;
   handleAddAddress: () => void;
-  setAddAddressStep: (step: 'select' | 'new' | 'vanity' | 'import') => void;
 };
 
 export function ImportAddressForm({
   newAddress,
   setNewAddress,
   handleAddAddress,
-  setAddAddressStep,
 }: ImportAddressFormProps) {
   return (
     <div className="space-y-4">
@@ -35,17 +33,11 @@ export function ImportAddressForm({
       />
       <Button
         className="w-full"
+        variant="secondary"
         onClick={handleAddAddress}
         disabled={!newAddress.label || !newAddress.privateKey}
       >
         Import Address
-      </Button>
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={() => setAddAddressStep('select')}
-      >
-        Back
       </Button>
     </div>
   );

@@ -9,11 +9,11 @@ interface HeaderProps {
 export const Header = ({ setIsSettingsOpen, isSettingsOpen }: HeaderProps) => {
   return (
     <div className="h-[60px] flex justify-between items-center px-4">
-      <h1 className="text-lg dark:text-white font-semibold">Cast Wallet</h1>
+      <h1 className="text-lg dark:text-secondary font-semibold">Cast Wallet</h1>
       <div className="flex space-x-2">
         <Button variant="ghost" size="icon">
           <Settings
-            className="h-5 w-5"
+            className="h-5 w-5 dark:text-secondary"
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
           />
         </Button>

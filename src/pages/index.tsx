@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useKeystore } from '@/contexts/keystore-context';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { Header } from '@/components/core/header';
@@ -13,7 +15,6 @@ import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
-import { useKeystore } from '@/contexts/KeystoreContext';
 
 type Address = {
   label: string;
@@ -66,6 +67,9 @@ export default function CastWallet() {
       } else {
         setAddAddressStep('select');
       }
+    } else if (isAddingKeystore) {
+      setIsAddingKeystore(false);
+      setNewKeystoreName('');
     } else {
       setSelectedKeystore(null);
     }
@@ -157,19 +161,13 @@ export default function CastWallet() {
   const renderAddAddressContent = () => {
     switch (addAddressStep) {
       case 'select':
-        return (
-          <SelectAddressType
-            setAddAddressStep={setAddAddressStep}
-            setIsAddingAddress={setIsAddingAddress}
-          />
-        );
+        return <SelectAddressType setAddAddressStep={setAddAddressStep} />;
       case 'new':
         return (
           <NewAddressForm
             newAddress={newAddress}
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
-            setAddAddressStep={setAddAddressStep}
           />
         );
       case 'vanity':
@@ -180,7 +178,6 @@ export default function CastWallet() {
             newAddress={newAddress}
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
-            setAddAddressStep={setAddAddressStep}
           />
         );
       case 'import':
@@ -189,7 +186,6 @@ export default function CastWallet() {
             newAddress={newAddress}
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
-            setAddAddressStep={setAddAddressStep}
           />
         );
     }
@@ -225,10 +221,13 @@ export default function CastWallet() {
             setNewKeystoreName={setNewKeystoreName}
             handleAddKeystore={handleAddKeystore}
             setIsAddingKeystore={setIsAddingKeystore}
+            handleBackClick={handleBackClick}
           />
         )}
       </ScrollArea>
       <Footer
+        isAddingAddress={isAddingAddress}
+        isAddingKeystore={isAddingKeystore}
         selectedKeystore={!!selectedKeystore}
         setIsAddingAddress={setIsAddingAddress}
         setIsAddingKeystore={setIsAddingKeystore}

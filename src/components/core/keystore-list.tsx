@@ -22,6 +22,7 @@ interface KeystoreListProps {
   setNewKeystoreName: (newKeystoreName: string) => void;
   handleAddKeystore: () => void;
   setIsAddingKeystore: (isAddingKeystore: boolean) => void;
+  handleBackClick: () => void;
 }
 
 export const KeystoreList = ({
@@ -31,31 +32,32 @@ export const KeystoreList = ({
   newKeystoreName,
   setNewKeystoreName,
   handleAddKeystore,
-  setIsAddingKeystore,
+  handleBackClick,
 }: KeystoreListProps) => {
   return (
     <div className="p-4">
-      {keystores.map((keystore, index) => (
-        <div key={index} className="mb-4 last:mb-0">
-          <Button
-            variant="ghost"
-            className="w-full justify-between text-left font-normal"
-            onClick={() => handleKeystoreClick(keystore)}
-          >
-            <span className="text-sm">{keystore.name}</span>
-            <span className="text-xs text-muted-foreground">
-              {keystore.addresses.length} addresses
-            </span>
-          </Button>
-          <Separator className="my-2" />
-        </div>
-      ))}
+      {!isAddingKeystore &&
+        keystores.map((keystore, index) => (
+          <div key={index} className="mb-2 last:mb-0">
+            <Button
+              variant="ghost"
+              className="w-full justify-between text-left font-normal dark:text-zinc-50"
+              onClick={() => handleKeystoreClick(keystore)}
+            >
+              <span className="text-sm">{keystore.name}</span>
+              <span className="text-xs text-muted-foreground">
+                {keystore.addresses.length} addresses
+              </span>
+            </Button>
+            {index < keystores.length - 1 && <Separator className="my-2" />}
+          </div>
+        ))}
       {isAddingKeystore && (
         <KeystoreForm
           newKeystoreName={newKeystoreName}
           setNewKeystoreName={setNewKeystoreName}
           handleAddKeystore={handleAddKeystore}
-          setIsAddingKeystore={setIsAddingKeystore}
+          handleBackClick={handleBackClick}
         />
       )}
     </div>

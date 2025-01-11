@@ -1,6 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
-
+import { Button } from '@/components/ui/button';
 import { AddressList } from './address-list';
 
 type Address = {
@@ -31,12 +30,18 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
 }) => {
   return (
     <div className="p-4">
-      <Button variant="ghost" onClick={handleBackClick} className="mb-4 pl-0">
-        <ChevronLeft className="h-5 w-5 mr-1" />
-        <span className="text-sm">
+      <div className="flex items-center mb-4">
+        <Button
+          variant="ghost"
+          onClick={handleBackClick}
+          className="p-2 dark:text-secondary"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" />
+        </Button>
+        <span className="text-md ml-1 dark:text-secondary flex items-center">
           {isAddingAddress ? 'Add New Address' : selectedKeystore.name}
         </span>
-      </Button>
+      </div>
       {isAddingAddress ? (
         renderAddAddressContent()
       ) : (
