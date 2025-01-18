@@ -30,14 +30,14 @@ export function VanityAddressForm({
         }
       />
       <Input
-        placeholder="Start with (e.g., 1a2b)"
+        placeholder="Start with (e.g., 0xdead)"
         value={vanityOptions.startWith}
         onChange={(e) =>
           setVanityOptions({ ...vanityOptions, startWith: e.target.value })
         }
       />
       <Input
-        placeholder="End with (e.g., 9z8y)"
+        placeholder="End with (e.g., 420)"
         value={vanityOptions.endWith}
         onChange={(e) =>
           setVanityOptions({ ...vanityOptions, endWith: e.target.value })
