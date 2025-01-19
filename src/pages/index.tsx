@@ -32,6 +32,11 @@ type Keystore = {
   addresses: Address[];
 };
 
+type VanityOpts = {
+  starts_with?: string;
+  ends_with?: string;
+};
+
 export default function CastWallet() {
   const { keystores, addKeystore, addAddress } = useKeystore();
 
@@ -51,8 +56,8 @@ export default function CastWallet() {
     password: '',
   });
   const [vanityOptions, setVanityOptions] = useState({
-    startWith: '',
-    endWith: '',
+    startsWith: '',
+    endsWith: '',
   });
   const [isAddingKeystore, setIsAddingKeystore] = useState(false);
   const [newKeystoreName, setNewKeystoreName] = useState('');
@@ -86,36 +91,37 @@ export default function CastWallet() {
       let address: Address;
       switch (addAddressStep) {
         case 'new':
-          const keypair: Keypair = await invoke('create_new_address');
+          const newKeypair: Keypair = await invoke('create_new_address');
 
           address = {
             label: newAddress.label,
-            address: keypair.address,
-            privateKey: keypair.privateKey,
+            address: newKeypair.address,
+            privateKey: newKeypair.privateKey,
           };
           break;
-        /*case 'vanity':
+        case 'vanity':
+          const vanityOpts: VanityOpts = {};
+
+          if (vanityOptions.startsWith) {
+            vanityOpts.starts_with = vanityOptions.startsWith;
+          }
+
+          if (vanityOptions.endsWith) {
+            vanityOpts.ends_with = vanityOptions.endsWith;
+          }
+
+          const vanityKeypair: Keypair = await invoke(
+            'create_vanity_address',
+            vanityOpts
+          );
+
           address = {
             label: newAddress.label,
-            address:
-              '0x' +
-              vanityOptions.startWith +
-              Array(
-                38 -
-                  vanityOptions.startWith.length -
-                  vanityOptions.endWith.length
-              )
-                .fill(0)
-                .map(() => Math.floor(Math.random() * 16).toString(16))
-                .join('') +
-              vanityOptions.endWith,
-            privateKey: Array(64)
-              .fill(0)
-              .map(() => Math.floor(Math.random() * 16).toString(16))
-              .join(''),
+            address: vanityKeypair.address,
+            privateKey: vanityKeypair.privateKey,
           };
+
           break;
-        */
         case 'import':
           const returnedAddress: string = await invoke('import_private_key', {
             private_key: newAddress.privateKey,
@@ -136,7 +142,7 @@ export default function CastWallet() {
 
       addAddress(selectedKeystore.name, address);
       setNewAddress({ label: '', address: '', privateKey: '', password: '' });
-      setVanityOptions({ startWith: '', endWith: '' });
+      setVanityOptions({ startsWith: '', endsWith: '' });
       setIsAddingAddress(false);
       setAddAddressStep('select');
     }

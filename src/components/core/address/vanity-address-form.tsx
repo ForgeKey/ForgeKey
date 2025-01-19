@@ -2,9 +2,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 type VanityAddressFormProps = {
-  vanityOptions: { startWith: string; endWith: string };
+  vanityOptions: { startsWith: string; endsWith: string };
   setVanityOptions: React.Dispatch<
-    React.SetStateAction<{ startWith: string; endWith: string }>
+    React.SetStateAction<{ startsWith: string; endsWith: string }>
   >;
   newAddress: {
     label: string;
@@ -41,16 +41,16 @@ export function VanityAddressForm({
       />
       <Input
         placeholder="Start with (e.g., 0xdead)"
-        value={vanityOptions.startWith}
+        value={vanityOptions.startsWith}
         onChange={(e) =>
-          setVanityOptions({ ...vanityOptions, startWith: e.target.value })
+          setVanityOptions({ ...vanityOptions, startsWith: e.target.value })
         }
       />
       <Input
         placeholder="End with (e.g., 420)"
-        value={vanityOptions.endWith}
+        value={vanityOptions.endsWith}
         onChange={(e) =>
-          setVanityOptions({ ...vanityOptions, endWith: e.target.value })
+          setVanityOptions({ ...vanityOptions, endsWith: e.target.value })
         }
       />
       <Button
@@ -59,7 +59,7 @@ export function VanityAddressForm({
         onClick={handleAddAddress}
         disabled={
           !newAddress.label ||
-          (!vanityOptions.startWith && !vanityOptions.endWith)
+          (!vanityOptions.startsWith && !vanityOptions.endsWith)
         }
       >
         Generate Vanity Address
