@@ -4,6 +4,7 @@ type Address = {
   label: string;
   address: string;
   privateKey: string;
+  password?: string;
 };
 
 type Keystore = {

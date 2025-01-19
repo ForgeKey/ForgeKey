@@ -2,9 +2,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 type NewAddressFormProps = {
-  newAddress: { label: string; address: string; privateKey: string };
+  newAddress: {
+    label: string;
+    address: string;
+    privateKey: string;
+    password?: string;
+  };
   setNewAddress: React.Dispatch<
-    React.SetStateAction<{ label: string; address: string; privateKey: string }>
+    React.SetStateAction<{
+      label: string;
+      address: string;
+      privateKey: string;
+      password?: string;
+    }>
   >;
   handleAddAddress: () => void;
 };

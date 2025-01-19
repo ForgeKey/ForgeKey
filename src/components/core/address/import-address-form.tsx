@@ -2,9 +2,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 type ImportAddressFormProps = {
-  newAddress: { label: string; address: string; privateKey: string };
+  newAddress: {
+    label: string;
+    address: string;
+    privateKey: string;
+    password?: string;
+  };
   setNewAddress: React.Dispatch<
-    React.SetStateAction<{ label: string; address: string; privateKey: string }>
+    React.SetStateAction<{
+      label: string;
+      address: string;
+      privateKey: string;
+      password?: string;
+    }>
   >;
   handleAddAddress: () => void;
 };
@@ -25,10 +35,17 @@ export function ImportAddressForm({
       />
       <Input
         placeholder="Private Key"
-        type="password"
         value={newAddress.privateKey}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({ ...newAddress, privateKey: e.target.value })
+        }
+      />
+      <Input
+        placeholder="Password"
+        type="password"
+        value={newAddress.password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewAddress({ ...newAddress, password: e.target.value })
         }
       />
       <Button

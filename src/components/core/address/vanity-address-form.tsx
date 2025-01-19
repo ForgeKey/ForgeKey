@@ -6,9 +6,19 @@ type VanityAddressFormProps = {
   setVanityOptions: React.Dispatch<
     React.SetStateAction<{ startWith: string; endWith: string }>
   >;
-  newAddress: { label: string; address: string; privateKey: string };
+  newAddress: {
+    label: string;
+    address: string;
+    privateKey: string;
+    password?: string;
+  };
   setNewAddress: React.Dispatch<
-    React.SetStateAction<{ label: string; address: string; privateKey: string }>
+    React.SetStateAction<{
+      label: string;
+      address: string;
+      privateKey: string;
+      password?: string;
+    }>
   >;
   handleAddAddress: () => void;
 };

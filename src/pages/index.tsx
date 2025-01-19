@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 
 import { useKeystore } from '@/contexts/keystore-context';
 
@@ -16,10 +17,14 @@ import { SelectAddressType } from '@/components/core/address/select-address-type
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
 
-type Address = {
-  label: string;
+type Keypair = {
   address: string;
   privateKey: string;
+  password?: string;
+};
+
+type Address = Keypair & {
+  label: string;
 };
 
 type Keystore = {
@@ -39,10 +44,11 @@ export default function CastWallet() {
   const [addAddressStep, setAddAddressStep] = useState<
     'select' | 'new' | 'vanity' | 'import'
   >('select');
-  const [newAddress, setNewAddress] = useState({
+  const [newAddress, setNewAddress] = useState<Address>({
     label: '',
     address: '',
     privateKey: '',
+    password: '',
   });
   const [vanityOptions, setVanityOptions] = useState({
     startWith: '',
@@ -75,26 +81,20 @@ export default function CastWallet() {
     }
   };
 
-  const handleAddAddress = () => {
+  const handleAddAddress = async () => {
     if (selectedKeystore && newAddress.label) {
       let address: Address;
       switch (addAddressStep) {
         case 'new':
+          const keypair: Keypair = await invoke('create_new_address');
+
           address = {
             label: newAddress.label,
-            address:
-              '0x' +
-              Array(40)
-                .fill(0)
-                .map(() => Math.floor(Math.random() * 16).toString(16))
-                .join(''),
-            privateKey: Array(64)
-              .fill(0)
-              .map(() => Math.floor(Math.random() * 16).toString(16))
-              .join(''),
+            address: keypair.address,
+            privateKey: keypair.privateKey,
           };
           break;
-        case 'vanity':
+        /*case 'vanity':
           address = {
             label: newAddress.label,
             address:
@@ -115,19 +115,27 @@ export default function CastWallet() {
               .join(''),
           };
           break;
+        */
         case 'import':
+          const returnedAddress: string = await invoke('import_private_key', {
+            private_key: newAddress.privateKey,
+            address_label: newAddress.label,
+            password: newAddress.password,
+          });
+
           address = {
             label: newAddress.label,
-            address: '0x' + newAddress.privateKey.slice(-40),
+            address: returnedAddress,
             privateKey: newAddress.privateKey,
           };
           break;
+
         default:
           return;
       }
 
       addAddress(selectedKeystore.name, address);
-      setNewAddress({ label: '', address: '', privateKey: '' });
+      setNewAddress({ label: '', address: '', privateKey: '', password: '' });
       setVanityOptions({ startWith: '', endWith: '' });
       setIsAddingAddress(false);
       setAddAddressStep('select');
