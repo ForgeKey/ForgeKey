@@ -4,6 +4,12 @@ mod models;
 use commands::create_new_wallet;
 use commands::import_wallet;
 use commands::create_vanity_wallet;
+use commands::list_wallets;
+
+#[tauri::command(rename_all = "snake_case")]
+fn list_addresses() -> Result<Vec<String>, String> {
+    list_wallets()
+}
 
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_address(address_label: String, password: String) -> Result<String, String> {
@@ -23,7 +29,7 @@ fn create_vanity_address(starts_with: Option<String>, ends_with: Option<String>,
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![create_new_address, import_private_key, create_vanity_address])
+    .invoke_handler(tauri::generate_handler![create_new_address, import_private_key, create_vanity_address, list_addresses])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
