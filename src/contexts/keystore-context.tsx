@@ -6,18 +6,13 @@ import {
   useEffect,
 } from 'react';
 
-import { Address } from '@/types/address';
-
-type Keystore = {
-  name: string;
-  addresses: Address[];
-};
+import { Address, Keystore } from '@/types/address';
+import { useWalletReconciliation } from '@/hooks/useWalletReconciliation';
 
 type KeystoreContextType = {
   keystores: Keystore[];
   addKeystore: (name: string) => void;
   addAddress: (keystoreName: string, address: Address) => void;
-  // Add other methods as needed
 };
 
 const KeystoreContext = createContext<KeystoreContextType | undefined>(
@@ -27,12 +22,8 @@ const KeystoreContext = createContext<KeystoreContextType | undefined>(
 export function KeystoreProvider({ children }: { children: ReactNode }) {
   const [keystores, setKeystores] = useState<Keystore[]>([]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('keystores');
-    if (saved) {
-      setKeystores(JSON.parse(saved));
-    }
-  }, []);
+  // Use the reconciliation hook
+  useWalletReconciliation(setKeystores);
 
   useEffect(() => {
     localStorage.setItem('keystores', JSON.stringify(keystores));
