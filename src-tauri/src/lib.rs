@@ -6,8 +6,8 @@ use commands::import_wallet;
 use commands::create_vanity_wallet;
 
 #[tauri::command(rename_all = "snake_case")]
-fn create_new_address() -> Result<models::WalletInfo, String> {
-    create_new_wallet()
+fn create_new_address(address_label: String, password: String) -> Result<String, String> {
+  create_new_wallet(address_label, password)
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -16,8 +16,8 @@ fn import_private_key(private_key: String, address_label: String, password: Stri
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn create_vanity_address(starts_with: Option<String>, ends_with: Option<String>) -> Result<models::WalletInfo, String> {
-  create_vanity_wallet(starts_with, ends_with)
+fn create_vanity_address(starts_with: Option<String>, ends_with: Option<String>, address_label: String, password: String) -> Result<String, String> {
+  create_vanity_wallet(starts_with, ends_with, address_label, password)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

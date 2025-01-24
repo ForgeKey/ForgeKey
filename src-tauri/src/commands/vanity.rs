@@ -17,17 +17,16 @@ fn parse_vanity_output(output: Vec<u8>) -> Result<WalletInfo, String> {
         .trim_start_matches("Private Key: ")
         .to_string();
 
-    Ok(WalletInfo {
-        address,
-        private_key
-    })
+    Ok(WalletInfo { address, private_key })
 }
 
 #[command]
 pub fn create_vanity_wallet(
     starts_with: Option<String>,
     ends_with: Option<String>,
-) -> Result<WalletInfo, String> {
+    address_label: String,
+    password: String,
+) -> Result<String, String> {
     let mut cmd = Command::new("cast");
     cmd.arg("wallet").arg("vanity");
     
@@ -45,5 +44,13 @@ pub fn create_vanity_wallet(
         return Err(String::from_utf8_lossy(&output.stderr).into_owned());
     }
 
-    parse_vanity_output(output.stdout)
+    let wallet_info = parse_vanity_output(output.stdout)?;
+
+    crate::commands::import::import_wallet(
+        wallet_info.private_key.clone(),
+        address_label,
+        password
+      )?;
+
+    Ok(wallet_info.address.to_string())
 }
