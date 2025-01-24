@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
 
 import { Address } from '@/types/address';
 
@@ -19,59 +25,18 @@ const KeystoreContext = createContext<KeystoreContextType | undefined>(
 );
 
 export function KeystoreProvider({ children }: { children: ReactNode }) {
-  const [keystores, setKeystores] = useState<Keystore[]>([
-    {
-      name: 'Main Keystore',
-      addresses: [
-        {
-          label: 'Main 1',
-          address: '0x0affb0a96fbefaa97dce488dfd97512346cf3ab8',
-          privateKey: 'abcdef1234567890',
-          password: '',
-        },
-        {
-          label: 'Main 2',
-          address: '0x518489F9ed41Fc35BCD23407C484F31897067ff0',
-          privateKey: '1234567890abcdef',
-          password: '',
-        },
-      ],
-    },
-    {
-      name: 'Development Keystore',
-      addresses: [
-        {
-          label: 'Development 1',
-          address: '0xabcdef1234567890abcdef1234567890abcdef12',
-          privateKey: 'fedcba0987654321',
-          password: '',
-        },
-        {
-          label: 'Development 2',
-          address: '0x7890abcdef1234567890abcdef1234567890abcd',
-          privateKey: '0987654321fedcba',
-          password: '',
-        },
-      ],
-    },
-    {
-      name: 'Test Keystore',
-      addresses: [
-        {
-          label: 'Test 1',
-          address: '0x4567890abcdef1234567890abcdef1234567890a',
-          privateKey: 'abcdefabcdefabcd',
-          password: '',
-        },
-        {
-          label: 'Test 2',
-          address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-          privateKey: '1234561234561234',
-          password: '',
-        },
-      ],
-    },
-  ]);
+  const [keystores, setKeystores] = useState<Keystore[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('keystores');
+    if (saved) {
+      setKeystores(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('keystores', JSON.stringify(keystores));
+  }, [keystores]);
 
   const addKeystore = (name: string) => {
     setKeystores([...keystores, { name, addresses: [] }]);
