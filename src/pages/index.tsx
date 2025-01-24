@@ -16,26 +16,7 @@ import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
-
-type Keypair = {
-  address: string;
-  privateKey: string;
-  password?: string;
-};
-
-type Address = Keypair & {
-  label: string;
-};
-
-type Keystore = {
-  name: string;
-  addresses: Address[];
-};
-
-type VanityOpts = {
-  starts_with?: string;
-  ends_with?: string;
-};
+import { Address, VanityOpts, Keystore } from '@/types/address';
 
 export default function CastWallet() {
   const { keystores, addKeystore, addAddress } = useKeystore();
@@ -52,12 +33,14 @@ export default function CastWallet() {
   const [newAddress, setNewAddress] = useState<Address>({
     label: '',
     address: '',
-    privateKey: '',
     password: '',
+    privateKey: undefined,
   });
-  const [vanityOptions, setVanityOptions] = useState({
-    startsWith: '',
-    endsWith: '',
+  const [vanityOptions, setVanityOptions] = useState<VanityOpts>({
+    starts_with: undefined,
+    ends_with: undefined,
+    address_label: '',
+    password: '',
   });
   const [isAddingKeystore, setIsAddingKeystore] = useState(false);
   const [newKeystoreName, setNewKeystoreName] = useState('');
@@ -91,39 +74,45 @@ export default function CastWallet() {
       let address: Address;
       switch (addAddressStep) {
         case 'new':
-          const newKeypair: Keypair = await invoke('create_new_address');
+          const createdAddress: string = await invoke('create_new_address', {
+            address_label: newAddress.label,
+            password: newAddress.password,
+          });
 
           address = {
+            address: createdAddress,
             label: newAddress.label,
-            address: newKeypair.address,
-            privateKey: newKeypair.privateKey,
+            password: newAddress.password,
           };
           break;
         case 'vanity':
-          const vanityOpts: VanityOpts = {};
+          const vanityOpts: VanityOpts = {
+            address_label: newAddress.label,
+            password: newAddress.password!,
+          };
 
-          if (vanityOptions.startsWith) {
-            vanityOpts.starts_with = vanityOptions.startsWith;
+          if (vanityOptions.starts_with) {
+            vanityOpts.starts_with = vanityOptions.starts_with;
           }
 
-          if (vanityOptions.endsWith) {
-            vanityOpts.ends_with = vanityOptions.endsWith;
+          if (vanityOptions.ends_with) {
+            vanityOpts.ends_with = vanityOptions.ends_with;
           }
 
-          const vanityKeypair: Keypair = await invoke(
+          const createdVanityAddress: string = await invoke(
             'create_vanity_address',
             vanityOpts
           );
 
           address = {
             label: newAddress.label,
-            address: vanityKeypair.address,
-            privateKey: vanityKeypair.privateKey,
+            address: createdVanityAddress,
+            password: newAddress.password,
           };
 
           break;
         case 'import':
-          const returnedAddress: string = await invoke('import_private_key', {
+          const importedAddress: string = await invoke('import_private_key', {
             private_key: newAddress.privateKey,
             address_label: newAddress.label,
             password: newAddress.password,
@@ -131,8 +120,8 @@ export default function CastWallet() {
 
           address = {
             label: newAddress.label,
-            address: returnedAddress,
-            privateKey: newAddress.privateKey,
+            address: importedAddress,
+            password: newAddress.password,
           };
           break;
 
@@ -141,8 +130,18 @@ export default function CastWallet() {
       }
 
       addAddress(selectedKeystore.name, address);
-      setNewAddress({ label: '', address: '', privateKey: '', password: '' });
-      setVanityOptions({ startsWith: '', endsWith: '' });
+      setNewAddress({
+        label: '',
+        address: '',
+        password: '',
+        privateKey: undefined,
+      });
+      setVanityOptions({
+        starts_with: undefined,
+        ends_with: undefined,
+        address_label: '',
+        password: '',
+      });
       setIsAddingAddress(false);
       setAddAddressStep('select');
     }

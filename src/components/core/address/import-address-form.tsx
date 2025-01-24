@@ -1,21 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { Address } from '@/types/address';
+
 type ImportAddressFormProps = {
-  newAddress: {
-    label: string;
-    address: string;
-    privateKey: string;
-    password?: string;
-  };
-  setNewAddress: React.Dispatch<
-    React.SetStateAction<{
-      label: string;
-      address: string;
-      privateKey: string;
-      password?: string;
-    }>
-  >;
+  newAddress: Address;
+  setNewAddress: React.Dispatch<React.SetStateAction<Address>>;
   handleAddAddress: () => void;
 };
 
@@ -52,7 +42,9 @@ export function ImportAddressForm({
         className="w-full"
         variant="secondary"
         onClick={handleAddAddress}
-        disabled={!newAddress.label || !newAddress.privateKey}
+        disabled={
+          !newAddress.label || !newAddress.privateKey || !newAddress.password
+        }
       >
         Import Address
       </Button>

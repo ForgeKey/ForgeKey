@@ -1,18 +1,8 @@
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Keystore } from '@/types/address';
 
 import { KeystoreForm } from './keystore-form';
-
-type Address = {
-  label: string;
-  address: string;
-  privateKey: string;
-};
-
-type Keystore = {
-  name: string;
-  addresses: Address[];
-};
 
 interface KeystoreListProps {
   keystores: Keystore[];

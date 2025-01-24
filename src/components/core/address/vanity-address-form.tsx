@@ -1,25 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { Address, VanityOpts } from '@/types/address';
+
 type VanityAddressFormProps = {
-  vanityOptions: { startsWith: string; endsWith: string };
-  setVanityOptions: React.Dispatch<
-    React.SetStateAction<{ startsWith: string; endsWith: string }>
-  >;
-  newAddress: {
-    label: string;
-    address: string;
-    privateKey: string;
-    password?: string;
-  };
-  setNewAddress: React.Dispatch<
-    React.SetStateAction<{
-      label: string;
-      address: string;
-      privateKey: string;
-      password?: string;
-    }>
-  >;
+  vanityOptions: VanityOpts;
+  setVanityOptions: React.Dispatch<React.SetStateAction<VanityOpts>>;
+  newAddress: Address;
+  setNewAddress: React.Dispatch<React.SetStateAction<Address>>;
   handleAddAddress: () => void;
 };
 
@@ -35,22 +23,30 @@ export function VanityAddressForm({
       <Input
         placeholder="Address Label"
         value={newAddress.label}
-        onChange={(e) =>
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({ ...newAddress, label: e.target.value })
         }
       />
       <Input
         placeholder="Start with (e.g., 0xdead)"
-        value={vanityOptions.startsWith}
-        onChange={(e) =>
-          setVanityOptions({ ...vanityOptions, startsWith: e.target.value })
+        value={vanityOptions.starts_with}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setVanityOptions({ ...vanityOptions, starts_with: e.target.value })
         }
       />
       <Input
         placeholder="End with (e.g., 420)"
-        value={vanityOptions.endsWith}
-        onChange={(e) =>
-          setVanityOptions({ ...vanityOptions, endsWith: e.target.value })
+        value={vanityOptions.ends_with}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setVanityOptions({ ...vanityOptions, ends_with: e.target.value })
+        }
+      />
+      <Input
+        placeholder="Password"
+        type="password"
+        value={newAddress.password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewAddress({ ...newAddress, password: e.target.value })
         }
       />
       <Button
@@ -59,7 +55,8 @@ export function VanityAddressForm({
         onClick={handleAddAddress}
         disabled={
           !newAddress.label ||
-          (!vanityOptions.startsWith && !vanityOptions.endsWith)
+          !newAddress.password ||
+          (!vanityOptions.starts_with && !vanityOptions.ends_with)
         }
       >
         Generate Vanity Address

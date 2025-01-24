@@ -1,17 +1,7 @@
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AddressList } from './address-list';
-
-type Address = {
-  label: string;
-  address: string;
-  privateKey: string;
-};
-
-type Keystore = {
-  name: string;
-  addresses: Address[];
-};
+import { Address, Keystore } from '@/types/address';
 
 interface KeystoreViewProps {
   selectedKeystore: Keystore;

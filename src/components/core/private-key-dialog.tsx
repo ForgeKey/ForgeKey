@@ -1,3 +1,4 @@
+import { Copy } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -5,14 +6,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Copy } from 'lucide-react';
 import { copyToClipboard } from '@/utils/copy-to-clipboard';
-
-type Address = {
-  label: string;
-  address: string;
-  privateKey: string;
-};
+import { Address } from '@/types/address';
 
 interface PrivateKeyDialogProps {
   selectedAddress: Address | null;
@@ -33,11 +28,11 @@ export function PrivateKeyDialog({
           <div className="py-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-mono break-all">
-                {selectedAddress.privateKey}
+                TODO: ASK TO CAST FOR THE PK
               </p>
               <Button
                 size="icon"
-                onClick={() => copyToClipboard(selectedAddress.privateKey)}
+                onClick={() => copyToClipboard('TODO: ASK TO CAST FOR THE PK')}
               >
                 <Copy className="h-4 w-4" />
               </Button>

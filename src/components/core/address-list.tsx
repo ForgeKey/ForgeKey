@@ -3,14 +3,9 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Address } from '@/types/address';
 
 import { copyToClipboard } from '@/utils/copy-to-clipboard';
-
-type Address = {
-  label: string;
-  address: string;
-  privateKey: string;
-};
 
 interface AddressListProps {
   addresses: Address[];

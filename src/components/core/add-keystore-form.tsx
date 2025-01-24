@@ -20,7 +20,9 @@ const AddKeystoreForm: React.FC<AddKeystoreFormProps> = ({
       <Input
         placeholder="New Keystore Name"
         value={newKeystoreName}
-        onChange={(e) => setNewKeystoreName(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewKeystoreName(e.target.value)
+        }
       />
       <Button onClick={handleAddKeystore} className="w-full">
         Add Keystore
