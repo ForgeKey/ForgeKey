@@ -18,6 +18,9 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   renderAddAddressContent,
   handleViewPrivateKey,
 }) => {
+  const showAddAddressComponent =
+    isAddingAddress || selectedKeystore.addresses.length === 0;
+
   return (
     <div className="p-4">
       <div className="flex items-center mb-4">
@@ -29,10 +32,10 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
           <ChevronLeft className="h-5 w-5 mr-1" />
         </Button>
         <span className="text-md ml-1 dark:text-secondary flex items-center">
-          {isAddingAddress ? 'Add New Address' : selectedKeystore.name}
+          {showAddAddressComponent ? 'Add New Address' : selectedKeystore.name}
         </span>
       </div>
-      {isAddingAddress ? (
+      {showAddAddressComponent ? (
         renderAddAddressContent()
       ) : (
         <AddressList

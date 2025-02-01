@@ -90,7 +90,7 @@ export default function CastWallet() {
       <Footer
         isAddingAddress={states.isAddingAddress}
         isAddingKeystore={states.isAddingKeystore}
-        selectedKeystore={!!states.selectedKeystore}
+        selectedKeystore={states.selectedKeystore}
         setIsAddingAddress={setters.setIsAddingAddress}
         setIsAddingKeystore={setters.setIsAddingKeystore}
       />
