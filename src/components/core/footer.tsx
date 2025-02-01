@@ -5,7 +5,7 @@ import { Keystore } from '@/types/address';
 interface FooterProps {
   isAddingAddress: boolean;
   isAddingKeystore: boolean;
-  selectedKeystore: Keystore;
+  selectedKeystore: Keystore | null;
   setIsAddingAddress: (isAddingAddress: boolean) => void;
   setIsAddingKeystore: (isAddingKeystore: boolean) => void;
 }
