@@ -12,7 +12,7 @@ export function useWalletReconciliation(
           localStorage.getItem('keystores') || '[]'
         );
 
-        const availableWallets: string[] = await invoke('list_addresses');
+        const availableWallets: string[] = await invoke('list_wallets');
 
         const reconciledKeystores = keystores.reduce<Keystore[]>(
           (acc, keystore) => {

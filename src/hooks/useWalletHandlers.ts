@@ -35,7 +35,7 @@ export function useWalletHandlers(
     try {
       switch (states.addAddressStep) {
         case 'new':
-          const createdAddress: string = await invoke('create_new_address', {
+          const createdAddress: string = await invoke('create_new_wallet', {
             address_label: states.newAddress.label,
             password: states.newAddress.password,
           });
@@ -62,7 +62,7 @@ export function useWalletHandlers(
           }
 
           const createdVanityAddress: string = await invoke(
-            'create_vanity_address',
+            'create_vanity_wallet',
             vanityOpts
           );
 

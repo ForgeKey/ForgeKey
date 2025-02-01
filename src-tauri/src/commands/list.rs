@@ -1,6 +1,5 @@
 use std::process::Command;
 
-#[tauri::command]
 pub fn list_wallets() -> Result<Vec<String>, String> {
     let output = Command::new("cast")
         .arg("wallet")
