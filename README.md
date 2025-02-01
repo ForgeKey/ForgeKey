@@ -17,7 +17,11 @@ A user-friendly graphical interface wrapper for the Foundry Cast Wallet CLI, des
 
 - Clone the repository
 - Run `pnpm install`
-- Run `pnpm tauri dev`
+- Run `pnpm tauri-dev`
+
+## Build
+
+- Run `pnpm tauri-build`
 
 ## License
 
