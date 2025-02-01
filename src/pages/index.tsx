@@ -53,40 +53,53 @@ export default function CastWallet() {
     }
   };
 
+  const renderRoute = () => {
+    // Settings Route
+    if (states.isSettingsOpen) {
+      return (
+        <Settings
+          setIsSettingsOpen={setters.setIsSettingsOpen}
+          keystoreFolder={states.keystoreFolder}
+          setKeystoreFolder={setters.setKeystoreFolder}
+        />
+      );
+    }
+
+    // Keystore View Route
+    if (states.selectedKeystore) {
+      return (
+        <KeystoreView
+          selectedKeystore={states.selectedKeystore}
+          isAddingAddress={states.isAddingAddress}
+          handleBackClick={handlers.handleBackClick}
+          renderAddAddressContent={renderAddAddressContent}
+          handleViewPrivateKey={handlers.handleViewPrivateKey}
+        />
+      );
+    }
+
+    // Default Route (Keystore List)
+    return (
+      <KeystoreList
+        keystores={states.keystores}
+        handleKeystoreClick={handlers.handleKeystoreClick}
+        isAddingKeystore={states.isAddingKeystore}
+        newKeystoreName={states.newKeystoreName}
+        setNewKeystoreName={setters.setNewKeystoreName}
+        handleAddKeystore={handlers.handleAddKeystore}
+        setIsAddingKeystore={setters.setIsAddingKeystore}
+        handleBackClick={handlers.handleBackClick}
+      />
+    );
+  };
+
   return (
     <div className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
       <Header
         setIsSettingsOpen={setters.setIsSettingsOpen}
         isSettingsOpen={states.isSettingsOpen}
       />
-      <ScrollArea className="flex-grow">
-        {states.isSettingsOpen ? (
-          <Settings
-            setIsSettingsOpen={setters.setIsSettingsOpen}
-            keystoreFolder={states.keystoreFolder}
-            setKeystoreFolder={setters.setKeystoreFolder}
-          />
-        ) : states.selectedKeystore ? (
-          <KeystoreView
-            selectedKeystore={states.selectedKeystore}
-            isAddingAddress={states.isAddingAddress}
-            handleBackClick={handlers.handleBackClick}
-            renderAddAddressContent={renderAddAddressContent}
-            handleViewPrivateKey={handlers.handleViewPrivateKey}
-          />
-        ) : (
-          <KeystoreList
-            keystores={states.keystores}
-            handleKeystoreClick={handlers.handleKeystoreClick}
-            isAddingKeystore={states.isAddingKeystore}
-            newKeystoreName={states.newKeystoreName}
-            setNewKeystoreName={setters.setNewKeystoreName}
-            handleAddKeystore={handlers.handleAddKeystore}
-            setIsAddingKeystore={setters.setIsAddingKeystore}
-            handleBackClick={handlers.handleBackClick}
-          />
-        )}
-      </ScrollArea>
+      <ScrollArea className="flex-grow">{renderRoute()}</ScrollArea>
       <Footer
         isAddingAddress={states.isAddingAddress}
         isAddingKeystore={states.isAddingKeystore}
