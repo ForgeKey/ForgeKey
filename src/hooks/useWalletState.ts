@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Address, VanityOpts, Keystore } from '@/types/address';
 import { useKeystore } from '@/contexts/keystore-context';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
@@ -28,11 +28,30 @@ export function useWalletState() {
   });
   const [isAddingKeystore, setIsAddingKeystore] = useState(false);
   const [newKeystoreName, setNewKeystoreName] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, _setIsPasswordDialogOpen] = useState(false);
   const [selectedAddressForPrivateKey, setSelectedAddressForPrivateKey] =
     useState<Address | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [privateKey, setPrivateKey] = useState('');
+  const [privateKeyError, setPrivateKeyError] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (isPasswordDialogOpen) {
+      setPrivateKey('');
+      setPassword('');
+      setPrivateKeyError('');
+    }
+  }, [isPasswordDialogOpen]);
+
+  const setIsPasswordDialogOpen = (open: boolean) => {
+    _setIsPasswordDialogOpen(open);
+
+    if (!open) {
+      setPrivateKey('');
+      setPassword('');
+    }
+  };
 
   const states: WalletStates = {
     keystoreFolder,
@@ -43,11 +62,13 @@ export function useWalletState() {
     vanityOptions,
     isAddingKeystore,
     newKeystoreName,
-    password,
     isPasswordDialogOpen,
     selectedAddressForPrivateKey,
     isSettingsOpen,
     keystores,
+    privateKey,
+    privateKeyError,
+    password,
   };
 
   const setters: WalletSetters = {
@@ -59,10 +80,12 @@ export function useWalletState() {
     setVanityOptions,
     setIsAddingKeystore,
     setNewKeystoreName,
-    setPassword,
     setIsPasswordDialogOpen,
     setSelectedAddressForPrivateKey,
     setIsSettingsOpen,
+    setPrivateKey,
+    setPrivateKeyError,
+    setPassword,
   };
 
   const actions: WalletActions = {

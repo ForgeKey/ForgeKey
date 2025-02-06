@@ -6,7 +6,6 @@ import { Settings } from '@/components/core/settings';
 import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
 import { PasswordDialog } from '@/components/core/password-dialog';
-import { PrivateKeyDialog } from '@/components/core/private-key-dialog';
 import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
@@ -110,13 +109,11 @@ export default function CastWallet() {
       <PasswordDialog
         isOpen={states.isPasswordDialogOpen}
         setIsOpen={setters.setIsPasswordDialogOpen}
+        handlePasswordSubmit={handlers.handlePasswordSubmit}
+        privateKey={states.privateKey}
+        privateKeyError={states.privateKeyError}
         password={states.password}
         setPassword={setters.setPassword}
-        handlePasswordSubmit={handlers.handlePasswordSubmit}
-      />
-      <PrivateKeyDialog
-        selectedAddress={states.selectedAddressForPrivateKey}
-        setSelectedAddress={setters.setSelectedAddressForPrivateKey}
       />
     </div>
   );

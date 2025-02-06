@@ -133,12 +133,22 @@ export function useWalletHandlers(
     setters.setIsPasswordDialogOpen(true);
   };
 
-  const handlePasswordSubmit = () => {
-    if (states.password === 'password') {
-      setters.setIsPasswordDialogOpen(false);
-      setters.setPassword('');
-    } else {
-      alert('Incorrect password');
+  const handlePasswordSubmit = async (password: string) => {
+    try {
+      const privateKey: string = await invoke('decrypt_keystore', {
+        keystore_name: states.selectedAddressForPrivateKey!.label,
+        password,
+      });
+
+      setters.setPrivateKeyError('');
+      setters.setPrivateKey(privateKey);
+    } catch (error: unknown) {
+      if (typeof error === 'string' && error.includes('Mac Mismatch')) {
+        setters.setPrivateKeyError('Invalid password');
+      } else {
+        setters.setPrivateKeyError('Error decrypting keystore');
+      }
+      setters.setPrivateKey('');
     }
   };
 

@@ -10,11 +10,13 @@ export interface WalletStates {
   vanityOptions: VanityOpts;
   isAddingKeystore: boolean;
   newKeystoreName: string;
-  password: string;
   isPasswordDialogOpen: boolean;
   selectedAddressForPrivateKey: Address | null;
   isSettingsOpen: boolean;
   keystores: Keystore[];
+  privateKey: string;
+  privateKeyError: string;
+  password: string;
 }
 
 export interface WalletSetters {
@@ -28,10 +30,12 @@ export interface WalletSetters {
   setVanityOptions: Dispatch<SetStateAction<VanityOpts>>;
   setIsAddingKeystore: (value: boolean) => void;
   setNewKeystoreName: (value: string) => void;
-  setPassword: (value: string) => void;
   setIsPasswordDialogOpen: (value: boolean) => void;
   setSelectedAddressForPrivateKey: Dispatch<SetStateAction<Address | null>>;
   setIsSettingsOpen: (value: boolean) => void;
+  setPrivateKey: (value: string) => void;
+  setPrivateKeyError: (value: string) => void;
+  setPassword: (value: string) => void;
 }
 
 export interface WalletActions {

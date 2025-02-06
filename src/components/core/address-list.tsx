@@ -24,7 +24,7 @@ export const AddressList: React.FC<AddressListProps> = ({
 
     setTimeout(() => {
       setCopiedAddress(null);
-    }, 1000);
+    }, 2000);
   };
 
   return (
@@ -45,7 +45,7 @@ export const AddressList: React.FC<AddressListProps> = ({
                 onClick={() => handleCopy(address.address)}
               >
                 {copiedAddress === address.address ? (
-                  <Check className="h-4 w-4 dark:text-secondary" />
+                  <Check className="h-4 w-4 text-green-500" />
                 ) : (
                   <Copy className="h-4 w-4 dark:text-secondary" />
                 )}
