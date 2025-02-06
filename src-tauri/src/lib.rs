@@ -21,10 +21,15 @@ fn list_wallets() -> Result<Vec<String>, String> {
   commands::list_wallets()
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, String> {
+  commands::decrypt_keystore(keystore_name, password)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![create_new_wallet, import_private_key, create_vanity_wallet, list_wallets])
+    .invoke_handler(tauri::generate_handler![create_new_wallet, import_private_key, create_vanity_wallet, list_wallets, decrypt_keystore])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
