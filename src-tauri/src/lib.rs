@@ -1,5 +1,6 @@
 mod commands;
 mod models;
+mod setup;
 
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_wallet(address_label: String, password: String) -> Result<String, String> {
@@ -29,7 +30,13 @@ fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, S
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![create_new_wallet, import_private_key, create_vanity_wallet, list_wallets, decrypt_keystore])
+    .invoke_handler(tauri::generate_handler![
+      create_new_wallet,
+      import_private_key,
+      create_vanity_wallet,
+      list_wallets,
+      decrypt_keystore
+    ])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -38,6 +45,12 @@ pub fn run() {
             .build(),
         )?;
       }
+
+      // Check and install Foundry during setup
+      if let Err(e) = setup::foundry::check_and_install_foundry() {
+        eprintln!("Failed to check/install Foundry: {}", e);
+      }
+
       Ok(())
     })
     .run(tauri::generate_context!())
