@@ -21,14 +21,6 @@ pub fn check_and_install_foundry() -> Result<(), String> {
 }
 
 fn install_foundry() -> Result<(), String> {
-    #[cfg(target_os = "windows")]
-    let install_command = {
-        Command::new("powershell")
-            .arg("-Command")
-            .arg("(new-object Net.WebClient).DownloadString('https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/install') | iex")
-            .output()
-    };
-
     #[cfg(target_os = "macos")]
     let install_command = {
         Command::new("bash")
@@ -60,12 +52,6 @@ fn install_foundry() -> Result<(), String> {
 }
 
 fn run_foundryup() -> Result<(), String> {
-    // On Windows, we need to use the full path to foundryup
-    #[cfg(target_os = "windows")]
-    let mut foundryup_command = Command::new(std::env::var("USERPROFILE")
-        .map_err(|e| format!("Failed to get user profile: {}", e))?
-        .replace("\\", "/") + "/.foundry/bin/foundryup.exe");
-
     // On Unix systems (including macOS), foundryup should be in PATH after installation
     #[cfg(not(target_os = "windows"))]
     let mut foundryup_command = Command::new("foundryup");
