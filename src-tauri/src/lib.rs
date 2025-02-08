@@ -1,6 +1,9 @@
+use tauri::ActivationPolicy;
+
 mod commands;
 mod models;
 mod setup;
+mod tray;
 
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_wallet(address_label: String, password: String) -> Result<String, String> {
@@ -37,6 +40,7 @@ pub fn run() {
       list_wallets,
       decrypt_keystore
     ])
+    .plugin(tauri_plugin_positioner::init())
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -50,7 +54,14 @@ pub fn run() {
       if let Err(e) = setup::foundry::check_and_install_foundry() {
         eprintln!("Failed to check/install Foundry: {}", e);
       }
-
+      
+      #[cfg(target_os = "macos")]
+      {
+          tray::init_macos_menu_extra(app.handle())?;
+          // Make the Dock icon invisible
+          app.set_activation_policy(ActivationPolicy::Accessory);
+      }
+    
       Ok(())
     })
     .run(tauri::generate_context!())

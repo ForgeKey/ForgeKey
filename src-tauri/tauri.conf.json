@@ -13,11 +13,22 @@
     "windows": [
       {
         "title": "Cast Wallet",
-        "width": 400,
-        "height": 400,
-        "resizable": false,
         "fullscreen": false,
+        "height": 400,
+        "width": 400,
+        "alwaysOnTop": true,
+        "closable": false,
         "decorations": false,
+        "dragDropEnabled": false,
+        "focus": true,
+        "hiddenTitle": true,
+        "label": "main",
+        "maximizable": false,
+        "minimizable": false,
+        "resizable": false,
+        "shadow": false,
+        "visible": true,
+        "transparent": true,
         "theme": "Light",
         "windowEffects": {
           "effects": ["menu"],
@@ -25,6 +36,7 @@
         }
       }
     ],
+    "macOSPrivateApi": true,
     "security": {
       "csp": null
     }
