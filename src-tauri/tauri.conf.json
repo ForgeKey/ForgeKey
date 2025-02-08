@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "cast-wallet-app",
+  "productName": "Cast Wallet UI",
   "version": "0.1.0",
   "identifier": "com.cast-wallet-app.dev",
   "build": {
@@ -44,6 +44,8 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "category": "DeveloperTool",
+    "externalBin": [],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
