@@ -26,7 +26,19 @@ export const KeystoreList = ({
 }: KeystoreListProps) => {
   return (
     <div className="p-4">
+      {!isAddingKeystore && keystores.length === 0 && (
+        <div className="text-center space-y-3 py-8">
+          <h3 className="text-lg font-semibold text-yellow-600 dark:text-yellow-500">
+            Welcome to Cast Wallet UI.
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            A keystore is a secure container for managing wallet addresses.
+            Create your first keystore group to start organizing your addresses.
+          </p>
+        </div>
+      )}
       {!isAddingKeystore &&
+        keystores.length > 0 &&
         keystores.map((keystore, index) => (
           <div key={index} className="mb-2 last:mb-0">
             <Button
