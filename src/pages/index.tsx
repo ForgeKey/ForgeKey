@@ -93,7 +93,7 @@ export default function CastWallet() {
   };
 
   return (
-    <div className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
+    <main className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
       <Header
         setIsSettingsOpen={setters.setIsSettingsOpen}
         isSettingsOpen={states.isSettingsOpen}
@@ -115,6 +115,6 @@ export default function CastWallet() {
         password={states.password}
         setPassword={setters.setPassword}
       />
-    </div>
+    </main>
   );
 }

@@ -28,12 +28,7 @@
         "resizable": false,
         "shadow": false,
         "visible": true,
-        "transparent": true,
-        "theme": "Light",
-        "windowEffects": {
-          "effects": ["menu"],
-          "radius": 1
-        }
+        "transparent": true
       }
     ],
     "macOSPrivateApi": true,
