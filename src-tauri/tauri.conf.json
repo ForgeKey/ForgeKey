@@ -28,7 +28,8 @@
         "resizable": false,
         "shadow": false,
         "visible": true,
-        "transparent": true
+        "transparent": true,
+        "theme": "Light"
       }
     ],
     "macOSPrivateApi": true,
