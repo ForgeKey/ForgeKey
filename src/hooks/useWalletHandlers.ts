@@ -15,6 +15,7 @@ export function useWalletHandlers(
     if (states.isAddingAddress) {
       if (states.addAddressStep === 'select') {
         setters.setIsAddingAddress(false);
+        setters.setAddAddressStep('select');
       } else {
         setters.setAddAddressStep('select');
       }
@@ -23,6 +24,7 @@ export function useWalletHandlers(
       setters.setNewKeystoreName('');
     } else {
       setters.setSelectedKeystore(null);
+      setters.setAddAddressStep('select');
     }
   };
 

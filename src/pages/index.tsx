@@ -10,6 +10,7 @@ import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
+
 import { useWalletState } from '@/hooks/useWalletState';
 import { useWalletHandlers } from '@/hooks/useWalletHandlers';
 
