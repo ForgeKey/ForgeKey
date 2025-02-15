@@ -8,8 +8,8 @@ export interface WalletStates {
   addAddressStep: 'select' | 'new' | 'vanity' | 'import';
   newAddress: Address;
   vanityOptions: VanityOpts;
-  isAddingKeystore: boolean;
-  newKeystoreName: string;
+  isAddingGroup: boolean;
+  newGroupName: string;
   isPasswordDialogOpen: boolean;
   selectedAddressForPrivateKey: Address | null;
   isSettingsOpen: boolean;
@@ -28,8 +28,8 @@ export interface WalletSetters {
   setAddAddressStep: (value: 'select' | 'new' | 'vanity' | 'import') => void;
   setNewAddress: Dispatch<SetStateAction<Address>>;
   setVanityOptions: Dispatch<SetStateAction<VanityOpts>>;
-  setIsAddingKeystore: (value: boolean) => void;
-  setNewKeystoreName: (value: string) => void;
+  setIsAddingGroup: (value: boolean) => void;
+  setNewGroupName: (value: string) => void;
   setIsPasswordDialogOpen: (value: boolean) => void;
   setSelectedAddressForPrivateKey: Dispatch<SetStateAction<Address | null>>;
   setIsSettingsOpen: (value: boolean) => void;
@@ -39,6 +39,6 @@ export interface WalletSetters {
 }
 
 export interface WalletActions {
-  addKeystore: (name: string) => void;
-  addAddress: (keystoreName: string, address: Address) => void;
+  addGroup: (name: string) => void;
+  addAddress: (groupName: string, address: Address) => void;
 }

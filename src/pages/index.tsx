@@ -83,11 +83,10 @@ export default function CastWallet() {
       <KeystoreList
         keystores={states.keystores}
         handleKeystoreClick={handlers.handleKeystoreClick}
-        isAddingKeystore={states.isAddingKeystore}
-        newKeystoreName={states.newKeystoreName}
-        setNewKeystoreName={setters.setNewKeystoreName}
-        handleAddKeystore={handlers.handleAddKeystore}
-        setIsAddingKeystore={setters.setIsAddingKeystore}
+        isAddingGroup={states.isAddingGroup}
+        newGroupName={states.newGroupName}
+        setNewGroupName={setters.setNewGroupName}
+        handleAddGroup={handlers.handleAddGroup}
         handleBackClick={handlers.handleBackClick}
       />
     );
@@ -102,10 +101,10 @@ export default function CastWallet() {
       <ScrollArea className="flex-grow">{renderRoute()}</ScrollArea>
       <Footer
         isAddingAddress={states.isAddingAddress}
-        isAddingKeystore={states.isAddingKeystore}
+        isAddingGroup={states.isAddingGroup}
         selectedKeystore={states.selectedKeystore}
         setIsAddingAddress={setters.setIsAddingAddress}
-        setIsAddingKeystore={setters.setIsAddingKeystore}
+        setIsAddingGroup={setters.setIsAddingGroup}
       />
       <PasswordDialog
         isOpen={states.isPasswordDialogOpen}

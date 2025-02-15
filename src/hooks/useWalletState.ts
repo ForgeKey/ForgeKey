@@ -4,7 +4,7 @@ import { useKeystore } from '@/contexts/keystore-context';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 
 export function useWalletState() {
-  const { keystores, addKeystore, addAddress } = useKeystore();
+  const { keystores, addGroup, addAddress } = useKeystore();
 
   const [keystoreFolder, setKeystoreFolder] = useState('');
   const [selectedKeystore, setSelectedKeystore] = useState<Keystore | null>(
@@ -26,8 +26,8 @@ export function useWalletState() {
     address_label: '',
     password: '',
   });
-  const [isAddingKeystore, setIsAddingKeystore] = useState(false);
-  const [newKeystoreName, setNewKeystoreName] = useState('');
+  const [isAddingGroup, setIsAddingGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
   const [isPasswordDialogOpen, _setIsPasswordDialogOpen] = useState(false);
   const [selectedAddressForPrivateKey, setSelectedAddressForPrivateKey] =
     useState<Address | null>(null);
@@ -60,8 +60,8 @@ export function useWalletState() {
     addAddressStep,
     newAddress,
     vanityOptions,
-    isAddingKeystore,
-    newKeystoreName,
+    isAddingGroup,
+    newGroupName,
     isPasswordDialogOpen,
     selectedAddressForPrivateKey,
     isSettingsOpen,
@@ -78,8 +78,8 @@ export function useWalletState() {
     setAddAddressStep,
     setNewAddress,
     setVanityOptions,
-    setIsAddingKeystore,
-    setNewKeystoreName,
+    setIsAddingGroup,
+    setNewGroupName,
     setIsPasswordDialogOpen,
     setSelectedAddressForPrivateKey,
     setIsSettingsOpen,
@@ -89,7 +89,7 @@ export function useWalletState() {
   };
 
   const actions: WalletActions = {
-    addKeystore,
+    addGroup,
     addAddress,
   };
 

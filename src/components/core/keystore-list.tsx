@@ -2,31 +2,30 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Keystore } from '@/types/address';
 
-import { KeystoreForm } from './keystore-form';
+import { GroupForm } from './group-form';
 
 interface KeystoreListProps {
   keystores: Keystore[];
   handleKeystoreClick: (keystore: Keystore) => void;
-  isAddingKeystore: boolean;
-  newKeystoreName: string;
-  setNewKeystoreName: (newKeystoreName: string) => void;
-  handleAddKeystore: () => void;
-  setIsAddingKeystore: (isAddingKeystore: boolean) => void;
+  isAddingGroup: boolean;
+  newGroupName: string;
+  setNewGroupName: (newGroupName: string) => void;
+  handleAddGroup: () => void;
   handleBackClick: () => void;
 }
 
 export const KeystoreList = ({
   keystores,
   handleKeystoreClick,
-  isAddingKeystore,
-  newKeystoreName,
-  setNewKeystoreName,
-  handleAddKeystore,
+  isAddingGroup,
+  newGroupName,
+  setNewGroupName,
+  handleAddGroup,
   handleBackClick,
 }: KeystoreListProps) => {
   return (
     <div className="p-4">
-      {!isAddingKeystore && keystores.length === 0 && (
+      {!isAddingGroup && keystores.length === 0 && (
         <div className="text-center space-y-3 py-8">
           <h3 className="text-lg font-semibold text-yellow-600 dark:text-yellow-500">
             Welcome to KeyForge.
@@ -37,7 +36,7 @@ export const KeystoreList = ({
           </p>
         </div>
       )}
-      {!isAddingKeystore &&
+      {!isAddingGroup &&
         keystores.length > 0 &&
         keystores.map((keystore, index) => (
           <div key={index} className="mb-2 last:mb-0">
@@ -54,11 +53,11 @@ export const KeystoreList = ({
             {index < keystores.length - 1 && <Separator className="my-2" />}
           </div>
         ))}
-      {isAddingKeystore && (
-        <KeystoreForm
-          newKeystoreName={newKeystoreName}
-          setNewKeystoreName={setNewKeystoreName}
-          handleAddKeystore={handleAddKeystore}
+      {isAddingGroup && (
+        <GroupForm
+          newGroupName={newGroupName}
+          setNewGroupName={setNewGroupName}
+          handleAddGroup={handleAddGroup}
           handleBackClick={handleBackClick}
         />
       )}

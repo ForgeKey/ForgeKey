@@ -3,19 +3,19 @@ import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-interface KeystoreFormProps {
-  newKeystoreName: string;
-  setNewKeystoreName: (keystoreName: string) => void;
-  handleAddKeystore: () => void;
+interface GroupFormProps {
+  newGroupName: string;
+  setNewGroupName: (groupName: string) => void;
+  handleAddGroup: () => void;
   handleBackClick: () => void;
 }
 
-export const KeystoreForm = ({
-  newKeystoreName,
-  setNewKeystoreName,
-  handleAddKeystore,
+export const GroupForm = ({
+  newGroupName,
+  setNewGroupName,
+  handleAddGroup,
   handleBackClick,
-}: KeystoreFormProps) => {
+}: GroupFormProps) => {
   return (
     <div className="space-y-4 mt-4">
       <div className="flex items-center mb-4">
@@ -31,16 +31,12 @@ export const KeystoreForm = ({
         </span>
       </div>
       <Input
-        placeholder="New Keystore Name"
-        value={newKeystoreName}
-        onChange={(e) => setNewKeystoreName(e.target.value)}
+        placeholder="New Group Name"
+        value={newGroupName}
+        onChange={(e) => setNewGroupName(e.target.value)}
       />
-      <Button
-        variant="secondary"
-        onClick={handleAddKeystore}
-        className="w-full"
-      >
-        Add Keystore
+      <Button variant="secondary" onClick={handleAddGroup} className="w-full">
+        Add Group
       </Button>
     </div>
   );

@@ -11,8 +11,8 @@ import { useWalletReconciliation } from '@/hooks/useWalletReconciliation';
 
 type KeystoreContextType = {
   keystores: Keystore[];
-  addKeystore: (name: string) => void;
-  addAddress: (keystoreName: string, address: Address) => void;
+  addGroup: (name: string) => void;
+  addAddress: (groupName: string, address: Address) => void;
 };
 
 const KeystoreContext = createContext<KeystoreContextType | undefined>(
@@ -29,7 +29,7 @@ export function KeystoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('keystores', JSON.stringify(keystores));
   }, [keystores]);
 
-  const addKeystore = (name: string) => {
+  const addGroup = (name: string) => {
     setKeystores([...keystores, { name, addresses: [] }]);
   };
 
@@ -44,7 +44,7 @@ export function KeystoreProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <KeystoreContext.Provider value={{ keystores, addKeystore, addAddress }}>
+    <KeystoreContext.Provider value={{ keystores, addGroup, addAddress }}>
       {children}
     </KeystoreContext.Provider>
   );

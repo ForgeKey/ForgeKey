@@ -3,33 +3,33 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface AddKeystoreFormProps {
-  newKeystoreName: string;
-  setNewKeystoreName: (name: string) => void;
-  handleAddKeystore: () => void;
-  setIsAddingKeystore: (isAdding: boolean) => void;
+  newGroupName: string;
+  setNewGroupName: (name: string) => void;
+  handleAddGroup: () => void;
+  setIsAddingGroup: (isAdding: boolean) => void;
 }
 
 const AddKeystoreForm: React.FC<AddKeystoreFormProps> = ({
-  newKeystoreName,
-  setNewKeystoreName,
-  handleAddKeystore,
-  setIsAddingKeystore,
+  newGroupName,
+  setNewGroupName,
+  handleAddGroup,
+  setIsAddingGroup,
 }) => {
   return (
     <div className="space-y-4 mt-4">
       <Input
-        placeholder="New Keystore Name"
-        value={newKeystoreName}
+        placeholder="New Group Name"
+        value={newGroupName}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewKeystoreName(e.target.value)
+          setNewGroupName(e.target.value)
         }
       />
-      <Button onClick={handleAddKeystore} className="w-full">
-        Add Keystore
+      <Button onClick={handleAddGroup} className="w-full">
+        Add Group
       </Button>
       <Button
         variant="outline"
-        onClick={() => setIsAddingKeystore(false)}
+        onClick={() => setIsAddingGroup(false)}
         className="w-full"
       >
         Cancel

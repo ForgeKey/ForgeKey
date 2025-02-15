@@ -19,9 +19,9 @@ export function useWalletHandlers(
       } else {
         setters.setAddAddressStep('select');
       }
-    } else if (states.isAddingKeystore) {
-      setters.setIsAddingKeystore(false);
-      setters.setNewKeystoreName('');
+    } else if (states.isAddingGroup) {
+      setters.setIsAddingGroup(false);
+      setters.setNewGroupName('');
     } else {
       setters.setSelectedKeystore(null);
       setters.setAddAddressStep('select');
@@ -122,11 +122,11 @@ export function useWalletHandlers(
     }
   };
 
-  const handleAddKeystore = () => {
-    if (states.newKeystoreName) {
-      actions.addKeystore(states.newKeystoreName);
-      setters.setNewKeystoreName('');
-      setters.setIsAddingKeystore(false);
+  const handleAddGroup = () => {
+    if (states.newGroupName) {
+      actions.addGroup(states.newGroupName);
+      setters.setNewGroupName('');
+      setters.setIsAddingGroup(false);
     }
   };
 
@@ -158,7 +158,7 @@ export function useWalletHandlers(
     handleKeystoreClick,
     handleBackClick,
     handleAddAddress,
-    handleAddKeystore,
+    handleAddGroup,
     handleViewPrivateKey,
     handlePasswordSubmit,
   };

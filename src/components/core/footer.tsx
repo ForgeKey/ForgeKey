@@ -4,18 +4,18 @@ import { Keystore } from '@/types/address';
 
 interface FooterProps {
   isAddingAddress: boolean;
-  isAddingKeystore: boolean;
+  isAddingGroup: boolean;
   selectedKeystore: Keystore | null;
   setIsAddingAddress: (isAddingAddress: boolean) => void;
-  setIsAddingKeystore: (isAddingKeystore: boolean) => void;
+  setIsAddingGroup: (isAddingGroup: boolean) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   isAddingAddress,
-  isAddingKeystore,
+  isAddingGroup,
   selectedKeystore,
   setIsAddingAddress,
-  setIsAddingKeystore,
+  setIsAddingGroup,
 }) => {
   return (
     <div className="p-4 dark:border-zinc-800">
@@ -30,10 +30,10 @@ export const Footer: React.FC<FooterProps> = ({
             Add Address
           </Button>
         )}
-      {!selectedKeystore && !isAddingKeystore && (
+      {!selectedKeystore && !isAddingGroup && (
         <Button
           className="w-full text-sm dark:text-secondary dark:bg-zinc-800 dark:hover:bg-zinc-700"
-          onClick={() => setIsAddingKeystore(true)}
+          onClick={() => setIsAddingGroup(true)}
         >
           <Plus className="mr-2 h-4 w-4" />
           New Group
