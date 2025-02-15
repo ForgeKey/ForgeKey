@@ -29,7 +29,7 @@ export const KeystoreList = ({
       {!isAddingKeystore && keystores.length === 0 && (
         <div className="text-center space-y-3 py-8">
           <h3 className="text-lg font-semibold text-yellow-600 dark:text-yellow-500">
-            Welcome to Cast Wallet UI.
+            Welcome to KeyForge.
           </h3>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             A keystore is a secure container for managing wallet addresses.

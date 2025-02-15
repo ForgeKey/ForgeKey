@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Cast Wallet UI",
+  "productName": "KeyForge",
   "version": "0.1.0",
-  "identifier": "com.cast-wallet-app.dev",
+  "identifier": "com.keyforge.dev",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Cast Wallet",
+        "title": "KeyForge",
         "fullscreen": false,
         "height": 400,
         "width": 400,

@@ -1,6 +1,6 @@
-# Foundry Cast Wallet UI
+# KeyForge
 
-A user-friendly graphical interface wrapper for the Foundry Cast Wallet CLI, designed to enhance the user experience of managing your crypto wallet.
+A menu bar app for managing Foundry Cast Wallet operations through a graphical interface. It provides a simple way to handle keystores and securely manage your Ethereum wallets.
 
 ## Features
 

@@ -1,5 +1,5 @@
 [package]
-name = "cast-wallet-ui"
+name = "KeyForge"
 version = "0.1.0"
 description = "A user-friendly UI for the Foundry Cast Wallet CLI"
 authors = ["Saeta <saetaeth@proton.me>"]
