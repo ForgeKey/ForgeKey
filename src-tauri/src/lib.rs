@@ -30,6 +30,11 @@ fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, S
   commands::decrypt_keystore(keystore_name, password)
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn remove_keystore(keystore_name: String, keystore_path: Option<String>) -> Result<(), String> {
+  commands::remove_keystore(keystore_name, keystore_path)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -38,7 +43,8 @@ pub fn run() {
       import_private_key,
       create_vanity_wallet,
       list_wallets,
-      decrypt_keystore
+      decrypt_keystore,
+      remove_keystore
     ])
     .plugin(tauri_plugin_positioner::init())
     .setup(|app| {
