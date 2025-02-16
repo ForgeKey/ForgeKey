@@ -41,4 +41,5 @@ export interface WalletSetters {
 export interface WalletActions {
   addGroup: (name: string) => void;
   addAddress: (groupName: string, address: Address) => void;
+  removeAddress: (groupName: string, address: Address) => void;
 }

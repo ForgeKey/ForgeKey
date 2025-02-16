@@ -9,6 +9,7 @@ interface KeystoreViewProps {
   handleBackClick: () => void;
   renderAddAddressContent: () => React.ReactNode;
   handleViewPrivateKey: (address: Address) => void;
+  handleDeleteAddress: (address: Address) => void;
 }
 
 export const KeystoreView: React.FC<KeystoreViewProps> = ({
@@ -17,6 +18,7 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   handleBackClick,
   renderAddAddressContent,
   handleViewPrivateKey,
+  handleDeleteAddress,
 }) => {
   const showAddAddressComponent =
     isAddingAddress || selectedKeystore.addresses.length === 0;
@@ -41,6 +43,7 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
         <AddressList
           addresses={selectedKeystore.addresses}
           handleViewPrivateKey={handleViewPrivateKey}
+          handleDeleteAddress={handleDeleteAddress}
         />
       )}
     </div>

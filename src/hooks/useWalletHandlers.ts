@@ -122,6 +122,32 @@ export function useWalletHandlers(
     }
   };
 
+  const handleDeleteAddress = async (address: Address) => {
+    try {
+      // Remove the keystore file
+      await invoke('remove_keystore', {
+        keystore_name: address.label,
+        keystore_path: states.keystoreFolder,
+      });
+
+      // Update the selectedKeystore state
+      setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+        if (!prevKeystore) return null;
+        return {
+          ...prevKeystore,
+          addresses: prevKeystore.addresses.filter(
+            (addr) => addr.label !== address.label
+          ),
+        };
+      });
+
+      // Update the global state
+      actions.removeAddress(states.selectedKeystore!.name, address);
+    } catch (error) {
+      console.error('Error deleting address:', error);
+    }
+  };
+
   const handleAddGroup = () => {
     if (states.newGroupName) {
       actions.addGroup(states.newGroupName);
@@ -158,6 +184,7 @@ export function useWalletHandlers(
     handleKeystoreClick,
     handleBackClick,
     handleAddAddress,
+    handleDeleteAddress,
     handleAddGroup,
     handleViewPrivateKey,
     handlePasswordSubmit,

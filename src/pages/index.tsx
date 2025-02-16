@@ -74,6 +74,7 @@ export default function CastWallet() {
           handleBackClick={handlers.handleBackClick}
           renderAddAddressContent={renderAddAddressContent}
           handleViewPrivateKey={handlers.handleViewPrivateKey}
+          handleDeleteAddress={handlers.handleDeleteAddress}
         />
       );
     }
@@ -93,7 +94,7 @@ export default function CastWallet() {
   };
 
   return (
-    <main className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[400px] h-[400px]">
+    <main className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px]">
       <Header
         setIsSettingsOpen={setters.setIsSettingsOpen}
         isSettingsOpen={states.isSettingsOpen}

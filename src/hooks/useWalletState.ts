@@ -4,7 +4,7 @@ import { useKeystore } from '@/contexts/keystore-context';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 
 export function useWalletState() {
-  const { keystores, addGroup, addAddress } = useKeystore();
+  const { keystores, addGroup, addAddress, removeAddress } = useKeystore();
 
   const [keystoreFolder, setKeystoreFolder] = useState('');
   const [selectedKeystore, setSelectedKeystore] = useState<Keystore | null>(
@@ -91,6 +91,7 @@ export function useWalletState() {
   const actions: WalletActions = {
     addGroup,
     addAddress,
+    removeAddress,
   };
 
   return { states, setters, actions };

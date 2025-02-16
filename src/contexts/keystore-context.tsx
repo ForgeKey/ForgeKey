@@ -13,6 +13,7 @@ type KeystoreContextType = {
   keystores: Keystore[];
   addGroup: (name: string) => void;
   addAddress: (groupName: string, address: Address) => void;
+  removeAddress: (groupName: string, address: Address) => void;
 };
 
 const KeystoreContext = createContext<KeystoreContextType | undefined>(
@@ -33,18 +34,36 @@ export function KeystoreProvider({ children }: { children: ReactNode }) {
     setKeystores([...keystores, { name, addresses: [] }]);
   };
 
-  const addAddress = (keystoreName: string, address: Address) => {
+  const addAddress = (groupName: string, address: Address) => {
     setKeystores(
       keystores.map((keystore) =>
-        keystore.name === keystoreName
+        keystore.name === groupName
           ? { ...keystore, addresses: [...keystore.addresses, address] }
           : keystore
       )
     );
   };
 
+  const removeAddress = (groupName: string, address: Address) => {
+    setKeystores(
+      keystores.map((keystore) =>
+        keystore.name === groupName
+          ? {
+              ...keystore,
+              addresses: keystore.addresses.filter(
+                (a: Address) =>
+                  a.address.toLowerCase() !== address.address.toLowerCase()
+              ),
+            }
+          : keystore
+      )
+    );
+  };
+
   return (
-    <KeystoreContext.Provider value={{ keystores, addGroup, addAddress }}>
+    <KeystoreContext.Provider
+      value={{ keystores, addGroup, addAddress, removeAddress }}
+    >
       {children}
     </KeystoreContext.Provider>
   );
