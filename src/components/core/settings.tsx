@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChevronLeft } from 'lucide-react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -18,6 +20,11 @@ export const Settings = ({
   keystoreFolder,
   setKeystoreFolder,
 }: SettingsProps) => {
+  const debouncedSetKeystoreFolder = useDebouncedCallback(
+    (value: string) => setKeystoreFolder(value),
+    300
+  );
+
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center mb-4">
@@ -30,14 +37,16 @@ export const Settings = ({
         </Button>
         <span className="text-md ml-1 dark:text-secondary">Settings</span>
       </div>
+
       <div className="space-y-2">
         <Label htmlFor="keystoreFolder">Keystore Folder</Label>
         <Input
           value={keystoreFolder}
-          onChange={(e) => setKeystoreFolder(e.target.value)}
+          onChange={(e) => debouncedSetKeystoreFolder(e.target.value)}
           placeholder="~/.foundry/keystores"
         />
       </div>
+
       <Separator className="my-2" />
       <div className="flex items-center space-x-2">
         <ThemeToggle />
