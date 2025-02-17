@@ -11,8 +11,8 @@ import { SelectAddressType } from '@/components/core/address/select-address-type
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
 
-import { useWalletState } from '@/hooks/useWalletState';
-import { useWalletHandlers } from '@/hooks/useWalletHandlers';
+import { useWalletState } from '@/hooks/use-wallet-state';
+import { useWalletHandlers } from '@/hooks/use-wallet-handlers';
 
 export default function CastWallet() {
   const { states, setters, actions } = useWalletState();
