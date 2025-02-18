@@ -2,7 +2,6 @@ import { Address, Keystore, VanityOpts } from '@/types/address';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface WalletStates {
-  keystoreFolder: string;
   selectedKeystore: Keystore | null;
   isAddingAddress: boolean;
   addAddressStep: 'select' | 'new' | 'vanity' | 'import';
@@ -12,7 +11,6 @@ export interface WalletStates {
   newGroupName: string;
   isPasswordDialogOpen: boolean;
   selectedAddressForPrivateKey: Address | null;
-  isSettingsOpen: boolean;
   keystores: Keystore[];
   privateKey: string;
   privateKeyError: string;
@@ -20,7 +18,6 @@ export interface WalletStates {
 }
 
 export interface WalletSetters {
-  setKeystoreFolder: (value: string) => void;
   setSelectedKeystore: (
     value: Keystore | null | ((prev: Keystore | null) => Keystore | null)
   ) => void;
@@ -32,7 +29,6 @@ export interface WalletSetters {
   setNewGroupName: (value: string) => void;
   setIsPasswordDialogOpen: (value: boolean) => void;
   setSelectedAddressForPrivateKey: Dispatch<SetStateAction<Address | null>>;
-  setIsSettingsOpen: (value: boolean) => void;
   setPrivateKey: (value: string) => void;
   setPrivateKeyError: (value: string) => void;
   setPassword: (value: string) => void;

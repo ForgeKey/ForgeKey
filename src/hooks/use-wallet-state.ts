@@ -6,7 +6,6 @@ import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 export function useWalletState() {
   const { keystores, addGroup, addAddress, removeAddress } = useKeystore();
 
-  const [keystoreFolder, setKeystoreFolder] = useState('');
   const [selectedKeystore, setSelectedKeystore] = useState<Keystore | null>(
     null
   );
@@ -31,7 +30,6 @@ export function useWalletState() {
   const [isPasswordDialogOpen, _setIsPasswordDialogOpen] = useState(false);
   const [selectedAddressForPrivateKey, setSelectedAddressForPrivateKey] =
     useState<Address | null>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState('');
   const [privateKeyError, setPrivateKeyError] = useState('');
   const [password, setPassword] = useState('');
@@ -54,7 +52,6 @@ export function useWalletState() {
   };
 
   const states: WalletStates = {
-    keystoreFolder,
     selectedKeystore,
     isAddingAddress,
     addAddressStep,
@@ -64,7 +61,6 @@ export function useWalletState() {
     newGroupName,
     isPasswordDialogOpen,
     selectedAddressForPrivateKey,
-    isSettingsOpen,
     keystores,
     privateKey,
     privateKeyError,
@@ -72,7 +68,6 @@ export function useWalletState() {
   };
 
   const setters: WalletSetters = {
-    setKeystoreFolder,
     setSelectedKeystore,
     setIsAddingAddress,
     setAddAddressStep,
@@ -82,7 +77,6 @@ export function useWalletState() {
     setNewGroupName,
     setIsPasswordDialogOpen,
     setSelectedAddressForPrivateKey,
-    setIsSettingsOpen,
     setPrivateKey,
     setPrivateKeyError,
     setPassword,

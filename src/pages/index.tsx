@@ -2,7 +2,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
-import { Settings } from '@/components/core/settings';
 import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
 import { PasswordDialog } from '@/components/core/password-dialog';
@@ -54,17 +53,6 @@ export default function CastWallet() {
   };
 
   const renderRoute = () => {
-    // Settings Route
-    if (states.isSettingsOpen) {
-      return (
-        <Settings
-          setIsSettingsOpen={setters.setIsSettingsOpen}
-          keystoreFolder={states.keystoreFolder}
-          setKeystoreFolder={setters.setKeystoreFolder}
-        />
-      );
-    }
-
     // Keystore View Route
     if (states.selectedKeystore) {
       return (
@@ -95,10 +83,7 @@ export default function CastWallet() {
 
   return (
     <main className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px]">
-      <Header
-        setIsSettingsOpen={setters.setIsSettingsOpen}
-        isSettingsOpen={states.isSettingsOpen}
-      />
+      <Header />
       <ScrollArea className="flex-grow">{renderRoute()}</ScrollArea>
       <Footer
         isAddingAddress={states.isAddingAddress}

@@ -127,7 +127,6 @@ export function useWalletHandlers(
       // Remove the keystore file
       await invoke('remove_keystore', {
         keystore_name: address.label,
-        keystore_path: states.keystoreFolder,
       });
 
       // Update the selectedKeystore state
