@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "KeyForge"
+name = "ForgeKey"
 version = "0.1.0"
 dependencies = [
  "dirs 5.0.1",

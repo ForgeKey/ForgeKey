@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "KeyForge",
+  "productName": "ForgeKey",
   "version": "0.1.0",
-  "identifier": "com.keyforge.dev",
+  "identifier": "com.ForgeKey.dev",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "KeyForge",
+        "title": "ForgeKey",
         "fullscreen": false,
         "height": 450,
         "width": 450,
