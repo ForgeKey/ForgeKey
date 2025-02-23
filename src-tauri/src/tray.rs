@@ -23,40 +23,41 @@ pub fn init_macos_menu_extra<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Re
   }
 
   let _ = TrayIconBuilder::with_id("menu_extra")
-      .icon(Image::from_bytes(include_bytes!("../icons/cast-wallet-icon.png")).unwrap())
-      .icon_as_template(true)
-      .menu(&menu)
-      .show_menu_on_left_click(false)
-      .on_menu_event(move |app, event| match event.id.as_ref() {
-          "quit" => {
-              app.exit(0);
-          }
-          // @TODO: Add and handle more menu entries, like play, pause, open, ...
-          _ => {}
-      })
-      .on_tray_icon_event(|tray, event| {
-          let app = tray.app_handle();
+    .icon(Image::from_bytes(include_bytes!("../icons/tray-icon.png")).unwrap())
+    .icon_as_template(true)
+    .menu(&menu)
+    .show_menu_on_left_click(false)
+    .on_menu_event(move |app, event| match event.id.as_ref() {
+      "quit" => {
+        app.exit(0);
+      }
+      // @TODO: Add and handle more menu entries, like play, pause, open, ...
+      _ => {}
+    })
+    .on_tray_icon_event(|tray, event| {
+      let app = tray.app_handle();
 
-          tauri_plugin_positioner::on_tray_event(app.app_handle(), &event);
+      tauri_plugin_positioner::on_tray_event(app.app_handle(), &event);
 
-          if let TrayIconEvent::Click {
-              button: MouseButton::Left,
-              button_state: MouseButtonState::Up,
-              ..
-          } = event
-          {
-              if let Some(window) = app.get_webview_window("main") {
-                  if !window.is_visible().unwrap_or(false) {
-                    let _ = window.move_window(tauri_plugin_positioner::Position::TrayBottomCenter);
-                    let _ = window.show();
-                    let _ = window.set_focus();
-                  } else {
-                    let _ = window.hide();
-                  }
-              }
+      if let TrayIconEvent::Click {
+        button: MouseButton::Left,
+        button_state: MouseButtonState::Up,
+        ..
+      } = event
+      
+      {
+        if let Some(window) = app.get_webview_window("main") {
+          if !window.is_visible().unwrap_or(false) {
+            let _ = window.move_window(tauri_plugin_positioner::Position::TrayBottomCenter);
+            let _ = window.show();
+            let _ = window.set_focus();
+          } else {
+            let _ = window.hide();
           }
-      })
-      .build(app);
+        }
+      }
+    })
+    .build(app);
 
   Ok(())
 }
