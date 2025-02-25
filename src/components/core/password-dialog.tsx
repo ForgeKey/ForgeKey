@@ -45,7 +45,7 @@ export const PasswordDialog = ({
       <DialogContent>
         <>
           <DialogHeader>
-            <DialogTitle className="text-lg text-left text-secondary font-semibold leading-none tracking-tight my-2">
+            <DialogTitle className="text-lg text-left font-semibold leading-none tracking-tight my-2 text-foreground dark:text-secondary">
               Reveal Private Key
             </DialogTitle>
           </DialogHeader>
@@ -65,9 +65,9 @@ export const PasswordDialog = ({
           {isPrivateKeyRevealed && (
             <div className="py-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm text-secondary">Private Key:</p>
+                <p className="text-sm dark:text-gray-300">Private Key:</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-secondary flex-1 break-all">
+                  <p className="text-sm dark:text-gray-300 flex-1 break-all">
                     {privateKey.slice(0, 10)}...
                     {privateKey.slice(-10)}
                   </p>
@@ -75,7 +75,7 @@ export const PasswordDialog = ({
                     variant="outline"
                     size="sm"
                     onClick={handleCopy}
-                    className="shrink-0 text-secondary relative w-[60px] flex justify-center items-center"
+                    className="shrink-0 relative w-[60px] flex justify-center items-center dark:text-secondary dark:border-gray-700"
                   >
                     {showCopySuccess ? (
                       <Check className="w-4 h-4 text-green-500" />

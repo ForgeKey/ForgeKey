@@ -25,16 +25,16 @@ export const DeleteAddressDialog = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-lg text-left text-secondary font-semibold leading-none tracking-tight my-2">
+          <DialogTitle className="text-lg text-left font-semibold leading-none tracking-tight my-2 dark:text-secondary">
             Delete Address
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-sm text-secondary">
+          <p className="text-sm dark:text-gray-300">
             Are you sure you want to delete the address{' '}
             <span className="font-bold">{addressToDelete?.label}</span>?
           </p>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-muted-foreground mt-2 dark:text-gray-400">
             This action cannot be undone.
           </p>
         </div>
@@ -54,7 +54,7 @@ export const DeleteAddressDialog = ({
             </Button>
             <Button
               variant="outline"
-              className="w-full text-sm dark:text-secondary"
+              className="w-full text-sm dark:text-secondary dark:border-gray-700"
               onClick={() => setIsOpen(false)}
             >
               Cancel
