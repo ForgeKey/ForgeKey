@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Address } from '@/types/address';
@@ -8,12 +7,20 @@ type ImportKeystoreFormProps = {
   newAddress: Address;
   setNewAddress: React.Dispatch<React.SetStateAction<Address>>;
   handleAddAddress: () => void;
+  validateKeystorePassword: (
+    keystoreName: string,
+    password: string
+  ) => Promise<boolean>;
 };
 
+/**
+ * Form for importing an existing keystore
+ */
 export function ImportKeystoreForm({
   newAddress,
   setNewAddress,
   handleAddAddress,
+  validateKeystorePassword,
 }: ImportKeystoreFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,10 +36,16 @@ export function ImportKeystoreForm({
 
     try {
       // Try to get the address from the keystore to validate the password
-      await invoke('get_wallet_address', {
-        keystore_name: newAddress.label,
-        password: newAddress.password,
-      });
+      const isValid = await validateKeystorePassword(
+        newAddress.label,
+        newAddress.password
+      );
+
+      if (!isValid) {
+        setError('Invalid password or keystore');
+        return false;
+      }
+
       return true;
     } catch (err) {
       console.error('Error validating keystore:', err);

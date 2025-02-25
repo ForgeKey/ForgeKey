@@ -1,33 +1,18 @@
-import { invoke } from '@tauri-apps/api/core';
 import { Address, Keystore, VanityOpts } from '@/types/address';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
+import { walletApi } from '@/api/wallet-api';
 
-export function useWalletHandlers(
+/**
+ * Hook for managing wallet addresses
+ */
+export function useWalletAddressManagement(
   states: WalletStates,
   setters: WalletSetters,
   actions: WalletActions
 ) {
-  const handleKeystoreClick = (keystore: Keystore) => {
-    setters.setSelectedKeystore(keystore);
-  };
-
-  const handleBackClick = () => {
-    if (states.isAddingAddress) {
-      if (states.addAddressStep === 'select') {
-        setters.setIsAddingAddress(false);
-        setters.setAddAddressStep('select');
-      } else {
-        setters.setAddAddressStep('select');
-      }
-    } else if (states.isAddingGroup) {
-      setters.setIsAddingGroup(false);
-      setters.setNewGroupName('');
-    } else {
-      setters.setSelectedKeystore(null);
-      setters.setAddAddressStep('select');
-    }
-  };
-
+  /**
+   * Handles adding a new address to a keystore
+   */
   const handleAddAddress = async () => {
     if (!states.selectedKeystore || !states.newAddress.label) {
       return;
@@ -37,10 +22,10 @@ export function useWalletHandlers(
     try {
       switch (states.addAddressStep) {
         case 'new':
-          const createdAddress: string = await invoke('create_new_wallet', {
-            address_label: states.newAddress.label,
-            password: states.newAddress.password,
-          });
+          const createdAddress: string = await walletApi.createNewWallet(
+            states.newAddress.label,
+            states.newAddress.password
+          );
 
           address = {
             address: createdAddress,
@@ -63,10 +48,8 @@ export function useWalletHandlers(
             vanityOpts.ends_with = states.vanityOptions.ends_with;
           }
 
-          const createdVanityAddress: string = await invoke(
-            'create_vanity_wallet',
-            vanityOpts
-          );
+          const createdVanityAddress: string =
+            await walletApi.createVanityWallet(vanityOpts);
 
           address = {
             label: states.newAddress.label,
@@ -76,11 +59,11 @@ export function useWalletHandlers(
           break;
 
         case 'import':
-          const importedAddress: string = await invoke('import_private_key', {
-            private_key: states.newAddress.privateKey,
-            address_label: states.newAddress.label,
-            password: states.newAddress.password,
-          });
+          const importedAddress: string = await walletApi.importPrivateKey(
+            states.newAddress.privateKey!,
+            states.newAddress.label,
+            states.newAddress.password
+          );
 
           address = {
             label: states.newAddress.label,
@@ -122,6 +105,9 @@ export function useWalletHandlers(
     }
   };
 
+  /**
+   * Handles importing an address from an existing keystore
+   */
   const handleImportKeystoreAddress = async () => {
     if (!states.selectedKeystore || !states.newAddress.label) {
       return;
@@ -129,10 +115,10 @@ export function useWalletHandlers(
 
     try {
       // Get the address from the keystore using the password
-      const walletAddress: string = await invoke('get_wallet_address', {
-        keystore_name: states.newAddress.label,
-        password: states.newAddress.password,
-      });
+      const walletAddress: string = await walletApi.getWalletAddress(
+        states.newAddress.label,
+        states.newAddress.password
+      );
 
       const address: Address = {
         label: states.newAddress.label,
@@ -163,12 +149,13 @@ export function useWalletHandlers(
     }
   };
 
+  /**
+   * Handles deleting an address
+   */
   const handleDeleteAddress = async (address: Address) => {
     try {
       // Remove the keystore file
-      await invoke('remove_keystore', {
-        keystore_name: address.label,
-      });
+      await walletApi.removeKeystore(address.label);
 
       // Update the selectedKeystore state
       setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
@@ -188,25 +175,39 @@ export function useWalletHandlers(
     }
   };
 
-  const handleAddGroup = () => {
-    if (states.newGroupName) {
-      actions.addGroup(states.newGroupName);
-      setters.setNewGroupName('');
-      setters.setIsAddingGroup(false);
+  /**
+   * Validates a keystore password
+   */
+  const validateKeystorePassword = async (
+    keystoreName: string,
+    password: string
+  ): Promise<boolean> => {
+    try {
+      await walletApi.getWalletAddress(keystoreName, password);
+      return true;
+    } catch (err) {
+      console.error('Error validating keystore:', err);
+      return false;
     }
   };
 
+  /**
+   * Handles viewing a private key
+   */
   const handleViewPrivateKey = (address: Address) => {
     setters.setSelectedAddressForPrivateKey(address);
     setters.setIsPasswordDialogOpen(true);
   };
 
+  /**
+   * Handles password submission for viewing a private key
+   */
   const handlePasswordSubmit = async (password: string) => {
     try {
-      const privateKey: string = await invoke('decrypt_keystore', {
-        keystore_name: states.selectedAddressForPrivateKey!.label,
-        password,
-      });
+      const privateKey: string = await walletApi.decryptKeystore(
+        states.selectedAddressForPrivateKey!.label,
+        password
+      );
 
       setters.setPrivateKeyError('');
       setters.setPrivateKey(privateKey);
@@ -221,12 +222,10 @@ export function useWalletHandlers(
   };
 
   return {
-    handleKeystoreClick,
-    handleBackClick,
     handleAddAddress,
     handleImportKeystoreAddress,
     handleDeleteAddress,
-    handleAddGroup,
+    validateKeystorePassword,
     handleViewPrivateKey,
     handlePasswordSubmit,
   };

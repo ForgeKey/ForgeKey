@@ -15,11 +15,28 @@ import { KeystoreSelect } from '@/components/core/address/keystore-select';
 import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
 import { useWalletState } from '@/hooks/use-wallet-state';
-import { useWalletHandlers } from '@/hooks/use-wallet-handlers';
+import { useWalletAddressManagement } from '@/hooks/use-wallet-address-management';
+import { useWalletNavigation } from '@/hooks/use-wallet-navigation';
+import { useWalletSync } from '@/hooks/use-wallet-sync';
 
 export default function CastWallet() {
   const { states, setters, actions } = useWalletState();
-  const handlers = useWalletHandlers(states, setters, actions);
+
+  // Use domain-specific hooks directly
+  const {
+    handleAddAddress,
+    handleImportKeystoreAddress,
+    handleDeleteAddress,
+    validateKeystorePassword,
+    handleViewPrivateKey,
+    handlePasswordSubmit,
+  } = useWalletAddressManagement(states, setters, actions);
+
+  const { handleKeystoreClick, handleBackClick, handleAddGroup } =
+    useWalletNavigation(states, setters);
+
+  const { loadAvailableKeystores } = useWalletSync();
+
   const [isImportOptionsOpen, setIsImportOptionsOpen] = useState(false);
 
   const handleImportClick = () => {
@@ -61,7 +78,7 @@ export default function CastWallet() {
           <NewAddressForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
-            handleAddAddress={handlers.handleAddAddress}
+            handleAddAddress={handleAddAddress}
           />
         );
       case 'vanity':
@@ -71,7 +88,7 @@ export default function CastWallet() {
             setVanityOptions={setters.setVanityOptions}
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
-            handleAddAddress={handlers.handleAddAddress}
+            handleAddAddress={handleAddAddress}
           />
         );
       case 'import':
@@ -79,7 +96,7 @@ export default function CastWallet() {
           <ImportAddressForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
-            handleAddAddress={handlers.handleAddAddress}
+            handleAddAddress={handleAddAddress}
           />
         );
       case 'select-keystore':
@@ -87,6 +104,7 @@ export default function CastWallet() {
           <KeystoreSelect
             onKeystoreSelect={handleKeystoreSelect}
             existingAddresses={getAllAddressLabels()}
+            loadAvailableKeystores={loadAvailableKeystores}
           />
         );
       case 'import-keystore':
@@ -94,7 +112,8 @@ export default function CastWallet() {
           <ImportKeystoreForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
-            handleAddAddress={handlers.handleImportKeystoreAddress}
+            handleAddAddress={handleImportKeystoreAddress}
+            validateKeystorePassword={validateKeystorePassword}
           />
         );
     }
@@ -107,10 +126,10 @@ export default function CastWallet() {
         <KeystoreView
           selectedKeystore={states.selectedKeystore}
           isAddingAddress={states.isAddingAddress}
-          handleBackClick={handlers.handleBackClick}
+          handleBackClick={handleBackClick}
           renderAddAddressContent={renderAddAddressContent}
-          handleViewPrivateKey={handlers.handleViewPrivateKey}
-          handleDeleteAddress={handlers.handleDeleteAddress}
+          handleViewPrivateKey={handleViewPrivateKey}
+          handleDeleteAddress={handleDeleteAddress}
           addAddressStep={states.addAddressStep}
         />
       );
@@ -120,12 +139,12 @@ export default function CastWallet() {
     return (
       <KeystoreList
         keystores={states.keystores}
-        handleKeystoreClick={handlers.handleKeystoreClick}
+        handleKeystoreClick={handleKeystoreClick}
         isAddingGroup={states.isAddingGroup}
         newGroupName={states.newGroupName}
         setNewGroupName={setters.setNewGroupName}
-        handleAddGroup={handlers.handleAddGroup}
-        handleBackClick={handlers.handleBackClick}
+        handleAddGroup={handleAddGroup}
+        handleBackClick={handleBackClick}
       />
     );
   };
@@ -155,7 +174,7 @@ export default function CastWallet() {
       <PasswordDialog
         isOpen={states.isPasswordDialogOpen}
         setIsOpen={setters.setIsPasswordDialogOpen}
-        handlePasswordSubmit={handlers.handlePasswordSubmit}
+        handlePasswordSubmit={handlePasswordSubmit}
         privateKey={states.privateKey}
         privateKeyError={states.privateKeyError}
         password={states.password}

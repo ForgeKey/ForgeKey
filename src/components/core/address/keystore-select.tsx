@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface KeystoreSelectProps {
   onKeystoreSelect: (keystoreName: string) => void;
   existingAddresses: string[];
+  loadAvailableKeystores: () => Promise<string[]>;
 }
 
+/**
+ * Component for selecting a keystore from available keystores
+ */
 export function KeystoreSelect({
   onKeystoreSelect,
   existingAddresses,
+  loadAvailableKeystores,
 }: KeystoreSelectProps) {
   const [availableKeystores, setAvailableKeystores] = useState<string[]>([]);
   const [filteredKeystores, setFilteredKeystores] = useState<string[]>([]);
@@ -31,7 +35,7 @@ export function KeystoreSelect({
     setLoading(true);
     let error = '';
     try {
-      const keystores: string[] = await invoke('list_wallets');
+      const keystores: string[] = await loadAvailableKeystores();
       setAvailableKeystores(keystores);
     } catch (err) {
       console.error('Failed to load keystores:', err);
