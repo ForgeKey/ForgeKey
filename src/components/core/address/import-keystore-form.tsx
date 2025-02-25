@@ -1,0 +1,83 @@
+import { useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Address } from '@/types/address';
+
+type ImportKeystoreFormProps = {
+  newAddress: Address;
+  setNewAddress: React.Dispatch<React.SetStateAction<Address>>;
+  handleAddAddress: () => void;
+};
+
+export function ImportKeystoreForm({
+  newAddress,
+  setNewAddress,
+  handleAddAddress,
+}: ImportKeystoreFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const validateKeystore = async () => {
+    if (!newAddress.label || !newAddress.password) {
+      setError('Please provide a password');
+      return false;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Try to get the address from the keystore to validate the password
+      await invoke('get_wallet_address', {
+        keystore_name: newAddress.label,
+        password: newAddress.password,
+      });
+      return true;
+    } catch (err) {
+      console.error('Error validating keystore:', err);
+      setError('Invalid password or keystore');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImport = async () => {
+    const isValid = await validateKeystore();
+    if (isValid) {
+      handleAddAddress();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <Input
+        placeholder="Address Label"
+        value={newAddress.label}
+        disabled
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewAddress({ ...newAddress, label: e.target.value })
+        }
+      />
+      <Input
+        placeholder="Password"
+        type="password"
+        value={newAddress.password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setNewAddress({ ...newAddress, password: e.target.value });
+          setError(null); // Clear error when password changes
+        }}
+      />
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      <Button
+        className="w-full"
+        variant="secondary"
+        onClick={handleImport}
+        disabled={!newAddress.label || !newAddress.password || loading}
+      >
+        {loading ? 'Importing...' : 'Import Keystore'}
+      </Button>
+    </div>
+  );
+}

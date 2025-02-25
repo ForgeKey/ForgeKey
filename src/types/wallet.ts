@@ -4,7 +4,13 @@ import { Dispatch, SetStateAction } from 'react';
 export interface WalletStates {
   selectedKeystore: Keystore | null;
   isAddingAddress: boolean;
-  addAddressStep: 'select' | 'new' | 'vanity' | 'import';
+  addAddressStep:
+    | 'select'
+    | 'new'
+    | 'vanity'
+    | 'import'
+    | 'select-keystore'
+    | 'import-keystore';
   newAddress: Address;
   vanityOptions: VanityOpts;
   isAddingGroup: boolean;
@@ -22,7 +28,15 @@ export interface WalletSetters {
     value: Keystore | null | ((prev: Keystore | null) => Keystore | null)
   ) => void;
   setIsAddingAddress: (value: boolean) => void;
-  setAddAddressStep: (value: 'select' | 'new' | 'vanity' | 'import') => void;
+  setAddAddressStep: (
+    value:
+      | 'select'
+      | 'new'
+      | 'vanity'
+      | 'import'
+      | 'select-keystore'
+      | 'import-keystore'
+  ) => void;
   setNewAddress: Dispatch<SetStateAction<Address>>;
   setVanityOptions: Dispatch<SetStateAction<VanityOpts>>;
   setIsAddingGroup: (value: boolean) => void;

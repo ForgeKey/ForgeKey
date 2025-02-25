@@ -10,6 +10,7 @@ interface KeystoreViewProps {
   renderAddAddressContent: () => React.ReactNode;
   handleViewPrivateKey: (address: Address) => void;
   handleDeleteAddress: (address: Address) => void;
+  addAddressStep?: string;
 }
 
 export const KeystoreView: React.FC<KeystoreViewProps> = ({
@@ -19,9 +20,25 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   renderAddAddressContent,
   handleViewPrivateKey,
   handleDeleteAddress,
+  addAddressStep,
 }) => {
   const showAddAddressComponent =
     isAddingAddress || selectedKeystore.addresses.length === 0;
+
+  const getTitle = () => {
+    if (!showAddAddressComponent) {
+      return selectedKeystore.name;
+    }
+
+    if (
+      addAddressStep === 'select-keystore' ||
+      addAddressStep === 'import-keystore'
+    ) {
+      return 'Select Keystore';
+    }
+
+    return 'Add New Address';
+  };
 
   return (
     <div className="p-4">
@@ -34,7 +51,7 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
           <ChevronLeft className="h-5 w-5 mr-1" />
         </Button>
         <span className="text-md ml-1 dark:text-secondary flex items-center">
-          {showAddAddressComponent ? 'Add New Address' : selectedKeystore.name}
+          {getTitle()}
         </span>
       </div>
       {showAddAddressComponent ? (

@@ -52,7 +52,7 @@ export function useWalletHandlers(
         case 'vanity':
           const vanityOpts: VanityOpts = {
             address_label: states.newAddress.label,
-            password: states.newAddress.password!,
+            password: states.newAddress.password,
           };
 
           if (states.vanityOptions.starts_with) {
@@ -122,6 +122,47 @@ export function useWalletHandlers(
     }
   };
 
+  const handleImportKeystoreAddress = async () => {
+    if (!states.selectedKeystore || !states.newAddress.label) {
+      return;
+    }
+
+    try {
+      // Get the address from the keystore using the password
+      const walletAddress: string = await invoke('get_wallet_address', {
+        keystore_name: states.newAddress.label,
+        password: states.newAddress.password,
+      });
+
+      const address: Address = {
+        label: states.newAddress.label,
+        address: walletAddress,
+        password: states.newAddress.password,
+      };
+
+      // Update the selectedKeystore state
+      setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+        if (!prevKeystore) return null;
+        return {
+          ...prevKeystore,
+          addresses: [...prevKeystore.addresses, address],
+        };
+      });
+
+      actions.addAddress(states.selectedKeystore.name, address);
+      setters.setNewAddress({
+        label: '',
+        address: '',
+        password: '',
+        privateKey: undefined,
+      });
+      setters.setIsAddingAddress(false);
+      setters.setAddAddressStep('select');
+    } catch (error) {
+      console.error('Error importing keystore address:', error);
+    }
+  };
+
   const handleDeleteAddress = async (address: Address) => {
     try {
       // Remove the keystore file
@@ -183,6 +224,7 @@ export function useWalletHandlers(
     handleKeystoreClick,
     handleBackClick,
     handleAddAddress,
+    handleImportKeystoreAddress,
     handleDeleteAddress,
     handleAddGroup,
     handleViewPrivateKey,

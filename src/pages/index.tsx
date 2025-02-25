@@ -1,4 +1,5 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
@@ -9,6 +10,9 @@ import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
+import { ImportOptionsDialog } from '@/components/core/address/import-options-dialog';
+import { KeystoreSelect } from '@/components/core/address/keystore-select';
+import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
 import { useWalletState } from '@/hooks/use-wallet-state';
 import { useWalletHandlers } from '@/hooks/use-wallet-handlers';
@@ -16,12 +20,41 @@ import { useWalletHandlers } from '@/hooks/use-wallet-handlers';
 export default function CastWallet() {
   const { states, setters, actions } = useWalletState();
   const handlers = useWalletHandlers(states, setters, actions);
+  const [isImportOptionsOpen, setIsImportOptionsOpen] = useState(false);
+
+  const handleImportClick = () => {
+    setIsImportOptionsOpen(true);
+  };
+
+  const handleImportPrivateKey = () => {
+    setIsImportOptionsOpen(false);
+    setters.setAddAddressStep('import');
+  };
+
+  const handleShowKeystoreSelect = () => {
+    setIsImportOptionsOpen(false);
+    setters.setAddAddressStep('select-keystore');
+  };
+
+  const handleKeystoreSelect = (keystoreName: string) => {
+    setters.setIsAddingAddress(true);
+    setters.setAddAddressStep('import-keystore');
+
+    // Pre-fill the label with the keystore name
+    setters.setNewAddress({
+      ...states.newAddress,
+      label: keystoreName,
+    });
+  };
 
   const renderAddAddressContent = () => {
     switch (states.addAddressStep) {
       case 'select':
         return (
-          <SelectAddressType setAddAddressStep={setters.setAddAddressStep} />
+          <SelectAddressType
+            setAddAddressStep={setters.setAddAddressStep}
+            onImportClick={handleImportClick}
+          />
         );
       case 'new':
         return (
@@ -49,6 +82,21 @@ export default function CastWallet() {
             handleAddAddress={handlers.handleAddAddress}
           />
         );
+      case 'select-keystore':
+        return (
+          <KeystoreSelect
+            onKeystoreSelect={handleKeystoreSelect}
+            existingAddresses={getAllAddressLabels()}
+          />
+        );
+      case 'import-keystore':
+        return (
+          <ImportKeystoreForm
+            newAddress={states.newAddress}
+            setNewAddress={setters.setNewAddress}
+            handleAddAddress={handlers.handleImportKeystoreAddress}
+          />
+        );
     }
   };
 
@@ -63,6 +111,7 @@ export default function CastWallet() {
           renderAddAddressContent={renderAddAddressContent}
           handleViewPrivateKey={handlers.handleViewPrivateKey}
           handleDeleteAddress={handlers.handleDeleteAddress}
+          addAddressStep={states.addAddressStep}
         />
       );
     }
@@ -79,6 +128,17 @@ export default function CastWallet() {
         handleBackClick={handlers.handleBackClick}
       />
     );
+  };
+
+  // Get all existing address labels for filtering
+  const getAllAddressLabels = () => {
+    const labels: string[] = [];
+    states.keystores.forEach((keystore) => {
+      keystore.addresses.forEach((address) => {
+        labels.push(address.label);
+      });
+    });
+    return labels;
   };
 
   return (
@@ -100,6 +160,12 @@ export default function CastWallet() {
         privateKeyError={states.privateKeyError}
         password={states.password}
         setPassword={setters.setPassword}
+      />
+      <ImportOptionsDialog
+        isOpen={isImportOptionsOpen}
+        setIsOpen={setIsImportOptionsOpen}
+        onImportPrivateKey={handleImportPrivateKey}
+        onImportKeystore={handleShowKeystoreSelect}
       />
     </main>
   );

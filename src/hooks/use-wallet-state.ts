@@ -11,7 +11,12 @@ export function useWalletState() {
   );
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [addAddressStep, setAddAddressStep] = useState<
-    'select' | 'new' | 'vanity' | 'import'
+    | 'select'
+    | 'new'
+    | 'vanity'
+    | 'import'
+    | 'select-keystore'
+    | 'import-keystore'
   >('select');
   const [newAddress, setNewAddress] = useState<Address>({
     label: '',
