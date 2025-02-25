@@ -1,40 +1,39 @@
 use std::process::{Command, Stdio};
-use std::collections::HashMap;
 use crate::utils::get_cast_binary;
+use crate::models::Password;
 use log::error;
 use zeroize::Zeroize;
 
 pub fn import_wallet(mut private_key: String, address_label: String, password: String) -> Result<String, String> {
   let cast_path = get_cast_binary()?;
 
-  // Create a mutable copy of the password that we can zeroize later
-  let mut password_to_zeroize = password.clone();
+  // Wrap the password in our secure Password type
+  let password = Password::from_string(password);
   
-  // Set up environment variables
-  let mut env_vars = HashMap::new();
-  env_vars.insert("CAST_UNSAFE_PASSWORD", &password);
+  // Use the safer with_env method to ensure the password remains valid during command execution
+  let result = password.with_env("CAST_UNSAFE_PASSWORD", |env_vars| {
+    Command::new(&cast_path)
+      .arg("wallet")
+      .arg("import")
+      .arg("--private-key")
+      .arg(&private_key)
+      .arg(&address_label)
+      .envs(env_vars)
+      .stdout(Stdio::piped())
+      .stderr(Stdio::piped())
+      .output()
+  });
+  
+  // Now handle the result of the command
+  let output = result.map_err(|e| {
+    // Zeroize the private key before returning the error
+    private_key.zeroize();
+    let err_msg = format!("Failed to execute cast wallet import command: {}", e);
+    error!("{}", err_msg);
+    err_msg
+  })?;
 
-  let output = Command::new(cast_path)
-    .arg("wallet")
-    .arg("import")
-    .arg("--private-key")
-    .arg(&private_key)
-    .arg(&address_label)
-    .envs(&env_vars)
-    .stdout(Stdio::piped())
-    .stderr(Stdio::piped())
-    .output()
-    .map_err(|e| {
-      // Zeroize sensitive data before returning the error
-      password_to_zeroize.zeroize();
-      private_key.zeroize();
-      let err_msg = format!("Failed to execute cast wallet import command: {}", e);
-      error!("{}", err_msg);
-      err_msg
-    })?;
-
-  // Zeroize sensitive data as soon as we don't need it anymore
-  password_to_zeroize.zeroize();
+  // Zeroize the private key as soon as we don't need it anymore
   private_key.zeroize();
 
   if !output.status.success() {

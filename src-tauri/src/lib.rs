@@ -7,6 +7,9 @@ mod setup;
 mod tray;
 mod utils;
 
+// Note: All password handling is done securely in the command implementations.
+// Passwords are automatically zeroized when no longer needed.
+
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_wallet(address_label: String, password: String) -> Result<String, String> {
   commands::create_new_wallet(address_label, password)

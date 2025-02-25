@@ -1,8 +1,7 @@
 use std::process::Command;
 use crate::utils::get_cast_binary;
-use crate::models::WalletInfo;
+use crate::models::{WalletInfo, Password};
 use log::error;
-use zeroize::Zeroize;
 
 fn parse_vanity_output(output: Vec<u8>) -> Result<WalletInfo, String> {
   let output_str = String::from_utf8_lossy(&output);
@@ -32,8 +31,8 @@ pub fn create_vanity_wallet(
 ) -> Result<String, String> {
   let cast_path = get_cast_binary()?;
 
-  // Create a mutable copy of the password that we can zeroize later
-  let mut password_to_zeroize = password.clone();
+  // Convert the password to our secure Password type
+  let password = Password::from_string(password);
 
   let mut cmd = Command::new(cast_path);
   cmd.arg("wallet").arg("vanity");
@@ -47,16 +46,14 @@ pub fn create_vanity_wallet(
   }
 
   let output = cmd.output().map_err(|e| {
-    // Zeroize the password before returning the error
-    password_to_zeroize.zeroize();
+    // password will be automatically zeroized when dropped
     let err_msg = format!("Failed to execute cast wallet vanity command: {}", e);
     error!("{}", err_msg);
     err_msg
   })?;
   
   if !output.status.success() {
-    // Zeroize the password before returning the error
-    password_to_zeroize.zeroize();
+    // password will be automatically zeroized when dropped
     let err_msg = String::from_utf8_lossy(&output.stderr).into_owned();
     error!("Failed to create vanity wallet for {}: {}", address_label, err_msg);
     return Err(err_msg);
@@ -71,12 +68,8 @@ pub fn create_vanity_wallet(
   let result = crate::commands::import::import_wallet(
     std::mem::take(&mut wallet_info.private_key), // Move the private key instead of cloning
     address_label,
-    password
+    password.into_string()
   );
-
-  // Zeroize sensitive data
-  password_to_zeroize.zeroize();
-  // wallet_info will be automatically zeroized when dropped due to our Drop implementation
 
   // Return the result or the address if successful
   match result {

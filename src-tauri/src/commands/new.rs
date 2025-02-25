@@ -1,30 +1,27 @@
 use std::process::Command;
-use crate::models::WalletInfo;
+use crate::models::{WalletInfo, Password};
 use crate::utils::get_cast_binary;
 use log::error;
-use zeroize::Zeroize;
 
 pub fn create_new_wallet(address_label: String, password: String) -> Result<String, String> { 
   let cast_path = get_cast_binary()?;
 
-  // Create a mutable copy of the password that we can zeroize later
-  let mut password_to_zeroize = password.clone();
+  // Convert the password to our secure Password type
+  let password = Password::from_string(password);
 
   let output = Command::new(cast_path)
     .arg("wallet")
     .arg("new")
     .output()
     .map_err(|e| {
-      // Zeroize the password before returning the error
-      password_to_zeroize.zeroize();
+      // password will be automatically zeroized when dropped
       let err_msg = format!("Failed to execute cast wallet new command: {}", e);
       error!("{}", err_msg);
       err_msg
     })?;
 
   if !output.status.success() {
-    // Zeroize the password before returning the error
-    password_to_zeroize.zeroize();
+    // password will be automatically zeroized when dropped
     let err_msg = String::from_utf8_lossy(&output.stderr).to_string();
     error!("Failed to create new wallet for {}: {}", address_label, err_msg);
     return Err(err_msg);
@@ -36,15 +33,15 @@ pub fn create_new_wallet(address_label: String, password: String) -> Result<Stri
   let address = wallet_info.address.clone();
   
   // Import the wallet (this will handle zeroizing the private_key internally)
+  // We need to clone the password here to pass ownership to import_wallet
+  // The original password will be zeroized when dropped at the end of this function
+  let password_clone = Password::new(password.as_str());
+  
   let result = crate::commands::import::import_wallet(
     std::mem::take(&mut wallet_info.private_key), // Move the private key instead of cloning
     address_label,
-    password
+    password_clone.into_string()
   );
-
-  // Zeroize sensitive data
-  password_to_zeroize.zeroize();
-  // wallet_info will be automatically zeroized when dropped due to our Drop implementation
 
   // Return the result or the address if successful
   match result {
