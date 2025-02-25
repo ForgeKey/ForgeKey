@@ -34,6 +34,7 @@ fn get_wallet_address(keystore_name: String, password: String) -> Result<String,
 
 #[tauri::command(rename_all = "snake_case")]
 fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, String> {
+  // SECURITY: The returned private key should be zeroized by the frontend when no longer needed
   commands::decrypt_keystore(keystore_name, password)
 }
 

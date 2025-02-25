@@ -29,3 +29,4 @@ log = "0.4"
 tauri-plugin-log = "2"
 tauri-plugin-positioner = { version = "2", features = ["tray-icon"] }
 dirs = "5.0"
+zeroize = "1.7.0"
