@@ -42,8 +42,8 @@ fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, S
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn remove_keystore(keystore_name: String, keystore_path: Option<String>) -> Result<(), String> {
-  commands::remove_keystore(keystore_name, keystore_path)
+fn remove_keystore(keystore_name: String) -> Result<(), String> {
+  commands::remove_keystore(keystore_name)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
