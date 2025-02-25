@@ -28,6 +28,11 @@ fn list_wallets() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
+fn get_wallet_address(keystore_name: String, password: String) -> Result<String, String> {
+  commands::get_wallet_address(&keystore_name, &password)
+}
+
+#[tauri::command(rename_all = "snake_case")]
 fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, String> {
   commands::decrypt_keystore(keystore_name, password)
 }
@@ -45,6 +50,7 @@ pub fn run() {
       import_private_key,
       create_vanity_wallet,
       list_wallets,
+      get_wallet_address,
       decrypt_keystore,
       remove_keystore
     ])

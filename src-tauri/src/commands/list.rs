@@ -36,3 +36,30 @@ pub fn list_wallets() -> Result<Vec<String>, String> {
 
   Ok(wallets)
 }
+
+pub fn get_wallet_address(keystore_name: &str, password: &str) -> Result<String, String> {
+  let cast_path = get_cast_binary()?;
+
+  let output = Command::new(cast_path)
+    .arg("wallet")
+    .arg("address")
+    .arg("--account")
+    .arg(keystore_name)
+    .arg("--password")
+    .arg(password)
+    .output()
+    .map_err(|e| {
+      let err_msg = format!("Failed to execute cast wallet address command: {}", e);
+      error!("{}", err_msg);
+      err_msg
+    })?;
+
+  if !output.status.success() {
+    let err_msg = String::from_utf8_lossy(&output.stderr).to_string();
+    error!("Failed to get wallet address: {}", err_msg);
+    return Err(err_msg);
+  }
+
+  let address = String::from_utf8_lossy(&output.stdout).trim().to_string();
+  Ok(address)
+}
