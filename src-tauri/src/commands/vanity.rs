@@ -1,12 +1,16 @@
 use std::process::Command;
+use crate::utils::get_cast_binary;
 use crate::models::WalletInfo;
+use log::error;
 
 fn parse_vanity_output(output: Vec<u8>) -> Result<WalletInfo, String> {
   let output_str = String::from_utf8_lossy(&output);
   let lines: Vec<&str> = output_str.lines().collect();
   
   if lines.len() < 4 {
-    return Err("Unexpected output format".to_string());
+    let err_msg = "Unexpected output format".to_string();
+    error!("{}", err_msg);
+    return Err(err_msg);
   }
 
   let address = lines[2]
@@ -20,12 +24,14 @@ fn parse_vanity_output(output: Vec<u8>) -> Result<WalletInfo, String> {
 }
 
 pub fn create_vanity_wallet(
-    starts_with: Option<String>,
-    ends_with: Option<String>,
-    address_label: String,
-    password: String,
+  starts_with: Option<String>,
+  ends_with: Option<String>,
+  address_label: String,
+  password: String,
 ) -> Result<String, String> {
-  let mut cmd = Command::new("cast");
+  let cast_path = get_cast_binary()?;
+
+  let mut cmd = Command::new(cast_path);
   cmd.arg("wallet").arg("vanity");
   
   if let Some(prefix) = starts_with {
@@ -36,10 +42,16 @@ pub fn create_vanity_wallet(
     cmd.arg("--ends-with").arg(suffix);
   }
 
-  let output = cmd.output().map_err(|e| e.to_string())?;
+  let output = cmd.output().map_err(|e| {
+    let err_msg = format!("Failed to execute cast wallet vanity command: {}", e);
+    error!("{}", err_msg);
+    err_msg
+  })?;
   
   if !output.status.success() {
-    return Err(String::from_utf8_lossy(&output.stderr).into_owned());
+    let err_msg = String::from_utf8_lossy(&output.stderr).into_owned();
+    error!("Failed to create vanity wallet for {}: {}", address_label, err_msg);
+    return Err(err_msg);
   }
 
   let wallet_info = parse_vanity_output(output.stdout)?;

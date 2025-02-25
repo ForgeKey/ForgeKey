@@ -1,9 +1,11 @@
 use tauri::ActivationPolicy;
+use log::LevelFilter;
 
 mod commands;
 mod models;
 mod setup;
 mod tray;
+mod utils;
 
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_wallet(address_label: String, password: String) -> Result<String, String> {
@@ -48,13 +50,19 @@ pub fn run() {
     ])
     .plugin(tauri_plugin_positioner::init())
     .setup(|app| {
-      if cfg!(debug_assertions) {
-        app.handle().plugin(
-          tauri_plugin_log::Builder::default()
-            .level(log::LevelFilter::Info)
-            .build(),
-        )?;
-      }
+      // Configure logging based on build profile
+      let log_level = if cfg!(debug_assertions) {
+        LevelFilter::Debug  // More verbose in debug builds
+      } else {
+        LevelFilter::Info   // Less verbose in release builds
+      };
+
+      // Enable logging with level filter
+      app.handle().plugin(
+        tauri_plugin_log::Builder::default()
+          .level(log_level)
+          .build(),
+      )?;
 
       // Check and install Foundry during setup
       if let Err(e) = setup::foundry::check_and_install_foundry() {
@@ -63,9 +71,9 @@ pub fn run() {
       
       #[cfg(target_os = "macos")]
       {
-          tray::init_macos_menu_extra(app.handle())?;
-          // Make the Dock icon invisible
-          app.set_activation_policy(ActivationPolicy::Accessory);
+        tray::init_macos_menu_extra(app.handle())?;
+        // Make the Dock icon invisible
+        app.set_activation_policy(ActivationPolicy::Accessory);
       }
     
       Ok(())
