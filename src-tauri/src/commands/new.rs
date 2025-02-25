@@ -37,10 +37,10 @@ pub fn create_new_wallet(address_label: String, password: String) -> Result<Stri
   // The original password will be zeroized when dropped at the end of this function
   let password_clone = Password::new(password.as_str());
   
-  let result = crate::commands::import::import_wallet(
+  let result = crate::commands::import_wallet(
     std::mem::take(&mut wallet_info.private_key), // Move the private key instead of cloning
     address_label,
-    password_clone.into_string()
+    password_clone
   );
 
   // Return the result or the address if successful

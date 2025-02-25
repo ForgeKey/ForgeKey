@@ -1,5 +1,4 @@
 use std::process::{Command, Stdio};
-use std::collections::HashMap;
 use crate::utils::get_cast_binary;
 use crate::models::Password;
 use log::error;
@@ -45,24 +44,23 @@ pub fn get_wallet_address(keystore_name: &str, password: &str) -> Result<String,
   // Convert the password to our secure Password type
   let password = Password::new(password);
   
-  // Set up environment variables
-  let mut env_vars = HashMap::new();
-  env_vars.insert("CAST_UNSAFE_PASSWORD", password.as_str());
-
-  let output = Command::new(cast_path)
-    .arg("wallet")
-    .arg("address")
-    .arg("--account")
-    .arg(keystore_name)
-    .envs(&env_vars)
-    .stdout(Stdio::piped())
-    .stderr(Stdio::piped())
-    .output()
-    .map_err(|e| {
-      let err_msg = format!("Failed to execute cast wallet address command: {}", e);
-      error!("{}", err_msg);
-      err_msg
-    })?;
+  // Use the safer with_env method to ensure the password remains valid during command execution
+  let output = password.with_env("CAST_UNSAFE_PASSWORD", |env_vars| {
+    Command::new(&cast_path)
+      .arg("wallet")
+      .arg("address")
+      .arg("--account")
+      .arg(keystore_name)
+      .envs(env_vars)
+      .stdout(Stdio::piped())
+      .stderr(Stdio::piped())
+      .output()
+  }).map_err(|e| {
+    // password will be automatically zeroized when dropped
+    let err_msg = format!("Failed to execute cast wallet address command: {}", e);
+    error!("{}", err_msg);
+    err_msg
+  })?;
 
   if !output.status.success() {
     let err_msg = String::from_utf8_lossy(&output.stderr).to_string();

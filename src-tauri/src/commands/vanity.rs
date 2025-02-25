@@ -64,11 +64,13 @@ pub fn create_vanity_wallet(
   // Store the address before we zeroize the wallet_info
   let address = wallet_info.address.clone();
   
-  // Import the wallet (this will handle zeroizing the private_key internally)
-  let result = crate::commands::import::import_wallet(
+  // We need to clone the password here to pass ownership to import_wallet
+  let password_clone = Password::new(password.as_str());
+  
+  let result = crate::commands::import_wallet(
     std::mem::take(&mut wallet_info.private_key), // Move the private key instead of cloning
     address_label,
-    password.into_string()
+    password_clone
   );
 
   // Return the result or the address if successful

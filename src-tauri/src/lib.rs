@@ -1,5 +1,6 @@
 use tauri::ActivationPolicy;
 use log::LevelFilter;
+use crate::models::Password;
 
 mod commands;
 mod models;
@@ -17,6 +18,8 @@ fn create_new_wallet(address_label: String, password: String) -> Result<String, 
 
 #[tauri::command(rename_all = "snake_case")]
 fn import_private_key(private_key: String, address_label: String, password: String) -> Result<String, String> {
+  // Convert password to Password type for better security
+  let password = Password::from_string(password);
   commands::import_wallet(private_key, address_label, password)
 }
 

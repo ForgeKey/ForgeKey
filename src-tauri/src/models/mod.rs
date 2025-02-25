@@ -49,16 +49,6 @@ impl Password {
     &self.inner
   }
     
-  /// Take ownership of the password, consuming self
-  /// WARNING: This method should be used with caution as it transfers responsibility
-  /// for zeroizing the password to the caller
-  pub fn into_string(mut self) -> String {
-    // Take ownership of the inner string to prevent it from being zeroized
-    let result = std::mem::take(&mut self.inner);
-    // Now self.inner is empty, so when it's zeroized on drop, nothing happens to our returned string
-    result
-  }
-    
   /// Execute a function with this password as an environment variable
   /// This ensures the password remains valid during command execution and is properly zeroized after
   pub fn with_env<F, T>(&self, env_key: &str, f: F) -> T

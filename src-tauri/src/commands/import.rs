@@ -4,11 +4,9 @@ use crate::models::Password;
 use log::error;
 use zeroize::Zeroize;
 
-pub fn import_wallet(mut private_key: String, address_label: String, password: String) -> Result<String, String> {
+// Add a new function that accepts a Password object directly
+pub fn import_wallet(mut private_key: String, address_label: String, password: Password) -> Result<String, String> {
   let cast_path = get_cast_binary()?;
-
-  // Wrap the password in our secure Password type
-  let password = Password::from_string(password);
   
   // Use the safer with_env method to ensure the password remains valid during command execution
   let result = password.with_env("CAST_UNSAFE_PASSWORD", |env_vars| {
