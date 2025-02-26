@@ -1,8 +1,10 @@
+import { ZeroizedString } from '@/utils/zeroize';
+
 export type Address = {
   label: string;
   address: string;
-  privateKey?: string;
-  password: string;
+  privateKey?: ZeroizedString;
+  password?: ZeroizedString;
 };
 
 export type Keystore = {
@@ -12,7 +14,7 @@ export type Keystore = {
 
 export type VanityOpts = {
   address_label: string;
-  password: string;
+  password?: ZeroizedString;
   starts_with?: string;
   ends_with?: string;
 };

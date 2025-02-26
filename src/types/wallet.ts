@@ -1,5 +1,6 @@
 import { Address, Keystore, VanityOpts } from '@/types/address';
 import { Dispatch, SetStateAction } from 'react';
+import { ZeroizedString } from '@/utils/zeroize';
 
 export interface WalletStates {
   selectedKeystore: Keystore | null;
@@ -18,9 +19,9 @@ export interface WalletStates {
   isPasswordDialogOpen: boolean;
   selectedAddressForPrivateKey: Address | null;
   keystores: Keystore[];
-  privateKey: string;
+  privateKey: ZeroizedString | null;
   privateKeyError: string;
-  password: string;
+  password: ZeroizedString | null;
 }
 
 export interface WalletSetters {
@@ -43,9 +44,9 @@ export interface WalletSetters {
   setNewGroupName: (value: string) => void;
   setIsPasswordDialogOpen: (value: boolean) => void;
   setSelectedAddressForPrivateKey: Dispatch<SetStateAction<Address | null>>;
-  setPrivateKey: (value: string) => void;
+  setPrivateKey: (value: ZeroizedString | null) => void;
   setPrivateKeyError: (value: string) => void;
-  setPassword: (value: string) => void;
+  setPassword: (value: string | null) => void;
 }
 
 export interface WalletActions {

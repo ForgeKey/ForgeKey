@@ -7,17 +7,18 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
+import { ZeroizedString } from '@/utils/zeroize';
 
 interface PasswordDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  handlePasswordSubmit: (password: string) => void;
-  privateKey: string;
+  handlePasswordSubmit: (password: ZeroizedString | null) => void;
+  privateKey: ZeroizedString | null;
   privateKeyError: string;
-  password: string;
-  setPassword: (password: string) => void;
+  password: ZeroizedString | null;
+  setPassword: (password: string | null) => void;
 }
 
 export const PasswordDialog = ({
@@ -29,15 +30,49 @@ export const PasswordDialog = ({
   password,
   setPassword,
 }: PasswordDialogProps) => {
-  const isPrivateKeyRevealed = privateKey.length > 0;
-  const showPrivateKeyError = privateKeyError.length > 0 && password.length > 0;
+  const isPrivateKeyRevealed = privateKey !== null && password !== null;
+  const showPrivateKeyError = privateKeyError.length > 0;
 
   const [showCopySuccess, setShowCopySuccess] = useState(false);
+  const [maskedPrivateKey, setMaskedPrivateKey] = useState('');
+
+  // When the private key changes, update the masked version
+  useEffect(() => {
+    if (privateKey) {
+      // Use the secure private key wrapper to get a masked version
+      privateKey.use((rawPrivateKey) => {
+        setMaskedPrivateKey(
+          `${rawPrivateKey.slice(0, 10)}...${rawPrivateKey.slice(-10)}`
+        );
+      });
+    } else {
+      setMaskedPrivateKey('');
+    }
+  }, [privateKey]);
+
+  // Clean up when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowCopySuccess(false);
+      setMaskedPrivateKey('');
+    }
+  }, [isOpen]);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(privateKey);
-    setShowCopySuccess(true);
-    setTimeout(() => setShowCopySuccess(false), 2000);
+    if (privateKey) {
+      // Use the secure private key wrapper to copy the private key
+      privateKey.use(async (rawPrivateKey) => {
+        await navigator.clipboard.writeText(rawPrivateKey);
+      });
+
+      setShowCopySuccess(true);
+      setTimeout(() => setShowCopySuccess(false), 2000);
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // The private key and password will be zeroized by the hook that manages it
   };
 
   return (
@@ -54,7 +89,7 @@ export const PasswordDialog = ({
               <Input
                 type="password"
                 placeholder="Enter your password"
-                value={password}
+                value={password?.getValue()}
                 onChange={(e) => setPassword(e.target.value)}
               />
               {showPrivateKeyError && (
@@ -68,8 +103,7 @@ export const PasswordDialog = ({
                 <p className="text-sm dark:text-gray-300">Private Key:</p>
                 <div className="flex items-center gap-2">
                   <p className="text-sm dark:text-gray-300 flex-1 break-all">
-                    {privateKey.slice(0, 10)}...
-                    {privateKey.slice(-10)}
+                    {maskedPrivateKey}
                   </p>
                   <Button
                     variant="outline"
@@ -92,7 +126,7 @@ export const PasswordDialog = ({
               className="w-full text-sm dark:text-secondary dark:bg-zinc-800 dark:hover:bg-zinc-700"
               onClick={() =>
                 isPrivateKeyRevealed
-                  ? setIsOpen(false)
+                  ? handleClose()
                   : handlePasswordSubmit(password)
               }
             >

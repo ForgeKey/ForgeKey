@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Address } from '@/types/address';
+import { ZeroizedString } from '@/utils/zeroize';
 
 type ImportKeystoreFormProps = {
   newAddress: Address;
@@ -9,7 +10,7 @@ type ImportKeystoreFormProps = {
   handleAddAddress: () => void;
   validateKeystorePassword: (
     keystoreName: string,
-    password: string
+    securePassword: ZeroizedString
   ) => Promise<boolean>;
 };
 
@@ -76,9 +77,12 @@ export function ImportKeystoreForm({
       <Input
         placeholder="Password"
         type="password"
-        value={newAddress.password}
+        value={newAddress.password?.getValue()}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          setNewAddress({ ...newAddress, password: e.target.value });
+          setNewAddress({
+            ...newAddress,
+            password: new ZeroizedString(e.target.value),
+          });
           setError(null); // Clear error when password changes
         }}
       />
