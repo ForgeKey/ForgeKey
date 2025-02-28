@@ -1,4 +1,4 @@
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
 
 export type Address = {
   label: string;

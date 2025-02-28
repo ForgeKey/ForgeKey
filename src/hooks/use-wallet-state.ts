@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { Address, VanityOpts, Keystore } from '@/types/address';
 import { useKeystore } from '@/contexts/keystore-context';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
+import { useZeroize } from '@/contexts/zeroize-context';
 
 export function useWalletState() {
   const { keystores, addGroup, addAddress, removeAddress } = useKeystore();
+  const { createZeroizedString } = useZeroize();
 
   const [selectedKeystore, setSelectedKeystore] = useState<Keystore | null>(
     null
@@ -44,6 +46,7 @@ export function useWalletState() {
       handlePasswordChange(null);
       setPrivateKeyError('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPasswordDialogOpen]);
 
   const setIsPasswordDialogOpen = (open: boolean) => {
@@ -70,7 +73,7 @@ export function useWalletState() {
     if (!value) {
       _setPassword(null);
     } else {
-      _setPassword(new ZeroizedString(value));
+      _setPassword(createZeroizedString(value));
     }
   };
 

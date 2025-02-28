@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { Address, VanityOpts } from '@/types/address';
-import { ZeroizedString } from '@/utils/zeroize';
+import { useZeroize } from '@/contexts/zeroize-context';
+
 type VanityAddressFormProps = {
   vanityOptions: VanityOpts;
   setVanityOptions: React.Dispatch<React.SetStateAction<VanityOpts>>;
@@ -18,6 +19,8 @@ export function VanityAddressForm({
   setNewAddress,
   handleAddAddress,
 }: VanityAddressFormProps) {
+  const { createZeroizedString } = useZeroize();
+
   return (
     <div className="space-y-4">
       <Input
@@ -48,7 +51,7 @@ export function VanityAddressForm({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({
             ...newAddress,
-            password: new ZeroizedString(e.target.value),
+            password: createZeroizedString(e.target.value),
           })
         }
       />

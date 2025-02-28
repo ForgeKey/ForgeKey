@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { VanityOpts } from '@/types/address';
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
 
 /**
  * Wallet API - Centralizes all Tauri invoke calls related to wallet functionality

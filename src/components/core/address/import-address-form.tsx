@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { Address } from '@/types/address';
-import { ZeroizedString } from '@/utils/zeroize';
+import { useZeroize } from '@/contexts/zeroize-context';
 
 type ImportAddressFormProps = {
   newAddress: Address;
@@ -15,6 +15,8 @@ export function ImportAddressForm({
   setNewAddress,
   handleAddAddress,
 }: ImportAddressFormProps) {
+  const { createZeroizedString } = useZeroize();
+
   return (
     <div className="space-y-4">
       <Input
@@ -30,7 +32,7 @@ export function ImportAddressForm({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({
             ...newAddress,
-            privateKey: new ZeroizedString(e.target.value),
+            privateKey: createZeroizedString(e.target.value),
           })
         }
       />
@@ -41,7 +43,7 @@ export function ImportAddressForm({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewAddress({
             ...newAddress,
-            password: new ZeroizedString(e.target.value),
+            password: createZeroizedString(e.target.value),
           })
         }
       />

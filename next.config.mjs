@@ -14,6 +14,20 @@ const nextConfig = {
   },
   // Configure assetPrefix or else the server won't properly resolve your assets.
   assetPrefix: isProd ? null : `http://${internalHost}:3000`,
+
+  // Add webpack configuration to handle Node.js modules
+  webpack: (config, { isServer }) => {
+    // If client-side (browser), provide empty module for Node.js modules
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

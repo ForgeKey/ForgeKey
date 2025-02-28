@@ -8,7 +8,7 @@ use zeroize::Zeroize;
 pub fn import_wallet(mut private_key: String, address_label: String, password: Password) -> Result<String, String> {
   let cast_path = get_cast_binary()?;
   
-  // Use the safer with_env method to ensure the password remains valid during command execution
+  // Use with_env method to ensure the password remains valid during command execution
   let result = password.with_env("CAST_UNSAFE_PASSWORD", |env_vars| {
     Command::new(&cast_path)
       .arg("wallet")

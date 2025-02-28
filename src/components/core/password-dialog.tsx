@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
 
 interface PasswordDialogProps {
   isOpen: boolean;
@@ -75,6 +75,14 @@ export const PasswordDialog = ({
     // The private key and password will be zeroized by the hook that manages it
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setPassword(e.target.value);
+    } else {
+      setPassword(null);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
@@ -89,8 +97,8 @@ export const PasswordDialog = ({
               <Input
                 type="password"
                 placeholder="Enter your password"
-                value={password?.getValue()}
-                onChange={(e) => setPassword(e.target.value)}
+                value={password?.getValue() || ''}
+                onChange={handlePasswordChange}
               />
               {showPrivateKeyError && (
                 <p className="text-red-500 text-sm">{privateKeyError}</p>

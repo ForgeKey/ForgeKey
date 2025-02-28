@@ -1,6 +1,6 @@
 import { Address, Keystore, VanityOpts } from '@/types/address';
 import { Dispatch, SetStateAction } from 'react';
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
 
 export interface WalletStates {
   selectedKeystore: Keystore | null;

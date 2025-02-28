@@ -1,7 +1,8 @@
 import { Address, Keystore, VanityOpts } from '@/types/address';
 import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 import { walletApi } from '@/api/wallet-api';
-import { ZeroizedString } from '@/utils/zeroize';
+import { ZeroizedString } from '@/lib/zeroized-string';
+import { useZeroize } from '@/contexts/zeroize-context';
 
 /**
  * Hook for managing wallet addresses
@@ -11,6 +12,8 @@ export function useWalletAddressManagement(
   setters: WalletSetters,
   actions: WalletActions
 ) {
+  const { createZeroizedString } = useZeroize();
+
   /**
    * Handles adding a new address to a keystore
    */
@@ -245,8 +248,8 @@ export function useWalletAddressManagement(
   /**
    * Handles password submission for viewing a private key
    */
-  const handlePasswordSubmit = async (password: ZeroizedString) => {
-    if (!states.selectedAddressForPrivateKey) {
+  const handlePasswordSubmit = async (password: ZeroizedString | null) => {
+    if (!states.selectedAddressForPrivateKey || !password) {
       return;
     }
 
@@ -258,7 +261,7 @@ export function useWalletAddressManagement(
       );
 
       // Create a secure private key wrapper
-      const zeroizedPrivateKeyWrapper = new ZeroizedString(privateKey);
+      const zeroizedPrivateKeyWrapper = createZeroizedString(privateKey);
 
       // Set the private key
       setters.setPrivateKey(zeroizedPrivateKeyWrapper);
