@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import { PasswordInput } from '@/components/ui/password-input';
 import { Address } from '@/types/address';
 import { useZeroize } from '@/contexts/zeroize-context';
+import { validatePassword } from '@/lib/password-validation';
 
 type ImportAddressFormProps = {
   newAddress: Address;
@@ -16,6 +17,9 @@ export function ImportAddressForm({
   handleAddAddress,
 }: ImportAddressFormProps) {
   const { createZeroizedString } = useZeroize();
+  const isPasswordValid = newAddress.password
+    ? validatePassword(newAddress.password.getValue()).isValid
+    : false;
 
   return (
     <div className="space-y-4">
@@ -36,23 +40,22 @@ export function ImportAddressForm({
           })
         }
       />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={newAddress.password?.getValue()}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewAddress({
-            ...newAddress,
-            password: createZeroizedString(e.target.value),
-          })
+      <PasswordInput
+        value={newAddress.password || null}
+        onChange={(password) =>
+          setNewAddress({ ...newAddress, password: password || undefined })
         }
+        placeholder="Password"
       />
       <Button
         className="w-full"
         variant="secondary"
         onClick={handleAddAddress}
         disabled={
-          !newAddress.label || !newAddress.privateKey || !newAddress.password
+          !newAddress.label ||
+          !newAddress.privateKey ||
+          !newAddress.password ||
+          !isPasswordValid
         }
       >
         Import Address

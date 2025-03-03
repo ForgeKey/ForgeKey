@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import { PasswordInput } from '@/components/ui/password-input';
 import { Address, VanityOpts } from '@/types/address';
-import { useZeroize } from '@/contexts/zeroize-context';
+import { validatePassword } from '@/lib/password-validation';
 
 type VanityAddressFormProps = {
   vanityOptions: VanityOpts;
@@ -19,7 +19,9 @@ export function VanityAddressForm({
   setNewAddress,
   handleAddAddress,
 }: VanityAddressFormProps) {
-  const { createZeroizedString } = useZeroize();
+  const isPasswordValid = newAddress.password
+    ? validatePassword(newAddress.password.getValue()).isValid
+    : false;
 
   return (
     <div className="space-y-4">
@@ -44,16 +46,12 @@ export function VanityAddressForm({
           setVanityOptions({ ...vanityOptions, ends_with: e.target.value })
         }
       />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={newAddress.password?.getValue()}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewAddress({
-            ...newAddress,
-            password: createZeroizedString(e.target.value),
-          })
+      <PasswordInput
+        value={newAddress.password || null}
+        onChange={(password) =>
+          setNewAddress({ ...newAddress, password: password || undefined })
         }
+        placeholder="Password"
       />
       <Button
         className="w-full"
@@ -62,6 +60,7 @@ export function VanityAddressForm({
         disabled={
           !newAddress.label ||
           !newAddress.password ||
+          !isPasswordValid ||
           (!vanityOptions.starts_with && !vanityOptions.ends_with)
         }
       >

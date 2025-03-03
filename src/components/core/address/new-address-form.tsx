@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import { PasswordInput } from '@/components/ui/password-input';
 import { Address } from '@/types/address';
-import { useZeroize } from '@/contexts/zeroize-context';
+import { validatePassword } from '@/lib/password-validation';
 
 type NewAddressFormProps = {
   newAddress: Address;
@@ -15,7 +15,9 @@ export function NewAddressForm({
   setNewAddress,
   handleAddAddress,
 }: NewAddressFormProps) {
-  const { createZeroizedString } = useZeroize();
+  const isPasswordValid = newAddress.password
+    ? validatePassword(newAddress.password.getValue()).isValid
+    : false;
 
   return (
     <div className="space-y-4">
@@ -26,22 +28,18 @@ export function NewAddressForm({
           setNewAddress({ ...newAddress, label: e.target.value })
         }
       />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={newAddress.password?.getValue()}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewAddress({
-            ...newAddress,
-            password: createZeroizedString(e.target.value),
-          })
+      <PasswordInput
+        value={newAddress.password || null}
+        onChange={(password) =>
+          setNewAddress({ ...newAddress, password: password || undefined })
         }
+        placeholder="Password"
       />
       <Button
         variant="secondary"
         className="w-full dark:text-secondary"
         onClick={handleAddAddress}
-        disabled={!newAddress.label || !newAddress.password}
+        disabled={!newAddress.label || !newAddress.password || !isPasswordValid}
       >
         Generate New Address
       </Button>

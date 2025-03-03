@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Address } from '@/types/address';
-import { useZeroize } from '@/contexts/zeroize-context';
 import { ZeroizedString } from '@/lib/zeroized-string';
 
 type ImportKeystoreFormProps = {
@@ -26,7 +26,6 @@ export function ImportKeystoreForm({
 }: ImportKeystoreFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { createZeroizedString } = useZeroize();
 
   const validateKeystore = async () => {
     if (!newAddress.label || !newAddress.password) {
@@ -75,16 +74,13 @@ export function ImportKeystoreForm({
           setNewAddress({ ...newAddress, label: e.target.value })
         }
       />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={newAddress.password?.getValue()}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewAddress({
-            ...newAddress,
-            password: createZeroizedString(e.target.value),
-          })
+      <PasswordInput
+        value={newAddress.password || null}
+        onChange={(password) =>
+          setNewAddress({ ...newAddress, password: password || undefined })
         }
+        placeholder="Password"
+        showRequirements={false}
       />
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <Button
