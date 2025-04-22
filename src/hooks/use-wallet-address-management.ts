@@ -217,6 +217,27 @@ export function useWalletAddressManagement(
       });
     } catch (error) {
       console.error('Error deleting address:', error);
+
+      // Check if the error is that the keystore file doesn't exist
+      const errorMessage =
+        error instanceof Error ? error.toString() : String(error);
+      if (
+        errorMessage.includes(`Keystore file '${address.label}' does not exist`)
+      ) {
+        // If the keystore file doesn't exist, still remove the address from the UI
+        actions.removeAddress(states.selectedKeystore.name, address);
+
+        // Update the selectedKeystore state
+        setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+          if (!prevKeystore) return null;
+          return {
+            ...prevKeystore,
+            addresses: prevKeystore.addresses.filter(
+              (a) => a.address !== address.address
+            ),
+          };
+        });
+      }
     }
   };
 
