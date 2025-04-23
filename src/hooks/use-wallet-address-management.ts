@@ -50,13 +50,13 @@ export function useWalletAddressManagement(
           });
           break;
         case 'vanity':
-          if (!states.vanityOptions.password) {
+          if (!states.newAddress.password) {
             console.error('Password is required for vanity address');
             return;
           }
 
           const vanityOpts: Omit<VanityOpts, 'password'> = {
-            address_label: states.vanityOptions.address_label,
+            address_label: states.newAddress.label,
           };
 
           if (states.vanityOptions.starts_with) {
@@ -69,12 +69,12 @@ export function useWalletAddressManagement(
 
           const vanityAddress: string = await walletApi.createVanityWallet(
             vanityOpts,
-            states.vanityOptions.password
+            states.newAddress.password
           );
 
           address = {
             address: vanityAddress,
-            label: states.vanityOptions.address_label,
+            label: states.newAddress.label,
           };
 
           // Update the selectedKeystore state
