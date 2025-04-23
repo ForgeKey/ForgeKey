@@ -33,7 +33,7 @@ export default function CastWallet() {
   } = useWalletAddressManagement(states, setters, actions);
 
   const { handleKeystoreClick, handleBackClick, handleAddGroup } =
-    useWalletNavigation(states, setters);
+    useWalletNavigation(states, setters, actions);
 
   const { loadAvailableKeystores } = useWalletSync();
 

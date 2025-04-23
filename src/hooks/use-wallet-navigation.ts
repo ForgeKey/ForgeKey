@@ -6,7 +6,8 @@ import { WalletStates, WalletSetters } from '@/types/wallet';
  */
 export function useWalletNavigation(
   states: WalletStates,
-  setters: WalletSetters
+  setters: WalletSetters,
+  actions: { addGroup: (name: string) => void }
 ) {
   /**
    * Handles clicking on a keystore to select it
@@ -40,6 +41,7 @@ export function useWalletNavigation(
    */
   const handleAddGroup = () => {
     if (states.newGroupName) {
+      actions.addGroup(states.newGroupName);
       setters.setNewGroupName('');
       setters.setIsAddingGroup(false);
     }
