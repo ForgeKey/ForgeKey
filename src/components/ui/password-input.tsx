@@ -3,8 +3,8 @@ import { Input } from '@/components/ui/input';
 import {
   validatePassword,
   PasswordValidationResult,
-  getScoreColor,
   getScoreText,
+  getColorHex,
 } from '@/lib/password-validation';
 import { ZeroizedString } from '@/lib/zeroized-string';
 import { useZeroize } from '@/contexts/zeroize-context';
@@ -50,6 +50,12 @@ export function PasswordInput({
     }
   };
 
+  // Create a progress bar width based on the score
+  const getProgressWidth = (score: number) => {
+    const percentage = ((score + 1) / 5) * 100;
+    return `${percentage}%`;
+  };
+
   return (
     <div className="space-y-2">
       <Input
@@ -61,11 +67,23 @@ export function PasswordInput({
       />
       {showRequirements && value && value.getValue().length > 0 && (
         <div className="text-sm space-y-1">
-          <div className="flex items-center gap-2">
-            <p className="text-muted-foreground">Password strength:</p>
-            <p className={getScoreColor(validation.score)}>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-300">Password strength:</p>
+            <p
+              className="font-medium"
+              style={{ color: getColorHex(validation.score) }}
+            >
               {getScoreText(validation.score)}
             </p>
+          </div>
+          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-300 ease-in-out`}
+              style={{
+                width: getProgressWidth(validation.score),
+                backgroundColor: getColorHex(validation.score),
+              }}
+            ></div>
           </div>
         </div>
       )}

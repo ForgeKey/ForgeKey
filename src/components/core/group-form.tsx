@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, FolderPlus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,28 +16,51 @@ export const GroupForm = ({
   handleAddGroup,
   handleBackClick,
 }: GroupFormProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newGroupName.trim()) {
+      handleAddGroup();
+    }
+  };
+
   return (
-    <div className="space-y-4 mt-4">
-      <div className="flex items-center mb-4">
+    <form onSubmit={handleSubmit} className="space-y-6 p-2">
+      <div className="relative text-center mb-6 pt-4">
         <Button
+          type="button"
           variant="ghost"
           onClick={handleBackClick}
-          className="p-2 dark:text-secondary"
+          className="absolute left-0 top-4 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
         >
-          <ChevronLeft className="h-5 w-5 mr-1" />
+          <ChevronLeft className="h-5 w-5" />
         </Button>
-        <span className="text-md ml-1 dark:text-secondary flex items-center">
-          New Group
-        </span>
+
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <FolderPlus className="h-8 w-8" />
+        </div>
+        <h2 className="text-lg font-bold text-white">Create New Group</h2>
+        <p className="text-sm text-gray-300 mt-1">
+          A keystore group helps you organize your wallet addresses
+        </p>
       </div>
-      <Input
-        placeholder="New Group Name"
-        value={newGroupName}
-        onChange={(e) => setNewGroupName(e.target.value)}
-      />
-      <Button variant="secondary" onClick={handleAddGroup} className="w-full">
-        Add Group
+
+      <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
+        <label className="block text-sm text-gray-300 mb-2">Group Name</label>
+        <Input
+          placeholder="Enter group name"
+          value={newGroupName}
+          onChange={(e) => setNewGroupName(e.target.value)}
+          className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+        />
+      </div>
+
+      <Button
+        type="submit"
+        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
+        disabled={!newGroupName.trim()}
+      >
+        Create Group
       </Button>
-    </div>
+    </form>
   );
 };

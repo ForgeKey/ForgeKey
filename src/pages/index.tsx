@@ -64,6 +64,10 @@ export default function CastWallet() {
     });
   };
 
+  const handleBackToAddressSelect = () => {
+    setters.setAddAddressStep('select');
+  };
+
   const renderAddAddressContent = () => {
     switch (states.addAddressStep) {
       case 'select':
@@ -71,6 +75,7 @@ export default function CastWallet() {
           <SelectAddressType
             setAddAddressStep={setters.setAddAddressStep}
             onImportClick={handleImportClick}
+            handleBackClick={handleBackClick}
           />
         );
       case 'new':
@@ -79,6 +84,7 @@ export default function CastWallet() {
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
+            handleBackClick={handleBackToAddressSelect}
           />
         );
       case 'vanity':
@@ -89,6 +95,7 @@ export default function CastWallet() {
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
+            handleBackClick={handleBackToAddressSelect}
           />
         );
       case 'import':
@@ -97,6 +104,7 @@ export default function CastWallet() {
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
+            handleBackClick={handleBackToAddressSelect}
           />
         );
       case 'select-keystore':
@@ -105,6 +113,7 @@ export default function CastWallet() {
             onKeystoreSelect={handleKeystoreSelect}
             existingAddresses={getAllAddressLabels()}
             loadAvailableKeystores={loadAvailableKeystores}
+            handleBackClick={handleBackToAddressSelect}
           />
         );
       case 'import-keystore':
@@ -114,6 +123,7 @@ export default function CastWallet() {
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleImportKeystoreAddress}
             validateKeystorePassword={validateKeystorePassword}
+            handleBackClick={handleBackToAddressSelect}
           />
         );
     }
@@ -161,16 +171,19 @@ export default function CastWallet() {
   };
 
   return (
-    <main className="bg-background dark:bg-zinc-900 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px]">
+    <main className="bg-[rgba(18,18,18,0.7)] backdrop-blur-md backdrop-filter bg-gradient-to-br from-purple-900/20 to-pink-900/20 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px] border border-white/5">
       <Header />
       <ScrollArea className="flex-grow">{renderRoute()}</ScrollArea>
-      <Footer
-        isAddingAddress={states.isAddingAddress}
-        isAddingGroup={states.isAddingGroup}
-        selectedKeystore={states.selectedKeystore}
-        setIsAddingAddress={setters.setIsAddingAddress}
-        setIsAddingGroup={setters.setIsAddingGroup}
-      />
+      {!states.isAddingGroup && !states.isAddingAddress && (
+        <Footer
+          isAddingAddress={states.isAddingAddress}
+          isAddingGroup={states.isAddingGroup}
+          selectedKeystore={states.selectedKeystore}
+          setIsAddingAddress={setters.setIsAddingAddress}
+          setIsAddingGroup={setters.setIsAddingGroup}
+          setAddAddressStep={setters.setAddAddressStep}
+        />
+      )}
       <PasswordDialog
         isOpen={states.isPasswordDialogOpen}
         setIsOpen={setters.setIsPasswordDialogOpen}

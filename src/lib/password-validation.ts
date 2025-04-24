@@ -11,17 +11,37 @@ export interface PasswordValidationResult {
 export function getScoreColor(score: number): string {
   switch (score) {
     case 0:
-      return 'text-red-500';
+      return 'text-rose-500';
     case 1:
-      return 'text-orange-500';
+      return 'text-amber-500';
     case 2:
       return 'text-yellow-500';
     case 3:
-      return 'text-green-500';
+      return 'text-emerald-500';
     case 4:
-      return 'text-green-500';
+      return 'text-emerald-500';
     default:
-      return 'text-red-500';
+      return 'text-rose-500';
+  }
+}
+
+/**
+ * Get the hex color value for a password strength score
+ */
+export function getColorHex(score: number): string {
+  switch (score) {
+    case 0:
+      return '#f43f5e'; // rose-500
+    case 1:
+      return '#f59e0b'; // amber-500
+    case 2:
+      return '#eab308'; // yellow-500
+    case 3:
+      return '#10b981'; // emerald-500
+    case 4:
+      return '#10b981'; // emerald-500
+    default:
+      return '#f43f5e'; // rose-500
   }
 }
 

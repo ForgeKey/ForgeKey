@@ -8,6 +8,15 @@ interface FooterProps {
   selectedKeystore: Keystore | null;
   setIsAddingAddress: (isAddingAddress: boolean) => void;
   setIsAddingGroup: (isAddingGroup: boolean) => void;
+  setAddAddressStep?: (
+    step:
+      | 'select'
+      | 'new'
+      | 'vanity'
+      | 'import'
+      | 'select-keystore'
+      | 'import-keystore'
+  ) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -16,28 +25,38 @@ export const Footer: React.FC<FooterProps> = ({
   selectedKeystore,
   setIsAddingAddress,
   setIsAddingGroup,
+  setAddAddressStep,
 }) => {
+  const handleAddAddressClick = () => {
+    setIsAddingAddress(true);
+    if (setAddAddressStep) {
+      setAddAddressStep('select');
+    }
+  };
+
   return (
-    <div className="p-4 dark:border-zinc-800">
+    <div className="p-4 relative h-16 flex items-center justify-center">
       {!!selectedKeystore &&
         !isAddingAddress &&
         selectedKeystore.addresses.length > 0 && (
-          <Button
-            className="w-full text-sm dark:text-secondary dark:bg-zinc-800 dark:hover:bg-zinc-700"
-            onClick={() => setIsAddingAddress(true)}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Address
-          </Button>
+          <div className="absolute bottom-6 right-6">
+            <Button
+              onClick={handleAddAddressClick}
+              className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 p-0 flex items-center justify-center text-white hover:shadow-xl transition-shadow"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
         )}
       {!selectedKeystore && !isAddingGroup && (
-        <Button
-          className="w-full text-sm dark:text-secondary dark:bg-zinc-800 dark:hover:bg-zinc-700"
-          onClick={() => setIsAddingGroup(true)}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New Group
-        </Button>
+        <div className="absolute bottom-6 right-6">
+          <Button
+            onClick={() => setIsAddingGroup(true)}
+            className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 p-0 flex items-center justify-center text-white hover:shadow-xl transition-shadow"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </div>
       )}
     </div>
   );

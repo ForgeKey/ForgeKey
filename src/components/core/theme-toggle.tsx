@@ -10,7 +10,7 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleDarkMode}
-      className="dark:text-secondary"
+      className="relative overflow-hidden rounded-full bg-white/10 backdrop-blur-sm p-2 h-9 w-9 text-white hover:bg-white/20 transition-colors"
     >
       {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
     </Button>

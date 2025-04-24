@@ -4,11 +4,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { Check, KeyRound, LockIcon } from 'lucide-react';
 import { ZeroizedString } from '@/lib/zeroized-string';
 
 interface PasswordDialogProps {
@@ -85,53 +86,73 @@ export const PasswordDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-sm">
         <>
-          <DialogHeader>
-            <DialogTitle className="text-lg text-left font-semibold leading-none tracking-tight my-2 text-foreground dark:text-secondary">
-              Reveal Private Key
-            </DialogTitle>
-          </DialogHeader>
-          {!isPrivateKeyRevealed && (
-            <div className="py-4">
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                value={password?.getValue() || ''}
-                onChange={handlePasswordChange}
-              />
-              {showPrivateKeyError && (
-                <p className="text-red-500 text-sm">{privateKeyError}</p>
+          <DialogHeader className="space-y-3">
+            <div className="mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center mb-2">
+              {isPrivateKeyRevealed ? (
+                <KeyRound className="h-6 w-6" />
+              ) : (
+                <LockIcon className="h-6 w-6" />
               )}
             </div>
+            <DialogTitle className="text-center">
+              {isPrivateKeyRevealed ? 'Private Key' : 'Reveal Private Key'}
+            </DialogTitle>
+            {!isPrivateKeyRevealed && (
+              <DialogDescription className="text-center">
+                Enter your password to view the private key
+              </DialogDescription>
+            )}
+          </DialogHeader>
+
+          {!isPrivateKeyRevealed && (
+            <div className="py-4">
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password?.getValue() || ''}
+                  onChange={handlePasswordChange}
+                  className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                />
+                {showPrivateKeyError && (
+                  <p className="text-red-400 text-sm mt-2">{privateKeyError}</p>
+                )}
+              </div>
+            </div>
           )}
+
           {isPrivateKeyRevealed && (
             <div className="py-4">
-              <div className="flex flex-col gap-2">
-                <p className="text-sm dark:text-gray-300">Private Key:</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm dark:text-gray-300 flex-1 break-all">
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
+                <p className="text-sm text-gray-300 mb-2">Private Key:</p>
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-white bg-white/10 p-3 rounded-md font-mono break-all">
                     {maskedPrivateKey}
                   </p>
                   <Button
                     variant="outline"
-                    size="sm"
                     onClick={handleCopy}
-                    className="shrink-0 relative w-[60px] flex justify-center items-center dark:text-secondary dark:border-gray-700"
+                    className="w-full relative flex justify-center items-center bg-white/10 hover:bg-white/20 text-white border-white/10"
                   >
                     {showCopySuccess ? (
-                      <Check className="w-4 h-4 text-green-500" />
+                      <>
+                        <Check className="w-4 h-4 text-green-400 mr-2" />
+                        <span>Copied!</span>
+                      </>
                     ) : (
-                      'Copy'
+                      'Copy Private Key'
                     )}
                   </Button>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter>
+
+          <DialogFooter className="mt-2">
             <Button
-              className="w-full text-sm dark:text-secondary dark:bg-zinc-800 dark:hover:bg-zinc-700"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
               onClick={() =>
                 isPrivateKeyRevealed
                   ? handleClose()
