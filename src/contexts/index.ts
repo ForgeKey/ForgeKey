@@ -11,4 +11,3 @@ export type { ZeroizedStringType } from './zeroize-context';
 
 // Export other contexts as needed
 export { KeystoreProvider } from './keystore-context';
-export { ThemeProvider } from './theme-context';
