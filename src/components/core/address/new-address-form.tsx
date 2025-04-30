@@ -30,7 +30,7 @@ export function NewAddressForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 px-1 py-2">
+    <form onSubmit={handleSubmit} className="px-1 py-1">
       {handleBackClick && (
         <div className="relative mb-2">
           <Button
@@ -44,7 +44,7 @@ export function NewAddressForm({
         </div>
       )}
 
-      <div className="text-center mb-3 pt-2">
+      <div className="text-center mb-3">
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
           <Key className="h-6 w-6" />
         </div>

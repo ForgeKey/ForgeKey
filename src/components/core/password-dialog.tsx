@@ -73,7 +73,8 @@ export const PasswordDialog = ({
 
   const handleClose = () => {
     setIsOpen(false);
-    // The private key and password will be zeroized by the hook that manages it
+    setPassword(null);
+    privateKey?.zeroize();
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {

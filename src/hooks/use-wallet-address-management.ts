@@ -286,6 +286,8 @@ export function useWalletAddressManagement(
 
       // Set the private key
       setters.setPrivateKey(zeroizedPrivateKeyWrapper);
+      // Clear any previous error message
+      setters.setPrivateKeyError('');
     } catch (error) {
       console.error('Error getting private key:', error);
       setters.setPrivateKeyError('Invalid password');

@@ -39,7 +39,7 @@ export function VanityAddressForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 px-1 py-2">
+    <form onSubmit={handleSubmit} className="px-1 py-2">
       {handleBackClick && (
         <div className="relative mb-2">
           <Button
@@ -53,7 +53,7 @@ export function VanityAddressForm({
         </div>
       )}
 
-      <div className="text-center mb-3 pt-2">
+      <div className="text-center mb-3">
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
           <Sparkles className="h-5 w-5" />
         </div>
