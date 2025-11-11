@@ -14,13 +14,13 @@ import { ImportOptionsDialog } from '@/components/core/address/import-options-di
 import { KeystoreSelect } from '@/components/core/address/keystore-select';
 import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
-import { useWalletState } from '@/hooks/wallet/use-wallet-state';
 import { useAddAddress } from '@/hooks/wallet/use-add-address';
 import { useImportKeystoreAddress } from '@/hooks/wallet/use-import-keystore-address';
 import { useDeleteAddress } from '@/hooks/wallet/use-delete-address';
 import { usePrivateKey } from '@/hooks/wallet/use-private-key';
 import { useWalletNavigation } from '@/hooks/wallet/use-wallet-navigation';
 import { useWalletSync } from '@/hooks/wallet/use-wallet-sync';
+import { useWalletReconciliation } from '@/hooks/wallet/use-wallet-reconciliation';
 import { useNavigation, useRouteParams } from '@/hooks/router/use-navigation';
 import { useRouterSync } from '@/hooks/router/use-router-sync';
 import { useRouteHelpers } from '@/hooks/router/use-route-helpers';
@@ -28,6 +28,7 @@ import { useAddressFormCleanup } from '@/hooks/router/use-address-form-cleanup';
 import { useImportDialog } from '@/hooks/address/use-import-dialog';
 import { useAddressNavigationHandlers } from '@/hooks/address/use-address-navigation-handlers';
 import { ROUTES } from '@/router/types';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Error boundary for route rendering
@@ -75,48 +76,59 @@ class RouteErrorBoundary extends Component<
 }
 
 export default function ForgeKeyWallet() {
-  const { states, setters, actions } = useWalletState();
   const nav = useNavigation();
   const routeParams = useRouteParams<{ keystoreId: string }>();
 
+  // Zustand store selectors
+  const keystores = useWalletStore((state) => state.keystores);
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const addAddressStep = useWalletStore((state) => state.addAddressStep);
+  const newAddress = useWalletStore((state) => state.newAddress);
+  const vanityOptions = useWalletStore((state) => state.vanityOptions);
+  const isAddingGroup = useWalletStore((state) => state.isAddingGroup);
+  const newGroupName = useWalletStore((state) => state.newGroupName);
+  const isPasswordDialogOpen = useWalletStore(
+    (state) => state.isPasswordDialogOpen
+  );
+  const privateKey = useWalletStore((state) => state.privateKey);
+  const privateKeyError = useWalletStore((state) => state.privateKeyError);
+  const password = useWalletStore((state) => state.password);
+  const setNewAddress = useWalletStore((state) => state.setNewAddress);
+  const setVanityOptions = useWalletStore((state) => state.setVanityOptions);
+  const setNewGroupName = useWalletStore((state) => state.setNewGroupName);
+  const setIsPasswordDialogOpen = useWalletStore(
+    (state) => state.setIsPasswordDialogOpen
+  );
+  const setPassword = useWalletStore((state) => state.setPassword);
+  const setIsAddingGroup = useWalletStore((state) => state.setIsAddingGroup);
+
+  // Reconciliation hook - initializes and syncs keystores
+  useWalletReconciliation();
+
   // Router state synchronization
-  useRouterSync(states, setters);
+  useRouterSync();
 
   // Form cleanup when leaving address routes
-  useAddressFormCleanup(setters);
+  useAddressFormCleanup();
 
   // Domain-specific hooks
-  const { handleAddAddress: handleAddAddressOriginal } = useAddAddress(
-    states,
-    setters,
-    actions
-  );
+  const { handleAddAddress: handleAddAddressOriginal } = useAddAddress();
   const {
     handleImportKeystoreAddress: handleImportKeystoreAddressOriginal,
     validateKeystorePassword,
-  } = useImportKeystoreAddress(states, setters, actions);
-  const { handleDeleteAddress } = useDeleteAddress(states, setters, actions);
-  const { handleViewPrivateKey, handlePasswordSubmit } = usePrivateKey(
-    states,
-    setters
-  );
-
-  const { handleKeystoreClick, handleAddGroup } = useWalletNavigation(
-    states,
-    setters,
-    actions
-  );
-
+  } = useImportKeystoreAddress();
+  const { handleDeleteAddress } = useDeleteAddress();
+  const { handleViewPrivateKey, handlePasswordSubmit } = usePrivateKey();
+  const { handleKeystoreClick, handleAddGroup } = useWalletNavigation();
   const { loadAvailableKeystores } = useWalletSync();
 
   // Route helper functions
   const { getKeystoreId, getAllAddressLabels, shouldHideFooter } =
-    useRouteHelpers(states);
+    useRouteHelpers();
 
   // Navigation wrappers for address handlers
   const { handleAddAddress, handleImportKeystoreAddress } =
     useAddressNavigationHandlers(
-      states,
       handleAddAddressOriginal,
       handleImportKeystoreAddressOriginal
     );
@@ -129,7 +141,7 @@ export default function ForgeKeyWallet() {
     handleImportPrivateKey,
     handleShowKeystoreSelect,
     handleKeystoreSelect,
-  } = useImportDialog(states, setters, getKeystoreId);
+  } = useImportDialog(getKeystoreId);
 
   /**
    * Debug route transitions (development only)
@@ -157,7 +169,7 @@ export default function ForgeKeyWallet() {
    */
   const renderAddressRoute = (
     content: React.ReactNode,
-    addAddressStep:
+    step:
       | 'new'
       | 'vanity'
       | 'import'
@@ -165,17 +177,17 @@ export default function ForgeKeyWallet() {
       | 'select-keystore'
       | 'import-keystore'
   ) => {
-    if (!states.selectedKeystore) return null;
+    if (!selectedKeystore) return null;
 
     return (
       <KeystoreView
-        selectedKeystore={states.selectedKeystore}
+        selectedKeystore={selectedKeystore}
         isAddingAddress={true}
         handleBackClick={nav.goBack}
         renderAddAddressContent={() => content}
         handleViewPrivateKey={handleViewPrivateKey}
         handleDeleteAddress={handleDeleteAddress}
-        addAddressStep={addAddressStep}
+        addAddressStep={step}
       />
     );
   };
@@ -188,11 +200,11 @@ export default function ForgeKeyWallet() {
       case ROUTES.KEYSTORE_LIST:
         return (
           <KeystoreList
-            keystores={states.keystores}
+            keystores={keystores}
             handleKeystoreClick={handleKeystoreClick}
-            isAddingGroup={states.isAddingGroup}
-            newGroupName={states.newGroupName}
-            setNewGroupName={setters.setNewGroupName}
+            isAddingGroup={isAddingGroup}
+            newGroupName={newGroupName}
+            setNewGroupName={setNewGroupName}
             handleAddGroup={handleAddGroup}
             handleBackClick={nav.goBack}
           />
@@ -201,32 +213,32 @@ export default function ForgeKeyWallet() {
       case ROUTES.GROUP_CREATE:
         return (
           <KeystoreList
-            keystores={states.keystores}
+            keystores={keystores}
             handleKeystoreClick={handleKeystoreClick}
             isAddingGroup={true}
-            newGroupName={states.newGroupName}
-            setNewGroupName={setters.setNewGroupName}
+            newGroupName={newGroupName}
+            setNewGroupName={setNewGroupName}
             handleAddGroup={handleAddGroup}
             handleBackClick={() => {
               // Reset state and navigate to list
-              setters.setIsAddingGroup(false);
-              setters.setNewGroupName('');
+              setIsAddingGroup(false);
+              setNewGroupName('');
               nav.toKeystoreList();
             }}
           />
         );
 
       case ROUTES.KEYSTORE_VIEW:
-        if (!states.selectedKeystore) return null;
+        if (!selectedKeystore) return null;
         return (
           <KeystoreView
-            selectedKeystore={states.selectedKeystore}
+            selectedKeystore={selectedKeystore}
             isAddingAddress={false}
             handleBackClick={nav.goBack}
             renderAddAddressContent={() => null}
             handleViewPrivateKey={handleViewPrivateKey}
             handleDeleteAddress={handleDeleteAddress}
-            addAddressStep={states.addAddressStep}
+            addAddressStep={addAddressStep}
           />
         );
 
@@ -235,7 +247,7 @@ export default function ForgeKeyWallet() {
           <SelectAddressType
             setAddAddressStep={(step) => {
               const keystoreId =
-                routeParams?.keystoreId || states.selectedKeystore?.name;
+                routeParams?.keystoreId || selectedKeystore?.name;
               if (!keystoreId) {
                 console.error('No keystoreId available for navigation');
                 return;
@@ -253,8 +265,8 @@ export default function ForgeKeyWallet() {
       case ROUTES.ADDRESS_NEW:
         return renderAddressRoute(
           <NewAddressForm
-            newAddress={states.newAddress}
-            setNewAddress={setters.setNewAddress}
+            newAddress={newAddress}
+            setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
           />,
@@ -264,10 +276,10 @@ export default function ForgeKeyWallet() {
       case ROUTES.ADDRESS_VANITY:
         return renderAddressRoute(
           <VanityAddressForm
-            vanityOptions={states.vanityOptions}
-            setVanityOptions={setters.setVanityOptions}
-            newAddress={states.newAddress}
-            setNewAddress={setters.setNewAddress}
+            vanityOptions={vanityOptions}
+            setVanityOptions={setVanityOptions}
+            newAddress={newAddress}
+            setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
           />,
@@ -277,8 +289,8 @@ export default function ForgeKeyWallet() {
       case ROUTES.ADDRESS_IMPORT:
         return renderAddressRoute(
           <ImportAddressForm
-            newAddress={states.newAddress}
-            setNewAddress={setters.setNewAddress}
+            newAddress={newAddress}
+            setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
           />,
@@ -299,8 +311,8 @@ export default function ForgeKeyWallet() {
       case ROUTES.ADDRESS_IMPORT_KEYSTORE:
         return renderAddressRoute(
           <ImportKeystoreForm
-            newAddress={states.newAddress}
-            setNewAddress={setters.setNewAddress}
+            newAddress={newAddress}
+            setNewAddress={setNewAddress}
             handleAddAddress={handleImportKeystoreAddress}
             validateKeystorePassword={validateKeystorePassword}
             handleBackClick={nav.goBack}
@@ -321,19 +333,19 @@ export default function ForgeKeyWallet() {
       </ScrollArea>
       {!shouldHideFooter() && (
         <Footer
-          isAddingGroup={states.isAddingGroup}
-          selectedKeystore={states.selectedKeystore}
-          setIsAddingGroup={setters.setIsAddingGroup}
+          isAddingGroup={isAddingGroup}
+          selectedKeystore={selectedKeystore}
+          setIsAddingGroup={setIsAddingGroup}
         />
       )}
       <PasswordDialog
-        isOpen={states.isPasswordDialogOpen}
-        setIsOpen={setters.setIsPasswordDialogOpen}
+        isOpen={isPasswordDialogOpen}
+        setIsOpen={setIsPasswordDialogOpen}
         handlePasswordSubmit={handlePasswordSubmit}
-        privateKey={states.privateKey}
-        privateKeyError={states.privateKeyError}
-        password={states.password}
-        setPassword={setters.setPassword}
+        privateKey={privateKey}
+        privateKeyError={privateKeyError}
+        password={password}
+        setPassword={setPassword}
       />
       <ImportOptionsDialog
         isOpen={isImportOptionsOpen}
