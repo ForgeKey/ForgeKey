@@ -29,6 +29,7 @@
     "tailwindcss-animate": "1.0.7",
     "use-debounce": "10.0.4",
     "wasm-zeroize": "0.0.2",
+    "zustand": "^5.0.8",
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
