@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigation } from '@/hooks/router/use-navigation';
-import { WalletStates, WalletSetters } from '@/types/wallet';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook for managing import dialog flow
@@ -9,18 +9,14 @@ import { WalletStates, WalletSetters } from '@/types/wallet';
  * - Private key import
  * - Keystore file import
  *
- * @param states - Wallet state object
- * @param setters - Wallet state setters
  * @param getKeystoreId - Function to get current keystoreId
  * @returns Dialog state and handlers
  */
-export function useImportDialog(
-  states: WalletStates,
-  setters: WalletSetters,
-  getKeystoreId: () => string | null
-) {
+export function useImportDialog(getKeystoreId: () => string | null) {
   const nav = useNavigation();
   const [isImportOptionsOpen, setIsImportOptionsOpen] = useState(false);
+  const newAddress = useWalletStore((state) => state.newAddress);
+  const setNewAddress = useWalletStore((state) => state.setNewAddress);
 
   /**
    * Opens the import options dialog
@@ -71,8 +67,8 @@ export function useImportDialog(
     }
 
     // Pre-fill the label with the keystore name
-    setters.setNewAddress({
-      ...states.newAddress,
+    setNewAddress({
+      ...newAddress,
       label: keystoreName,
     });
 
