@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { Address, Keystore } from '@/types/address';
-import { useWalletReconciliation } from '@/hooks/use-wallet-reconciliation';
+import { useWalletReconciliation } from '@/hooks/wallet/use-wallet-reconciliation';
 
 type KeystoreContextType = {
   keystores: Keystore[];
