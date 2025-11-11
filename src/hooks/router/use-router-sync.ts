@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigation } from './use-navigation';
 import { ROUTES } from '@/router/types';
-import { WalletStates, WalletSetters } from '@/types/wallet';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook to sync component state with router state
@@ -11,12 +11,16 @@ import { WalletStates, WalletSetters } from '@/types/wallet';
  * - Syncing selectedKeystore with keystoreId route param
  * - Clearing selectedKeystore when returning to list
  * - Syncing isAddingGroup flag for GROUP_CREATE route
- *
- * @param states - Wallet state object
- * @param setters - Wallet state setters
  */
-export function useRouterSync(states: WalletStates, setters: WalletSetters) {
+export function useRouterSync() {
   const nav = useNavigation();
+  const keystores = useWalletStore((state) => state.keystores);
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const isAddingGroup = useWalletStore((state) => state.isAddingGroup);
+  const setSelectedKeystore = useWalletStore(
+    (state) => state.setSelectedKeystore
+  );
+  const setIsAddingGroup = useWalletStore((state) => state.setIsAddingGroup);
 
   /**
    * Sync component state with router state
@@ -41,10 +45,10 @@ export function useRouterSync(states: WalletStates, setters: WalletSetters) {
     // Sync selectedKeystore with router params for keystore-based routes
     if ('params' in route && route.params && 'keystoreId' in route.params) {
       const keystoreId = route.params.keystoreId as string;
-      if (keystoreId && keystoreId !== states.selectedKeystore?.name) {
-        const keystore = states.keystores.find((k) => k.name === keystoreId);
+      if (keystoreId && keystoreId !== selectedKeystore?.name) {
+        const keystore = keystores.find((k) => k.name === keystoreId);
         if (keystore) {
-          setters.setSelectedKeystore(keystore);
+          setSelectedKeystore(keystore);
         } else {
           // Keystore not found, redirect to list
           console.warn(`Keystore ${keystoreId} not found, redirecting to list`);
@@ -53,20 +57,15 @@ export function useRouterSync(states: WalletStates, setters: WalletSetters) {
       }
     } else if (route.name === ROUTES.KEYSTORE_LIST) {
       // Clear selected keystore when on list view
-      if (states.selectedKeystore !== null) {
-        setters.setSelectedKeystore(null);
+      if (selectedKeystore !== null) {
+        setSelectedKeystore(null);
       }
     } else if (route.name === ROUTES.GROUP_CREATE) {
       // Sync group creation state
-      if (!states.isAddingGroup) {
-        setters.setIsAddingGroup(true);
+      if (!isAddingGroup) {
+        setIsAddingGroup(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    nav.currentRoute,
-    states.keystores,
-    states.selectedKeystore?.name,
-    states.isAddingGroup,
-  ]);
+  }, [nav.currentRoute, keystores, selectedKeystore?.name, isAddingGroup]);
 }

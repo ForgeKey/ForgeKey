@@ -1,6 +1,6 @@
 import { useNavigation, useRouteParams } from './use-navigation';
 import { shouldHideFooterForRoute } from '@/router/types';
-import { WalletStates } from '@/types/wallet';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook providing route-related helper functions
@@ -10,12 +10,13 @@ import { WalletStates } from '@/types/wallet';
  * - Getting all address labels for validation
  * - Determining footer visibility based on route
  *
- * @param states - Wallet state object
  * @returns Object with helper functions
  */
-export function useRouteHelpers(states: WalletStates) {
+export function useRouteHelpers() {
   const nav = useNavigation();
   const routeParams = useRouteParams<{ keystoreId: string }>();
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const keystores = useWalletStore((state) => state.keystores);
 
   /**
    * Get keystoreId from route params or selected keystore
@@ -25,7 +26,7 @@ export function useRouteHelpers(states: WalletStates) {
    * @returns The keystoreId from route params, or selected keystore name, or null
    */
   const getKeystoreId = (): string | null => {
-    return routeParams?.keystoreId || states.selectedKeystore?.name || null;
+    return routeParams?.keystoreId || selectedKeystore?.name || null;
   };
 
   /**
@@ -36,7 +37,7 @@ export function useRouteHelpers(states: WalletStates) {
    */
   const getAllAddressLabels = (): string[] => {
     const labels: string[] = [];
-    states.keystores.forEach((keystore) => {
+    keystores.forEach((keystore) => {
       keystore.addresses.forEach((address) => {
         labels.push(address.label);
       });

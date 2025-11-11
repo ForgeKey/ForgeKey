@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigation } from './use-navigation';
 import { isAddressRoute } from '@/router/types';
-import { WalletSetters } from '@/types/wallet';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook to automatically clear form state when navigating away from address routes
@@ -16,11 +16,11 @@ import { WalletSetters } from '@/types/wallet';
  * - Detects when current route is NOT an address-related route
  * - Clears newAddress state (label, address, privateKey)
  * - Clears vanityOptions state (starts_with, ends_with, address_label)
- *
- * @param setters - Wallet state setters
  */
-export function useAddressFormCleanup(setters: WalletSetters) {
+export function useAddressFormCleanup() {
   const nav = useNavigation();
+  const setNewAddress = useWalletStore((state) => state.setNewAddress);
+  const setVanityOptions = useWalletStore((state) => state.setVanityOptions);
 
   /**
    * Clear form state when navigating away from address routes
@@ -35,12 +35,12 @@ export function useAddressFormCleanup(setters: WalletSetters) {
 
     if (!isAddressRoute(route)) {
       // Clear form data when not on address routes
-      setters.setNewAddress({
+      setNewAddress({
         label: '',
         address: '',
         privateKey: undefined,
       });
-      setters.setVanityOptions({
+      setVanityOptions({
         starts_with: undefined,
         ends_with: undefined,
         address_label: '',
