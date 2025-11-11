@@ -1,24 +1,32 @@
 import { Address, Keystore } from '@/types/address';
-import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 import { walletApi } from '@/api/wallet-api';
 import { ZeroizedString } from '@/lib/zeroized-string';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook for importing addresses from existing keystores
  */
-export function useImportKeystoreAddress(
-  states: WalletStates,
-  setters: WalletSetters,
-  actions: WalletActions
-) {
+export function useImportKeystoreAddress() {
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const newAddress = useWalletStore((state) => state.newAddress);
+  const setSelectedKeystore = useWalletStore(
+    (state) => state.setSelectedKeystore
+  );
+  const setNewAddress = useWalletStore((state) => state.setNewAddress);
+  const setIsAddingAddress = useWalletStore(
+    (state) => state.setIsAddingAddress
+  );
+  const setAddAddressStep = useWalletStore((state) => state.setAddAddressStep);
+  const addAddress = useWalletStore((state) => state.addAddress);
+
   /**
    * Handles importing an address from a keystore
    */
   const handleImportKeystoreAddress = async () => {
     if (
-      !states.selectedKeystore ||
-      !states.newAddress.label ||
-      !states.newAddress.password
+      !selectedKeystore ||
+      !newAddress.label ||
+      !newAddress.password
     ) {
       return;
     }
@@ -26,35 +34,35 @@ export function useImportKeystoreAddress(
     try {
       // Get the address from the keystore
       const address: string = await walletApi.getWalletAddress(
-        states.newAddress.label,
-        states.newAddress.password
+        newAddress.label,
+        newAddress.password
       );
 
-      const newAddress: Address = {
+      const importedAddress: Address = {
         address,
-        label: states.newAddress.label,
+        label: newAddress.label,
       };
 
       // Update the selectedKeystore state
-      setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+      setSelectedKeystore((prevKeystore: Keystore | null) => {
         if (!prevKeystore) return null;
         return {
           ...prevKeystore,
-          addresses: [...prevKeystore.addresses, newAddress],
+          addresses: [...prevKeystore.addresses, importedAddress],
         };
       });
 
       // Add the address to the keystore
-      actions.addAddress(states.selectedKeystore.name, newAddress);
+      addAddress(selectedKeystore.name, importedAddress);
 
       // Reset the form
-      setters.setNewAddress({
+      setNewAddress({
         label: '',
         address: '',
         privateKey: undefined,
       });
-      setters.setIsAddingAddress(false);
-      setters.setAddAddressStep('select');
+      setIsAddingAddress(false);
+      setAddAddressStep('select');
     } catch (error) {
       console.error('Error importing address from keystore:', error);
     }

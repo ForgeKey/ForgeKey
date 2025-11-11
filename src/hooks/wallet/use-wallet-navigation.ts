@@ -1,22 +1,32 @@
 import { Keystore } from '@/types/address';
-import { WalletStates, WalletSetters } from '@/types/wallet';
 import { useNavigation } from '@/hooks/router/use-navigation';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook for managing wallet navigation and UI state
  */
-export function useWalletNavigation(
-  states: WalletStates,
-  setters: WalletSetters,
-  actions: { addGroup: (name: string) => void }
-) {
+export function useWalletNavigation() {
   const nav = useNavigation();
+  const isAddingAddress = useWalletStore((state) => state.isAddingAddress);
+  const addAddressStep = useWalletStore((state) => state.addAddressStep);
+  const isAddingGroup = useWalletStore((state) => state.isAddingGroup);
+  const newGroupName = useWalletStore((state) => state.newGroupName);
+  const setSelectedKeystore = useWalletStore(
+    (state) => state.setSelectedKeystore
+  );
+  const setIsAddingAddress = useWalletStore(
+    (state) => state.setIsAddingAddress
+  );
+  const setAddAddressStep = useWalletStore((state) => state.setAddAddressStep);
+  const setIsAddingGroup = useWalletStore((state) => state.setIsAddingGroup);
+  const setNewGroupName = useWalletStore((state) => state.setNewGroupName);
+  const addGroup = useWalletStore((state) => state.addGroup);
 
   /**
    * Handles clicking on a keystore to select it
    */
   const handleKeystoreClick = (keystore: Keystore) => {
-    setters.setSelectedKeystore(keystore);
+    setSelectedKeystore(keystore);
 
     // If keystore is empty, go directly to address creation
     if (keystore.addresses.length === 0) {
@@ -48,19 +58,19 @@ export function useWalletNavigation(
    * @see useNavigation for the current navigation API
    */
   const handleBackClick = () => {
-    if (states.isAddingAddress) {
-      if (states.addAddressStep === 'select') {
-        setters.setIsAddingAddress(false);
-        setters.setAddAddressStep('select');
+    if (isAddingAddress) {
+      if (addAddressStep === 'select') {
+        setIsAddingAddress(false);
+        setAddAddressStep('select');
       } else {
-        setters.setAddAddressStep('select');
+        setAddAddressStep('select');
       }
-    } else if (states.isAddingGroup) {
-      setters.setIsAddingGroup(false);
-      setters.setNewGroupName('');
+    } else if (isAddingGroup) {
+      setIsAddingGroup(false);
+      setNewGroupName('');
     } else {
-      setters.setSelectedKeystore(null);
-      setters.setAddAddressStep('select');
+      setSelectedKeystore(null);
+      setAddAddressStep('select');
     }
   };
 
@@ -68,10 +78,10 @@ export function useWalletNavigation(
    * Handles adding a new group
    */
   const handleAddGroup = () => {
-    if (states.newGroupName) {
-      actions.addGroup(states.newGroupName);
-      setters.setNewGroupName('');
-      setters.setIsAddingGroup(false);
+    if (newGroupName) {
+      addGroup(newGroupName);
+      setNewGroupName('');
+      setIsAddingGroup(false);
       nav.toKeystoreList();
     }
   };

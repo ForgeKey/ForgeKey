@@ -1,43 +1,54 @@
-import { Address, Keystore, VanityOpts } from '@/types/address';
-import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
+import { Address, Keystore } from '@/types/address';
 import { walletApi } from '@/api/wallet-api';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook for adding new addresses to a keystore
  */
-export function useAddAddress(
-  states: WalletStates,
-  setters: WalletSetters,
-  actions: WalletActions
-) {
+export function useAddAddress() {
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const newAddress = useWalletStore((state) => state.newAddress);
+  const addAddressStep = useWalletStore((state) => state.addAddressStep);
+  const vanityOptions = useWalletStore((state) => state.vanityOptions);
+  const setSelectedKeystore = useWalletStore(
+    (state) => state.setSelectedKeystore
+  );
+  const setNewAddress = useWalletStore((state) => state.setNewAddress);
+  const setVanityOptions = useWalletStore((state) => state.setVanityOptions);
+  const setIsAddingAddress = useWalletStore(
+    (state) => state.setIsAddingAddress
+  );
+  const setAddAddressStep = useWalletStore((state) => state.setAddAddressStep);
+  const addAddress = useWalletStore((state) => state.addAddress);
+
   /**
    * Handles adding a new address to a keystore
    */
   const handleAddAddress = async () => {
     if (
-      !states.selectedKeystore ||
-      !states.newAddress.label ||
-      !states.newAddress.password
+      !selectedKeystore ||
+      !newAddress.label ||
+      !newAddress.password
     ) {
       return;
     }
 
     let address: Address;
     try {
-      switch (states.addAddressStep) {
+      switch (addAddressStep) {
         case 'new':
           const createdAddress: string = await walletApi.createNewWallet(
-            states.newAddress.label,
-            states.newAddress.password
+            newAddress.label,
+            newAddress.password
           );
 
           address = {
             address: createdAddress,
-            label: states.newAddress.label,
+            label: newAddress.label,
           };
 
           // Update the selectedKeystore state
-          setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+          setSelectedKeystore((prevKeystore: Keystore | null) => {
             if (!prevKeystore) return null;
             return {
               ...prevKeystore,
@@ -46,35 +57,29 @@ export function useAddAddress(
           });
           break;
         case 'vanity':
-          if (!states.newAddress.password) {
+          if (!newAddress.password) {
             console.error('Password is required for vanity address');
             return;
           }
 
-          const vanityOpts: Omit<VanityOpts, 'password'> = {
-            address_label: states.newAddress.label,
+          const vanityOpts = {
+            address_label: newAddress.label,
+            starts_with: vanityOptions.starts_with,
+            ends_with: vanityOptions.ends_with,
           };
-
-          if (states.vanityOptions.starts_with) {
-            vanityOpts.starts_with = states.vanityOptions.starts_with;
-          }
-
-          if (states.vanityOptions.ends_with) {
-            vanityOpts.ends_with = states.vanityOptions.ends_with;
-          }
 
           const vanityAddress: string = await walletApi.createVanityWallet(
             vanityOpts,
-            states.newAddress.password
+            newAddress.password
           );
 
           address = {
             address: vanityAddress,
-            label: states.newAddress.label,
+            label: newAddress.label,
           };
 
           // Update the selectedKeystore state
-          setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+          setSelectedKeystore((prevKeystore: Keystore | null) => {
             if (!prevKeystore) return null;
             return {
               ...prevKeystore,
@@ -83,24 +88,24 @@ export function useAddAddress(
           });
           break;
         case 'import':
-          if (!states.newAddress.privateKey) {
+          if (!newAddress.privateKey) {
             console.error('Private key is required for import');
             return;
           }
 
           const importedAddress: string = await walletApi.importPrivateKey(
-            states.newAddress.privateKey,
-            states.newAddress.label,
-            states.newAddress.password
+            newAddress.privateKey,
+            newAddress.label,
+            newAddress.password
           );
 
           address = {
             address: importedAddress,
-            label: states.newAddress.label,
+            label: newAddress.label,
           };
 
           // Update the selectedKeystore state
-          setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+          setSelectedKeystore((prevKeystore: Keystore | null) => {
             if (!prevKeystore) return null;
             return {
               ...prevKeystore,
@@ -117,21 +122,21 @@ export function useAddAddress(
       }
 
       // Add the address to the keystore
-      actions.addAddress(states.selectedKeystore.name, address);
+      addAddress(selectedKeystore.name, address);
 
       // Reset the form
-      setters.setNewAddress({
+      setNewAddress({
         label: '',
         address: '',
         privateKey: undefined,
       });
-      setters.setVanityOptions({
+      setVanityOptions({
         starts_with: undefined,
         ends_with: undefined,
         address_label: '',
       });
-      setters.setIsAddingAddress(false);
-      setters.setAddAddressStep('select');
+      setIsAddingAddress(false);
+      setAddAddressStep('select');
     } catch (error) {
       console.error('Error adding address:', error);
     }

@@ -1,20 +1,22 @@
 import { Address, Keystore } from '@/types/address';
-import { WalletStates, WalletSetters, WalletActions } from '@/types/wallet';
 import { walletApi } from '@/api/wallet-api';
+import { useWalletStore } from '@/stores/wallet-store';
 
 /**
  * Hook for deleting addresses from a keystore
  */
-export function useDeleteAddress(
-  states: WalletStates,
-  setters: WalletSetters,
-  actions: WalletActions
-) {
+export function useDeleteAddress() {
+  const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
+  const setSelectedKeystore = useWalletStore(
+    (state) => state.setSelectedKeystore
+  );
+  const removeAddress = useWalletStore((state) => state.removeAddress);
+
   /**
    * Handles deleting an address from a keystore
    */
   const handleDeleteAddress = async (address: Address) => {
-    if (!states.selectedKeystore) {
+    if (!selectedKeystore) {
       return;
     }
 
@@ -23,10 +25,10 @@ export function useDeleteAddress(
       await walletApi.removeKeystore(address.label);
 
       // Remove the address from the keystore
-      actions.removeAddress(states.selectedKeystore.name, address);
+      removeAddress(selectedKeystore.name, address);
 
       // Update the selectedKeystore state
-      setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+      setSelectedKeystore((prevKeystore: Keystore | null) => {
         if (!prevKeystore) return null;
         return {
           ...prevKeystore,
@@ -45,10 +47,10 @@ export function useDeleteAddress(
         errorMessage.includes(`Keystore file '${address.label}' does not exist`)
       ) {
         // If the keystore file doesn't exist, still remove the address from the UI
-        actions.removeAddress(states.selectedKeystore.name, address);
+        removeAddress(selectedKeystore.name, address);
 
         // Update the selectedKeystore state
-        setters.setSelectedKeystore((prevKeystore: Keystore | null) => {
+        setSelectedKeystore((prevKeystore: Keystore | null) => {
           if (!prevKeystore) return null;
           return {
             ...prevKeystore,
