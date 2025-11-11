@@ -9,5 +9,5 @@ export { ZeroizedString } from '../lib/zeroized-string';
 // Export types
 export type { ZeroizedStringType } from './zeroize-context';
 
-// Export other contexts as needed
-export { KeystoreProvider } from './keystore-context';
+// Note: KeystoreProvider has been removed in favor of Zustand store
+// See @/stores/wallet-store for the new state management implementation
