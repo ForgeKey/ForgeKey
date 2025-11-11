@@ -15,7 +15,10 @@ import { KeystoreSelect } from '@/components/core/address/keystore-select';
 import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
 import { useWalletState } from '@/hooks/wallet/use-wallet-state';
-import { useWalletAddressManagement } from '@/hooks/wallet/use-wallet-address-management';
+import { useAddAddress } from '@/hooks/wallet/use-add-address';
+import { useImportKeystoreAddress } from '@/hooks/wallet/use-import-keystore-address';
+import { useDeleteAddress } from '@/hooks/wallet/use-delete-address';
+import { usePrivateKey } from '@/hooks/wallet/use-private-key';
 import { useWalletNavigation } from '@/hooks/wallet/use-wallet-navigation';
 import { useWalletSync } from '@/hooks/wallet/use-wallet-sync';
 import { useNavigation, useRouteParams } from '@/hooks/router/use-navigation';
@@ -83,14 +86,20 @@ export default function ForgeKeyWallet() {
   useAddressFormCleanup(setters);
 
   // Domain-specific hooks
+  const { handleAddAddress: handleAddAddressOriginal } = useAddAddress(
+    states,
+    setters,
+    actions
+  );
   const {
-    handleAddAddress: handleAddAddressOriginal,
     handleImportKeystoreAddress: handleImportKeystoreAddressOriginal,
-    handleDeleteAddress,
     validateKeystorePassword,
-    handleViewPrivateKey,
-    handlePasswordSubmit,
-  } = useWalletAddressManagement(states, setters, actions);
+  } = useImportKeystoreAddress(states, setters, actions);
+  const { handleDeleteAddress } = useDeleteAddress(states, setters, actions);
+  const { handleViewPrivateKey, handlePasswordSubmit } = usePrivateKey(
+    states,
+    setters
+  );
 
   const { handleKeystoreClick, handleAddGroup } = useWalletNavigation(
     states,
