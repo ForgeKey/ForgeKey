@@ -133,7 +133,7 @@ export function VanityAddressForm({
 
       <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-sm h-9"
+        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-sm h-9 mt-2"
         disabled={
           !newAddress.label ||
           !newAddress.password ||
