@@ -1,5 +1,5 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useState } from 'react';
+import { useEffect, Component, ReactNode } from 'react';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
@@ -14,174 +14,307 @@ import { ImportOptionsDialog } from '@/components/core/address/import-options-di
 import { KeystoreSelect } from '@/components/core/address/keystore-select';
 import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
-import { useWalletState } from '@/hooks/use-wallet-state';
-import { useWalletAddressManagement } from '@/hooks/use-wallet-address-management';
-import { useWalletNavigation } from '@/hooks/use-wallet-navigation';
-import { useWalletSync } from '@/hooks/use-wallet-sync';
+import { useWalletState } from '@/hooks/wallet/use-wallet-state';
+import { useWalletAddressManagement } from '@/hooks/wallet/use-wallet-address-management';
+import { useWalletNavigation } from '@/hooks/wallet/use-wallet-navigation';
+import { useWalletSync } from '@/hooks/wallet/use-wallet-sync';
+import { useNavigation, useRouteParams } from '@/hooks/router/use-navigation';
+import { useRouterSync } from '@/hooks/router/use-router-sync';
+import { useRouteHelpers } from '@/hooks/router/use-route-helpers';
+import { useAddressFormCleanup } from '@/hooks/router/use-address-form-cleanup';
+import { useImportDialog } from '@/hooks/address/use-import-dialog';
+import { useAddressNavigationHandlers } from '@/hooks/address/use-address-navigation-handlers';
+import { ROUTES } from '@/router/types';
 
-export default function CastWallet() {
+/**
+ * Error boundary for route rendering
+ * Catches errors during route rendering and displays fallback UI
+ */
+class RouteErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Route rendering error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 max-w-md">
+            <h2 className="text-lg font-bold text-red-400 mb-2">
+              Something went wrong
+            </h2>
+            <p className="text-sm text-gray-300 mb-4">
+              An error occurred while rendering this page. Please try navigating
+              back or restarting the app.
+            </p>
+            <p className="text-xs text-gray-400 font-mono">
+              {this.state.error?.message}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default function ForgeKeyWallet() {
   const { states, setters, actions } = useWalletState();
+  const nav = useNavigation();
+  const routeParams = useRouteParams<{ keystoreId: string }>();
 
-  // Use domain-specific hooks directly
+  // Router state synchronization
+  useRouterSync(states, setters);
+
+  // Form cleanup when leaving address routes
+  useAddressFormCleanup(setters);
+
+  // Domain-specific hooks
   const {
-    handleAddAddress,
-    handleImportKeystoreAddress,
+    handleAddAddress: handleAddAddressOriginal,
+    handleImportKeystoreAddress: handleImportKeystoreAddressOriginal,
     handleDeleteAddress,
     validateKeystorePassword,
     handleViewPrivateKey,
     handlePasswordSubmit,
   } = useWalletAddressManagement(states, setters, actions);
 
-  const { handleKeystoreClick, handleBackClick, handleAddGroup } =
-    useWalletNavigation(states, setters, actions);
+  const { handleKeystoreClick, handleAddGroup } = useWalletNavigation(
+    states,
+    setters,
+    actions
+  );
 
   const { loadAvailableKeystores } = useWalletSync();
 
-  const [isImportOptionsOpen, setIsImportOptionsOpen] = useState(false);
+  // Route helper functions
+  const { getKeystoreId, getAllAddressLabels, shouldHideFooter } =
+    useRouteHelpers(states);
 
-  const handleImportClick = () => {
-    setIsImportOptionsOpen(true);
+  // Navigation wrappers for address handlers
+  const { handleAddAddress, handleImportKeystoreAddress } =
+    useAddressNavigationHandlers(
+      states,
+      handleAddAddressOriginal,
+      handleImportKeystoreAddressOriginal
+    );
+
+  // Import dialog management
+  const {
+    isImportOptionsOpen,
+    setIsImportOptionsOpen,
+    handleImportClick,
+    handleImportPrivateKey,
+    handleShowKeystoreSelect,
+    handleKeystoreSelect,
+  } = useImportDialog(states, setters, getKeystoreId);
+
+  /**
+   * Debug route transitions (development only)
+   * Logs route changes to console for debugging navigation flows
+   */
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const route = nav.currentRoute;
+      const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+
+      if ('params' in route && route.params) {
+        console.log(
+          `[${timestamp}] Route: ${route.name} | Params:`,
+          route.params
+        );
+      } else {
+        console.log(`[${timestamp}] Route: ${route.name}`);
+      }
+    }
+  }, [nav.currentRoute]);
+
+  /**
+   * Helper to render address-related routes with KeystoreView wrapper
+   * Reduces code duplication across ADDRESS_NEW, ADDRESS_VANITY, ADDRESS_IMPORT, etc.
+   */
+  const renderAddressRoute = (
+    content: React.ReactNode,
+    addAddressStep:
+      | 'new'
+      | 'vanity'
+      | 'import'
+      | 'select'
+      | 'select-keystore'
+      | 'import-keystore'
+  ) => {
+    if (!states.selectedKeystore) return null;
+
+    return (
+      <KeystoreView
+        selectedKeystore={states.selectedKeystore}
+        isAddingAddress={true}
+        handleBackClick={nav.goBack}
+        renderAddAddressContent={() => content}
+        handleViewPrivateKey={handleViewPrivateKey}
+        handleDeleteAddress={handleDeleteAddress}
+        addAddressStep={addAddressStep}
+      />
+    );
   };
 
-  const handleImportPrivateKey = () => {
-    setIsImportOptionsOpen(false);
-    setters.setAddAddressStep('import');
-  };
+  // New router-based rendering
+  const renderRouterView = () => {
+    const route = nav.currentRoute;
 
-  const handleShowKeystoreSelect = () => {
-    setIsImportOptionsOpen(false);
-    setters.setAddAddressStep('select-keystore');
-  };
-
-  const handleKeystoreSelect = (keystoreName: string) => {
-    setters.setIsAddingAddress(true);
-    setters.setAddAddressStep('import-keystore');
-
-    // Pre-fill the label with the keystore name
-    setters.setNewAddress({
-      ...states.newAddress,
-      label: keystoreName,
-    });
-  };
-
-  const handleBackToAddressSelect = () => {
-    setters.setAddAddressStep('select');
-  };
-
-  const renderAddAddressContent = () => {
-    switch (states.addAddressStep) {
-      case 'select':
+    switch (route.name) {
+      case ROUTES.KEYSTORE_LIST:
         return (
-          <SelectAddressType
-            setAddAddressStep={setters.setAddAddressStep}
-            onImportClick={handleImportClick}
-            handleBackClick={handleBackClick}
+          <KeystoreList
+            keystores={states.keystores}
+            handleKeystoreClick={handleKeystoreClick}
+            isAddingGroup={states.isAddingGroup}
+            newGroupName={states.newGroupName}
+            setNewGroupName={setters.setNewGroupName}
+            handleAddGroup={handleAddGroup}
+            handleBackClick={nav.goBack}
           />
         );
-      case 'new':
+
+      case ROUTES.GROUP_CREATE:
         return (
+          <KeystoreList
+            keystores={states.keystores}
+            handleKeystoreClick={handleKeystoreClick}
+            isAddingGroup={true}
+            newGroupName={states.newGroupName}
+            setNewGroupName={setters.setNewGroupName}
+            handleAddGroup={handleAddGroup}
+            handleBackClick={() => {
+              // Reset state and navigate to list
+              setters.setIsAddingGroup(false);
+              setters.setNewGroupName('');
+              nav.toKeystoreList();
+            }}
+          />
+        );
+
+      case ROUTES.KEYSTORE_VIEW:
+        if (!states.selectedKeystore) return null;
+        return (
+          <KeystoreView
+            selectedKeystore={states.selectedKeystore}
+            isAddingAddress={false}
+            handleBackClick={nav.goBack}
+            renderAddAddressContent={() => null}
+            handleViewPrivateKey={handleViewPrivateKey}
+            handleDeleteAddress={handleDeleteAddress}
+            addAddressStep={states.addAddressStep}
+          />
+        );
+
+      case ROUTES.ADDRESS_SELECT_TYPE:
+        return renderAddressRoute(
+          <SelectAddressType
+            setAddAddressStep={(step) => {
+              const keystoreId =
+                routeParams?.keystoreId || states.selectedKeystore?.name;
+              if (!keystoreId) {
+                console.error('No keystoreId available for navigation');
+                return;
+              }
+              if (step === 'new') nav.toAddressNew(keystoreId);
+              else if (step === 'vanity') nav.toAddressVanity(keystoreId);
+              else if (step === 'import') nav.toAddressImport(keystoreId);
+            }}
+            onImportClick={handleImportClick}
+            handleBackClick={nav.goBack}
+          />,
+          'select'
+        );
+
+      case ROUTES.ADDRESS_NEW:
+        return renderAddressRoute(
           <NewAddressForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
-            handleBackClick={handleBackToAddressSelect}
-          />
+            handleBackClick={nav.goBack}
+          />,
+          'new'
         );
-      case 'vanity':
-        return (
+
+      case ROUTES.ADDRESS_VANITY:
+        return renderAddressRoute(
           <VanityAddressForm
             vanityOptions={states.vanityOptions}
             setVanityOptions={setters.setVanityOptions}
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
-            handleBackClick={handleBackToAddressSelect}
-          />
+            handleBackClick={nav.goBack}
+          />,
+          'vanity'
         );
-      case 'import':
-        return (
+
+      case ROUTES.ADDRESS_IMPORT:
+        return renderAddressRoute(
           <ImportAddressForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleAddAddress}
-            handleBackClick={handleBackToAddressSelect}
-          />
+            handleBackClick={nav.goBack}
+          />,
+          'import'
         );
-      case 'select-keystore':
-        return (
+
+      case ROUTES.ADDRESS_SELECT_KEYSTORE:
+        return renderAddressRoute(
           <KeystoreSelect
             onKeystoreSelect={handleKeystoreSelect}
             existingAddresses={getAllAddressLabels()}
             loadAvailableKeystores={loadAvailableKeystores}
-            handleBackClick={handleBackToAddressSelect}
-          />
+            handleBackClick={nav.goBack}
+          />,
+          'select-keystore'
         );
-      case 'import-keystore':
-        return (
+
+      case ROUTES.ADDRESS_IMPORT_KEYSTORE:
+        return renderAddressRoute(
           <ImportKeystoreForm
             newAddress={states.newAddress}
             setNewAddress={setters.setNewAddress}
             handleAddAddress={handleImportKeystoreAddress}
             validateKeystorePassword={validateKeystorePassword}
-            handleBackClick={handleBackToAddressSelect}
-          />
+            handleBackClick={nav.goBack}
+          />,
+          'import-keystore'
         );
+
+      default:
+        return null;
     }
-  };
-
-  const renderRoute = () => {
-    // Keystore View Route
-    if (states.selectedKeystore) {
-      return (
-        <KeystoreView
-          selectedKeystore={states.selectedKeystore}
-          isAddingAddress={states.isAddingAddress}
-          handleBackClick={handleBackClick}
-          renderAddAddressContent={renderAddAddressContent}
-          handleViewPrivateKey={handleViewPrivateKey}
-          handleDeleteAddress={handleDeleteAddress}
-          addAddressStep={states.addAddressStep}
-        />
-      );
-    }
-
-    // Default Route (Keystore List)
-    return (
-      <KeystoreList
-        keystores={states.keystores}
-        handleKeystoreClick={handleKeystoreClick}
-        isAddingGroup={states.isAddingGroup}
-        newGroupName={states.newGroupName}
-        setNewGroupName={setters.setNewGroupName}
-        handleAddGroup={handleAddGroup}
-        handleBackClick={handleBackClick}
-      />
-    );
-  };
-
-  // Get all existing address labels for filtering
-  const getAllAddressLabels = () => {
-    const labels: string[] = [];
-    states.keystores.forEach((keystore) => {
-      keystore.addresses.forEach((address) => {
-        labels.push(address.label);
-      });
-    });
-    return labels;
   };
 
   return (
     <main className="bg-[rgba(18,18,18,0.7)] backdrop-blur-md backdrop-filter bg-gradient-to-br from-purple-900/20 to-pink-900/20 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px] border border-white/5">
       <Header />
-      <ScrollArea className="flex-grow">{renderRoute()}</ScrollArea>
-      {!states.isAddingGroup && !states.isAddingAddress && (
+      <ScrollArea className="flex-grow">
+        <RouteErrorBoundary>{renderRouterView()}</RouteErrorBoundary>
+      </ScrollArea>
+      {!shouldHideFooter() && (
         <Footer
-          isAddingAddress={states.isAddingAddress}
           isAddingGroup={states.isAddingGroup}
           selectedKeystore={states.selectedKeystore}
-          setIsAddingAddress={setters.setIsAddingAddress}
           setIsAddingGroup={setters.setIsAddingGroup}
-          setAddAddressStep={setters.setAddAddressStep}
         />
       )}
       <PasswordDialog
