@@ -11,16 +11,19 @@ import { useWalletStore } from '@/stores/wallet-store';
  * - Syncing selectedKeystore with keystoreId route param
  * - Clearing selectedKeystore when returning to list
  * - Syncing isAddingGroup flag for GROUP_CREATE route
+ * - Syncing addAddressStep with address-related routes
  */
 export function useRouterSync() {
   const nav = useNavigation();
   const keystores = useWalletStore((state) => state.keystores);
   const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
   const isAddingGroup = useWalletStore((state) => state.isAddingGroup);
+  const addAddressStep = useWalletStore((state) => state.addAddressStep);
   const setSelectedKeystore = useWalletStore(
     (state) => state.setSelectedKeystore
   );
   const setIsAddingGroup = useWalletStore((state) => state.setIsAddingGroup);
+  const setAddAddressStep = useWalletStore((state) => state.setAddAddressStep);
 
   /**
    * Sync component state with router state
@@ -66,6 +69,23 @@ export function useRouterSync() {
         setIsAddingGroup(true);
       }
     }
+
+    // Sync addAddressStep with address-related routes
+    // This ensures the wallet store knows which type of address operation is active
+    const routeToStepMap: Record<string, typeof addAddressStep> = {
+      [ROUTES.ADDRESS_SELECT_TYPE]: 'select',
+      [ROUTES.ADDRESS_NEW]: 'new',
+      [ROUTES.ADDRESS_VANITY]: 'vanity',
+      [ROUTES.ADDRESS_IMPORT_OPTIONS]: 'select', // import-options doesn't have its own step
+      [ROUTES.ADDRESS_IMPORT]: 'import',
+      [ROUTES.ADDRESS_SELECT_KEYSTORE]: 'select-keystore',
+      [ROUTES.ADDRESS_IMPORT_KEYSTORE]: 'import-keystore',
+    };
+
+    const expectedStep = routeToStepMap[route.name];
+    if (expectedStep && addAddressStep !== expectedStep) {
+      setAddAddressStep(expectedStep);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nav.currentRoute, keystores, selectedKeystore?.name, isAddingGroup]);
+  }, [nav.currentRoute, keystores, selectedKeystore?.name, isAddingGroup, addAddressStep]);
 }

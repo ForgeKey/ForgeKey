@@ -35,6 +35,9 @@ export function useNavigation() {
     toAddressVanity: (keystoreId: string) =>
       navigate({ name: ROUTES.ADDRESS_VANITY, params: { keystoreId } }),
 
+    toAddressImportOptions: (keystoreId: string) =>
+      navigate({ name: ROUTES.ADDRESS_IMPORT_OPTIONS, params: { keystoreId } }),
+
     toAddressImport: (keystoreId: string) =>
       navigate({ name: ROUTES.ADDRESS_IMPORT, params: { keystoreId } }),
 

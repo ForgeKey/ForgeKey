@@ -2,11 +2,13 @@
  * Route names as constants for type-safe routing
  */
 export const ROUTES = {
+  ONBOARDING_WELCOME: 'onboarding-welcome',
   KEYSTORE_LIST: 'keystore-list',
   KEYSTORE_VIEW: 'keystore-view',
   ADDRESS_SELECT_TYPE: 'address-select-type',
   ADDRESS_NEW: 'address-new',
   ADDRESS_VANITY: 'address-vanity',
+  ADDRESS_IMPORT_OPTIONS: 'address-import-options',
   ADDRESS_IMPORT: 'address-import',
   ADDRESS_SELECT_KEYSTORE: 'address-select-keystore',
   ADDRESS_IMPORT_KEYSTORE: 'address-import-keystore',
@@ -19,11 +21,13 @@ export type RouteName = (typeof ROUTES)[keyof typeof ROUTES];
  * Define parameters required for each route
  */
 export type RouteParams = {
+  'onboarding-welcome': undefined;
   'keystore-list': undefined;
   'keystore-view': { keystoreId: string };
   'address-select-type': { keystoreId: string };
   'address-new': { keystoreId: string };
   'address-vanity': { keystoreId: string };
+  'address-import-options': { keystoreId: string };
   'address-import': { keystoreId: string };
   'address-select-keystore': { keystoreId: string };
   'address-import-keystore': { keystoreId: string };
@@ -53,6 +57,9 @@ export interface RouteConfig {
  * Map of route configurations
  */
 export const ROUTE_CONFIG: Record<RouteName, RouteConfig> = {
+  'onboarding-welcome': {
+    title: 'Welcome',
+  },
   'keystore-list': {
     title: 'Keystores',
   },
@@ -76,9 +83,14 @@ export const ROUTE_CONFIG: Record<RouteName, RouteConfig> = {
     parent: 'address-select-type',
     requiresKeystore: true,
   },
-  'address-import': {
-    title: 'Import',
+  'address-import-options': {
+    title: 'Import Options',
     parent: 'address-select-type',
+    requiresKeystore: true,
+  },
+  'address-import': {
+    title: 'Import Private Key',
+    parent: 'address-import-options',
     requiresKeystore: true,
   },
   'address-select-keystore': {
@@ -105,6 +117,7 @@ export const ROUTE_CONFIG: Record<RouteName, RouteConfig> = {
 export const ADDRESS_ROUTES = [
   ROUTES.ADDRESS_NEW,
   ROUTES.ADDRESS_VANITY,
+  ROUTES.ADDRESS_IMPORT_OPTIONS,
   ROUTES.ADDRESS_IMPORT,
   ROUTES.ADDRESS_SELECT_TYPE,
   ROUTES.ADDRESS_SELECT_KEYSTORE,
@@ -113,6 +126,7 @@ export const ADDRESS_ROUTES = [
 
 /** Routes where footer should be hidden */
 export const FOOTER_HIDDEN_ROUTES = [
+  ROUTES.ONBOARDING_WELCOME,
   ROUTES.GROUP_CREATE,
   ...ADDRESS_ROUTES,
 ] as const;

@@ -48,10 +48,15 @@ export function useRouteHelpers() {
   /**
    * Determine if footer should be hidden for current route
    * Footer is hidden during multi-step flows (group creation, address creation)
+   * and when there are no keystores (showing empty state)
    *
    * @returns true if footer should be hidden, false otherwise
    */
   const shouldHideFooter = (): boolean => {
+    // Hide footer when showing empty keystore screen
+    if (keystores.length === 0) {
+      return true;
+    }
     return shouldHideFooterForRoute(nav.currentRoute.name);
   };
 
