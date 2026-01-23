@@ -14,8 +14,8 @@
       {
         "title": "ForgeKey",
         "fullscreen": false,
-        "height": 450,
-        "width": 450,
+        "height": 400,
+        "width": 350,
         "alwaysOnTop": true,
         "closable": false,
         "decorations": false,
