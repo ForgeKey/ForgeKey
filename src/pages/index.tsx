@@ -3,14 +3,16 @@ import { useEffect, Component, ReactNode } from 'react';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
+import { WelcomeScreen } from '@/components/core/welcome-screen';
+import { EmptyKeystoreScreen } from '@/components/core/empty-keystore-screen';
 import { KeystoreList } from '@/components/core/keystore-list';
 import { KeystoreView } from '@/components/core/keystore-view';
 import { PasswordDialog } from '@/components/core/password-dialog';
 import { NewAddressForm } from '@/components/core/address/new-address-form';
 import { SelectAddressType } from '@/components/core/address/select-address-type';
 import { VanityAddressForm } from '@/components/core/address/vanity-address-form';
+import { ImportOptions } from '@/components/core/address/import-options';
 import { ImportAddressForm } from '@/components/core/address/import-address-form';
-import { ImportOptionsDialog } from '@/components/core/address/import-options-dialog';
 import { KeystoreSelect } from '@/components/core/address/keystore-select';
 import { ImportKeystoreForm } from '@/components/core/address/import-keystore-form';
 
@@ -25,7 +27,6 @@ import { useNavigation, useRouteParams } from '@/hooks/router/use-navigation';
 import { useRouterSync } from '@/hooks/router/use-router-sync';
 import { useRouteHelpers } from '@/hooks/router/use-route-helpers';
 import { useAddressFormCleanup } from '@/hooks/router/use-address-form-cleanup';
-import { useImportDialog } from '@/hooks/address/use-import-dialog';
 import { useAddressNavigationHandlers } from '@/hooks/address/use-address-navigation-handlers';
 import { ROUTES } from '@/router/types';
 import { useWalletStore } from '@/stores/wallet-store';
@@ -92,14 +93,12 @@ export default function ForgeKeyWallet() {
   );
   const privateKey = useWalletStore((state) => state.privateKey);
   const privateKeyError = useWalletStore((state) => state.privateKeyError);
-  const password = useWalletStore((state) => state.password);
   const setNewAddress = useWalletStore((state) => state.setNewAddress);
   const setVanityOptions = useWalletStore((state) => state.setVanityOptions);
   const setNewGroupName = useWalletStore((state) => state.setNewGroupName);
   const setIsPasswordDialogOpen = useWalletStore(
     (state) => state.setIsPasswordDialogOpen
   );
-  const setPassword = useWalletStore((state) => state.setPassword);
   const setIsAddingGroup = useWalletStore((state) => state.setIsAddingGroup);
 
   // Reconciliation hook - initializes and syncs keystores
@@ -123,8 +122,7 @@ export default function ForgeKeyWallet() {
   const { loadAvailableKeystores } = useWalletSync();
 
   // Route helper functions
-  const { getKeystoreId, getAllAddressLabels, shouldHideFooter } =
-    useRouteHelpers();
+  const { getAllAddressLabels, shouldHideFooter } = useRouteHelpers();
 
   // Navigation wrappers for address handlers
   const { handleAddAddress, handleImportKeystoreAddress } =
@@ -132,16 +130,6 @@ export default function ForgeKeyWallet() {
       handleAddAddressOriginal,
       handleImportKeystoreAddressOriginal
     );
-
-  // Import dialog management
-  const {
-    isImportOptionsOpen,
-    setIsImportOptionsOpen,
-    handleImportClick,
-    handleImportPrivateKey,
-    handleShowKeystoreSelect,
-    handleKeystoreSelect,
-  } = useImportDialog(getKeystoreId);
 
   /**
    * Debug route transitions (development only)
@@ -167,16 +155,7 @@ export default function ForgeKeyWallet() {
    * Helper to render address-related routes with KeystoreView wrapper
    * Reduces code duplication across ADDRESS_NEW, ADDRESS_VANITY, ADDRESS_IMPORT, etc.
    */
-  const renderAddressRoute = (
-    content: React.ReactNode,
-    step:
-      | 'new'
-      | 'vanity'
-      | 'import'
-      | 'select'
-      | 'select-keystore'
-      | 'import-keystore'
-  ) => {
+  const renderAddressRoute = (content: React.ReactNode) => {
     if (!selectedKeystore) return null;
 
     return (
@@ -187,7 +166,6 @@ export default function ForgeKeyWallet() {
         renderAddAddressContent={() => content}
         handleViewPrivateKey={handleViewPrivateKey}
         handleDeleteAddress={handleDeleteAddress}
-        addAddressStep={step}
       />
     );
   };
@@ -197,7 +175,18 @@ export default function ForgeKeyWallet() {
     const route = nav.currentRoute;
 
     switch (route.name) {
+      case ROUTES.ONBOARDING_WELCOME:
+        return <WelcomeScreen />;
+
       case ROUTES.KEYSTORE_LIST:
+        // Show empty state if no keystores exist
+        if (keystores.length === 0) {
+          return (
+            <EmptyKeystoreScreen
+              onCreateWorkspace={() => nav.navigate({ name: ROUTES.GROUP_CREATE })}
+            />
+          );
+        }
         return (
           <KeystoreList
             keystores={keystores}
@@ -220,10 +209,10 @@ export default function ForgeKeyWallet() {
             setNewGroupName={setNewGroupName}
             handleAddGroup={handleAddGroup}
             handleBackClick={() => {
-              // Reset state and navigate to list
+              // Reset state and go back to previous route
               setIsAddingGroup(false);
               setNewGroupName('');
-              nav.toKeystoreList();
+              nav.goBack();
             }}
           />
         );
@@ -254,12 +243,10 @@ export default function ForgeKeyWallet() {
               }
               if (step === 'new') nav.toAddressNew(keystoreId);
               else if (step === 'vanity') nav.toAddressVanity(keystoreId);
-              else if (step === 'import') nav.toAddressImport(keystoreId);
+              else if (step === 'import-options') nav.toAddressImportOptions(keystoreId);
             }}
-            onImportClick={handleImportClick}
             handleBackClick={nav.goBack}
-          />,
-          'select'
+          />
         );
 
       case ROUTES.ADDRESS_NEW:
@@ -269,8 +256,7 @@ export default function ForgeKeyWallet() {
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
-          />,
-          'new'
+          />
         );
 
       case ROUTES.ADDRESS_VANITY:
@@ -282,8 +268,22 @@ export default function ForgeKeyWallet() {
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
-          />,
-          'vanity'
+          />
+        );
+
+      case ROUTES.ADDRESS_IMPORT_OPTIONS:
+        return renderAddressRoute(
+          <ImportOptions
+            onImportPrivateKey={() => {
+              const keystoreId = routeParams?.keystoreId || selectedKeystore?.name;
+              if (keystoreId) nav.toAddressImport(keystoreId);
+            }}
+            onImportKeystore={() => {
+              const keystoreId = routeParams?.keystoreId || selectedKeystore?.name;
+              if (keystoreId) nav.toAddressSelectKeystore(keystoreId);
+            }}
+            handleBackClick={nav.goBack}
+          />
         );
 
       case ROUTES.ADDRESS_IMPORT:
@@ -293,19 +293,21 @@ export default function ForgeKeyWallet() {
             setNewAddress={setNewAddress}
             handleAddAddress={handleAddAddress}
             handleBackClick={nav.goBack}
-          />,
-          'import'
+          />
         );
 
       case ROUTES.ADDRESS_SELECT_KEYSTORE:
         return renderAddressRoute(
           <KeystoreSelect
-            onKeystoreSelect={handleKeystoreSelect}
+            onKeystoreSelect={(keystoreName: string) => {
+              setNewAddress((prev) => ({ ...prev, label: keystoreName }));
+              const keystoreId = routeParams?.keystoreId || selectedKeystore?.name;
+              if (keystoreId) nav.toAddressImportKeystore(keystoreId);
+            }}
             existingAddresses={getAllAddressLabels()}
             loadAvailableKeystores={loadAvailableKeystores}
             handleBackClick={nav.goBack}
-          />,
-          'select-keystore'
+          />
         );
 
       case ROUTES.ADDRESS_IMPORT_KEYSTORE:
@@ -316,8 +318,7 @@ export default function ForgeKeyWallet() {
             handleAddAddress={handleImportKeystoreAddress}
             validateKeystorePassword={validateKeystorePassword}
             handleBackClick={nav.goBack}
-          />,
-          'import-keystore'
+          />
         );
 
       default:
@@ -326,7 +327,7 @@ export default function ForgeKeyWallet() {
   };
 
   return (
-    <main className="bg-[rgba(18,18,18,0.7)] backdrop-blur-md backdrop-filter bg-gradient-to-br from-purple-900/20 to-pink-900/20 text-foreground shadow-lg rounded-lg overflow-hidden flex flex-col w-[450px] h-[450px] border border-white/5">
+    <main className="bg-[#0d0f1a] text-foreground shadow-2xl rounded-md overflow-hidden flex flex-col w-[350px] h-[400px] border border-white/5">
       <Header />
       <ScrollArea className="flex-grow">
         <RouteErrorBoundary>{renderRouterView()}</RouteErrorBoundary>
@@ -344,14 +345,6 @@ export default function ForgeKeyWallet() {
         handlePasswordSubmit={handlePasswordSubmit}
         privateKey={privateKey}
         privateKeyError={privateKeyError}
-        password={password}
-        setPassword={setPassword}
-      />
-      <ImportOptionsDialog
-        isOpen={isImportOptionsOpen}
-        setIsOpen={setIsImportOptionsOpen}
-        onImportPrivateKey={handleImportPrivateKey}
-        onImportKeystore={handleShowKeystoreSelect}
       />
     </main>
   );
