@@ -132,7 +132,7 @@ export const walletApi = {
         return result;
       });
     } finally {
-      // Explicitly zeroize the password after use
+      // Always zeroize the password after use for security
       password.zeroize();
     }
   },
