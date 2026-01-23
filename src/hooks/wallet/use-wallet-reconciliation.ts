@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Keystore } from '@/types/address';
 import { useWalletSync } from './use-wallet-sync';
 import { useWalletStore } from '@/stores/wallet-store';
+import { useNavigation } from '@/hooks/router/use-navigation';
+import { ROUTES } from '@/router/types';
 
 /**
  * Hook for reconciling wallet data with the backend
@@ -11,6 +13,8 @@ export function useWalletReconciliation() {
   const { reconcileWallets } = useWalletSync();
   const keystores = useWalletStore((state) => state.keystores);
   const setKeystores = useWalletStore((state) => state.setKeystores);
+  const nav = useNavigation();
+  const hasReconciled = useRef(false);
 
   useEffect(() => {
     const reconcileWalletsFromStorage = async () => {
@@ -21,6 +25,18 @@ export function useWalletReconciliation() {
 
         const reconciledKeystores = await reconcileWallets(storedKeystores);
         setKeystores(reconciledKeystores);
+
+        // Auto-navigate to onboarding if no keystores exist
+        // Only on initial reconciliation and when on keystore list route
+        if (
+          !hasReconciled.current &&
+          reconciledKeystores.length === 0 &&
+          nav.currentRoute.name === ROUTES.KEYSTORE_LIST
+        ) {
+          nav.navigate({ name: ROUTES.ONBOARDING_WELCOME });
+        }
+
+        hasReconciled.current = true;
       } catch (error) {
         console.error('Failed to reconcile wallets:', error);
       }
