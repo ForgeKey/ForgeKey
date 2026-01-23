@@ -83,7 +83,6 @@ export default function ForgeKeyWallet() {
   // Zustand store selectors
   const keystores = useWalletStore((state) => state.keystores);
   const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
-  const addAddressStep = useWalletStore((state) => state.addAddressStep);
   const newAddress = useWalletStore((state) => state.newAddress);
   const vanityOptions = useWalletStore((state) => state.vanityOptions);
   const isAddingGroup = useWalletStore((state) => state.isAddingGroup);
@@ -227,7 +226,6 @@ export default function ForgeKeyWallet() {
             renderAddAddressContent={() => null}
             handleViewPrivateKey={handleViewPrivateKey}
             handleDeleteAddress={handleDeleteAddress}
-            addAddressStep={addAddressStep}
           />
         );
 

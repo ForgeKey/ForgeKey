@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Check, Copy, KeyRound, LockIcon, AlertTriangle } from 'lucide-react';
 import { ZeroizedString } from '@/lib/zeroized-string';
 import { useZeroize } from '@/contexts/zeroize-context';
@@ -38,30 +38,26 @@ export const PasswordDialog = ({
   const showPrivateKeyError = privateKeyError.length > 0;
 
   const [showCopySuccess, setShowCopySuccess] = useState(false);
-  const [maskedPrivateKey, setMaskedPrivateKey] = useState('');
 
-  // When the private key changes, store a masked version for display
-  useEffect(() => {
+  // Derive masked private key from privateKey prop
+  const maskedPrivateKey = useMemo(() => {
     if (privateKey) {
-      privateKey.use((rawPrivateKey) => {
-        setMaskedPrivateKey(
-          `${rawPrivateKey.slice(0, 12)}...${rawPrivateKey.slice(-12)}`
-        );
-      });
-    } else {
-      setMaskedPrivateKey('');
+      return privateKey.use((rawPrivateKey) =>
+        `${rawPrivateKey.slice(0, 12)}...${rawPrivateKey.slice(-12)}`
+      );
     }
+    return '';
   }, [privateKey]);
 
-  // Clean up when dialog closes
-  useEffect(() => {
-    if (!isOpen) {
+  // Reset state when dialog closes
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       setShowCopySuccess(false);
-      setMaskedPrivateKey('');
       setPasswordInput('');
       setHasSubmitted(false);
     }
-  }, [isOpen]);
+    setIsOpen(open);
+  };
 
   const handleCopy = async () => {
     if (privateKey) {
@@ -99,7 +95,7 @@ export const PasswordDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-xs">
         <>
           <DialogHeader className="space-y-2">

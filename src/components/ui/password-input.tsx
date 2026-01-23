@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import {
   validatePassword,
@@ -25,21 +25,12 @@ export function PasswordInput({
   className = '',
 }: PasswordInputProps) {
   const { createZeroizedString } = useZeroize();
-  const [validation, setValidation] = useState<PasswordValidationResult>({
-    isValid: false,
-    score: 0,
-  });
 
-  useEffect(() => {
+  const validation: PasswordValidationResult = useMemo(() => {
     if (value) {
-      const result = validatePassword(value.getValue());
-      setValidation(result);
-    } else {
-      setValidation({
-        isValid: false,
-        score: 0,
-      });
+      return validatePassword(value.getValue());
     }
+    return { isValid: false, score: 0 };
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
