@@ -43,6 +43,9 @@ export function PasswordInput({
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Zeroize the old password before creating a new one
+    value?.zeroize();
+
     if (e.target.value) {
       onChange(createZeroizedString(e.target.value));
     } else {

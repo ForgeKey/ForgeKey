@@ -9,8 +9,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { Check, KeyRound, LockIcon } from 'lucide-react';
+import { Check, Copy, KeyRound, LockIcon, AlertTriangle } from 'lucide-react';
 import { ZeroizedString } from '@/lib/zeroized-string';
+import { useZeroize } from '@/contexts/zeroize-context';
 
 interface PasswordDialogProps {
   isOpen: boolean;
@@ -18,8 +19,6 @@ interface PasswordDialogProps {
   handlePasswordSubmit: (password: ZeroizedString | null) => void;
   privateKey: ZeroizedString | null;
   privateKeyError: string;
-  password: ZeroizedString | null;
-  setPassword: (password: string | null) => void;
 }
 
 export const PasswordDialog = ({
@@ -28,22 +27,25 @@ export const PasswordDialog = ({
   handlePasswordSubmit,
   privateKey,
   privateKeyError,
-  password,
-  setPassword,
 }: PasswordDialogProps) => {
-  const isPrivateKeyRevealed = privateKey !== null && password !== null;
+  const { createZeroizedString } = useZeroize();
+
+  // Local state for password input - not a ZeroizedString until submission
+  const [passwordInput, setPasswordInput] = useState('');
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  const isPrivateKeyRevealed = privateKey !== null && hasSubmitted;
   const showPrivateKeyError = privateKeyError.length > 0;
 
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const [maskedPrivateKey, setMaskedPrivateKey] = useState('');
 
-  // When the private key changes, update the masked version
+  // When the private key changes, store a masked version for display
   useEffect(() => {
     if (privateKey) {
-      // Use the secure private key wrapper to get a masked version
       privateKey.use((rawPrivateKey) => {
         setMaskedPrivateKey(
-          `${rawPrivateKey.slice(0, 10)}...${rawPrivateKey.slice(-10)}`
+          `${rawPrivateKey.slice(0, 12)}...${rawPrivateKey.slice(-12)}`
         );
       });
     } else {
@@ -56,6 +58,8 @@ export const PasswordDialog = ({
     if (!isOpen) {
       setShowCopySuccess(false);
       setMaskedPrivateKey('');
+      setPasswordInput('');
+      setHasSubmitted(false);
     }
   }, [isOpen]);
 
@@ -73,92 +77,102 @@ export const PasswordDialog = ({
 
   const handleClose = () => {
     setIsOpen(false);
-    setPassword(null);
+    setPasswordInput('');
+    setHasSubmitted(false);
     privateKey?.zeroize();
   };
 
+  const handleSubmit = () => {
+    if (!passwordInput) return;
+
+    // Create ZeroizedString only at submission time
+    const securePassword = createZeroizedString(passwordInput);
+    // Clear the plain text password from local state immediately
+    setPasswordInput('');
+    setHasSubmitted(true);
+    // Pass to handler - it will be zeroized after API call
+    handlePasswordSubmit(securePassword);
+  };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      setPassword(e.target.value);
-    } else {
-      setPassword(null);
-    }
+    setPasswordInput(e.target.value);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-xs">
         <>
-          <DialogHeader className="space-y-3">
-            <div className="mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center mb-2">
+          <DialogHeader className="space-y-2">
+            <div className="mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center mb-1">
               {isPrivateKeyRevealed ? (
-                <KeyRound className="h-6 w-6" />
+                <KeyRound className="h-4 w-4" />
               ) : (
-                <LockIcon className="h-6 w-6" />
+                <LockIcon className="h-4 w-4" />
               )}
             </div>
-            <DialogTitle className="text-center">
-              {isPrivateKeyRevealed ? 'Private Key' : 'Reveal Private Key'}
+            <DialogTitle className="text-center text-base">
+              {isPrivateKeyRevealed ? 'Private key' : 'Reveal Private Key'}
             </DialogTitle>
             {!isPrivateKeyRevealed && (
-              <DialogDescription className="text-center">
-                Enter your password to view the private key
+              <DialogDescription className="text-center text-xs">
+                Enter your password
               </DialogDescription>
             )}
           </DialogHeader>
 
           {!isPrivateKeyRevealed && (
-            <div className="py-4">
-              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
-                <Input
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password?.getValue() || ''}
-                  onChange={handlePasswordChange}
-                  className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
-                />
-                {showPrivateKeyError && (
-                  <p className="text-red-400 text-sm mt-2">{privateKeyError}</p>
-                )}
-              </div>
+            <div className="py-2">
+              <label className="block text-xs font-medium text-gray-400 mb-1.5">Enter your password</label>
+              <Input
+                type="password"
+                placeholder=""
+                value={passwordInput}
+                onChange={handlePasswordChange}
+                className="h-9 bg-white/10 text-white"
+              />
+              {showPrivateKeyError && (
+                <p className="text-red-400 text-xs mt-2">{privateKeyError}</p>
+              )}
             </div>
           )}
 
           {isPrivateKeyRevealed && (
-            <div className="py-4">
-              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
-                <p className="text-sm text-gray-300 mb-2">Private Key:</p>
-                <div className="flex flex-col gap-3">
-                  <p className="text-sm text-white bg-white/10 p-3 rounded-md font-mono break-all">
-                    {maskedPrivateKey}
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={handleCopy}
-                    className="w-full relative flex justify-center items-center bg-white/10 hover:bg-white/20 text-white border-white/10"
-                  >
-                    {showCopySuccess ? (
-                      <>
-                        <Check className="w-4 h-4 text-green-400 mr-2" />
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      'Copy Private Key'
-                    )}
-                  </Button>
-                </div>
+            <div className="space-y-3">
+              {/* Private key display with copy button */}
+              <div className="flex items-center gap-2 bg-white/5 p-3 rounded-lg border border-white/10">
+                <p className="flex-1 text-xs text-white/90 font-mono break-all">
+                  {maskedPrivateKey}
+                </p>
+                <button
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
+                  title="Copy full key to clipboard"
+                >
+                  {showCopySuccess ? (
+                    <Check className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-white/50 hover:text-white" />
+                  )}
+                </button>
+              </div>
+
+              {/* Security warning */}
+              <div className="flex items-start gap-2 text-[10px] text-amber-400/80">
+                <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <span>Never share your private key. Anyone with it has full control of your wallet.</span>
               </div>
             </div>
           )}
 
-          <DialogFooter className="mt-2">
+          <DialogFooter className="mt-1">
             <Button
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
+              className="w-full h-9"
               onClick={() =>
                 isPrivateKeyRevealed
                   ? handleClose()
-                  : handlePasswordSubmit(password)
+                  : handleSubmit()
               }
+              disabled={!isPrivateKeyRevealed && !passwordInput}
             >
               {isPrivateKeyRevealed ? 'Close' : 'View Private Key'}
             </Button>

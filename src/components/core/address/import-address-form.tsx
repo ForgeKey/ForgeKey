@@ -36,6 +36,18 @@ export function ImportAddressForm({
     }
   };
 
+  const handlePrivateKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Zeroize the old private key before creating a new one
+    newAddress.privateKey?.zeroize();
+
+    setNewAddress({
+      ...newAddress,
+      privateKey: e.target.value
+        ? createZeroizedString(e.target.value)
+        : undefined,
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="p-3 flex flex-col h-full min-h-[340px]">
       {/* Back Button */}
@@ -82,13 +94,8 @@ export function ImportAddressForm({
           </label>
           <Input
             placeholder=""
-            value={newAddress.privateKey?.getValue()}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewAddress({
-                ...newAddress,
-                privateKey: createZeroizedString(e.target.value),
-              })
-            }
+            value={newAddress.privateKey?.getValue() ?? ''}
+            onChange={handlePrivateKeyChange}
             className="bg-white/90 text-gray-900 placeholder:text-gray-400 border-0 h-9 rounded-md text-sm"
           />
           <p className="text-xs text-white/50 mt-1">

@@ -125,18 +125,24 @@ export const useWalletStore = create<WalletStore>()(
         setAddAddressStep: (value) =>
           set({ addAddressStep: value }, false, 'setAddAddressStep'),
 
-        setNewAddress: (value) =>
-          set(
-            (state) => {
-              const newValue =
-                typeof value === 'function'
-                  ? value(state.newAddress as Address)
-                  : value;
-              state.newAddress = newValue as Address;
-            },
-            false,
-            'setNewAddress'
-          ),
+        setNewAddress: (value) => {
+          const currentAddress = get().newAddress;
+          const newValue =
+            typeof value === 'function'
+              ? value(currentAddress as Address)
+              : value;
+
+          // Zeroize when sensitive data is being cleared (set to undefined/null).
+          // When replacing with a new value, the caller zeroizes the old value first.
+          if (currentAddress.privateKey && !newValue.privateKey) {
+            currentAddress.privateKey.zeroize();
+          }
+          if (currentAddress.password && !newValue.password) {
+            currentAddress.password.zeroize();
+          }
+
+          set({ newAddress: newValue as Address }, false, 'setNewAddress');
+        },
 
         setVanityOptions: (value) =>
           set(
@@ -255,7 +261,12 @@ export const useWalletStore = create<WalletStore>()(
           ),
 
         // Utility actions
-        resetAddressForm: () =>
+        resetAddressForm: () => {
+          const currentAddress = get().newAddress;
+          // Zeroize sensitive data before resetting
+          currentAddress.privateKey?.zeroize();
+          currentAddress.password?.zeroize();
+
           set(
             {
               newAddress: { label: '', address: '', privateKey: undefined },
@@ -269,7 +280,8 @@ export const useWalletStore = create<WalletStore>()(
             },
             false,
             'resetAddressForm'
-          ),
+          );
+        },
       })),
       {
         name: 'wallet-storage',

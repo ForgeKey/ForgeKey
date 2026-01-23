@@ -19,6 +19,7 @@ import { useWalletStore } from '@/stores/wallet-store';
  */
 export function useAddressFormCleanup() {
   const nav = useNavigation();
+  const newAddress = useWalletStore((state) => state.newAddress);
   const setNewAddress = useWalletStore((state) => state.setNewAddress);
   const setVanityOptions = useWalletStore((state) => state.setVanityOptions);
 
@@ -34,11 +35,13 @@ export function useAddressFormCleanup() {
     const route = nav.currentRoute.name;
 
     if (!isAddressRoute(route)) {
-      // Clear form data when not on address routes
+      // Zeroize sensitive data before clearing form
+      newAddress.privateKey?.zeroize();
+      newAddress.password?.zeroize();
+
       setNewAddress({
         label: '',
         address: '',
-        privateKey: undefined,
       });
       setVanityOptions({
         starts_with: undefined,
