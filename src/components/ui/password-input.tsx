@@ -57,7 +57,7 @@ export function PasswordInput({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <Input
         type="password"
         placeholder={placeholder}
@@ -66,7 +66,7 @@ export function PasswordInput({
         className={className}
       />
       {showRequirements && value && value.getValue().length > 0 && (
-        <div className="text-sm space-y-1">
+        <div className="text-xs space-y-1">
           <div className="flex items-center justify-between">
             <p className="text-gray-300">Password strength:</p>
             <p
@@ -78,7 +78,7 @@ export function PasswordInput({
           </div>
           <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-300 ease-in-out`}
+              className={`h-full transition-all duration-300 ease-in-out rounded-full`}
               style={{
                 width: getProgressWidth(validation.score),
                 backgroundColor: getColorHex(validation.score),
