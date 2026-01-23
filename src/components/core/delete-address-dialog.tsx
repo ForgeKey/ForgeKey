@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Address } from '@/types/address';
-import { AlertTriangle } from 'lucide-react';
 
 interface DeleteAddressDialogProps {
   isOpen: boolean;
@@ -25,21 +24,24 @@ export const DeleteAddressDialog = ({
 }: DeleteAddressDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader className="space-y-3">
-          <div className="mx-auto bg-red-500/20 text-red-400 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-2">
-            <AlertTriangle className="h-6 w-6" />
-          </div>
-          <DialogTitle className="text-center">Delete Keystore</DialogTitle>
-          <DialogDescription className="text-center">
-            This action cannot be undone
+      <DialogContent className="max-w-xs" hideCloseButton>
+        <DialogHeader className="space-y-1">
+          <DialogTitle className="text-center text-base">Delete address</DialogTitle>
+          <DialogDescription className="text-center text-xs">
+            You are going to delete this keystore. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex flex-col space-y-2 sm:space-y-0">
+        <DialogFooter className="flex flex-row gap-2 mt-2">
           <Button
-            variant="destructive"
-            className="w-full bg-red-500/80 hover:bg-red-500 text-white"
+            variant="outline"
+            className="flex-1 h-8 text-xs"
+            onClick={() => setIsOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="flex-1 h-8 text-xs"
             onClick={() => {
               if (addressToDelete) {
                 onConfirmDelete(addressToDelete);
@@ -47,14 +49,7 @@ export const DeleteAddressDialog = ({
               setIsOpen(false);
             }}
           >
-            Delete
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full text-white bg-white/5 hover:bg-white/10 border-white/10"
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
+            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>

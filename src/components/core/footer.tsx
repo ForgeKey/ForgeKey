@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Keystore } from '@/types/address';
 import { useNavigation, useIsRoute } from '@/hooks/router/use-navigation';
@@ -30,27 +29,37 @@ export const Footer: React.FC<FooterProps> = ({
     setIsAddingGroup(true);
   };
 
+  const handleDeleteWorkspace = () => {
+    // TODO: Implement delete workspace functionality
+    console.log('Delete workspace clicked');
+  };
+
   return (
-    <div className="p-4 relative h-16 flex items-center justify-center">
-      {isKeystoreView &&
-        selectedKeystore &&
-        selectedKeystore.addresses.length > 0 && (
-          <div className="absolute bottom-6 right-6">
-            <Button
-              onClick={handleAddAddressClick}
-              className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 p-0 flex items-center justify-center text-white hover:shadow-xl transition-shadow"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+    <div className="p-3 relative flex items-center justify-center gap-2">
+      {isKeystoreView && selectedKeystore && selectedKeystore.addresses.length > 0 && (
+        <div className="w-full flex gap-2">
+          <Button
+            onClick={handleDeleteWorkspace}
+            variant="outline"
+            className="flex-1 h-9 rounded-md border border-purple-500/50 bg-transparent text-purple-300 hover:bg-purple-500/10 hover:border-purple-500 transition-all text-sm"
+          >
+            Delete Workspace
+          </Button>
+          <Button
+            onClick={handleAddAddressClick}
+            className="flex-1 h-9 rounded-md text-sm"
+          >
+            Add a Keystore
+          </Button>
+        </div>
+      )}
       {isKeystoreList && !isAddingGroup && (
-        <div className="absolute bottom-6 right-6">
+        <div className="w-full">
           <Button
             onClick={handleAddGroupClick}
-            className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 p-0 flex items-center justify-center text-white hover:shadow-xl transition-shadow"
+            className="w-full h-9 rounded-md text-sm"
           >
-            <Plus className="h-6 w-6" />
+            Create a New Workspace
           </Button>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { ChevronLeft, FolderPlus } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,43 +24,53 @@ export const GroupForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 p-2">
-      <div className="relative text-center mb-6 pt-4">
+    <form onSubmit={handleSubmit} className="p-3 flex flex-col h-full min-h-[340px]">
+      {/* Back Button */}
+      <div className="mb-2">
         <Button
           type="button"
           variant="ghost"
           onClick={handleBackClick}
-          className="absolute left-0 top-4 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
+          className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" />
         </Button>
+      </div>
 
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <FolderPlus className="h-8 w-8" />
-        </div>
-        <h2 className="text-lg font-bold text-white">Create New Group</h2>
-        <p className="text-sm text-gray-300 mt-1">
-          A keystore group helps you organize your wallet addresses
+      {/* Header */}
+      <div className="mb-3">
+        <h2 className="text-base font-semibold text-white mb-1">
+          Create a New Workspace
+        </h2>
+        <p className="text-xs text-white/50">
+          A Workspace helps you organize your keystores by project or environment.
         </p>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg border border-white/5">
-        <label className="block text-sm text-gray-300 mb-2">Group Name</label>
+      {/* Form Field */}
+      <div className="flex-1">
+        <label className="block text-xs font-medium text-white mb-1.5">
+          Workspace Name
+        </label>
         <Input
-          placeholder="Enter group name"
+          placeholder=""
           value={newGroupName}
           onChange={(e) => setNewGroupName(e.target.value)}
-          className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+          className="bg-white/90 text-gray-900 placeholder:text-gray-400 border-0 h-9 rounded-md text-sm"
+          autoFocus
         />
       </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
-        disabled={!newGroupName.trim()}
-      >
-        Create Group
-      </Button>
+      {/* Submit Button - fixed at bottom */}
+      <div className="pt-3">
+        <Button
+          type="submit"
+          disabled={!newGroupName.trim()}
+          className="w-full h-9 text-sm font-medium rounded-md"
+        >
+          Create a New Workspace
+        </Button>
+      </div>
     </form>
   );
 };
