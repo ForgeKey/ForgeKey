@@ -1,101 +1,89 @@
 import { Button } from '@/components/ui/button';
-import { Key, Sparkles, Download, PlusCircle, ChevronLeft } from 'lucide-react';
+import { Key, Sparkles, Download, ArrowLeft } from 'lucide-react';
 
 type SelectAddressTypeProps = {
-  setAddAddressStep: (step: 'select' | 'new' | 'vanity' | 'import') => void;
-  onImportClick?: () => void;
+  setAddAddressStep: (step: 'select' | 'new' | 'vanity' | 'import-options') => void;
   handleBackClick?: () => void;
 };
 
 export function SelectAddressType({
   setAddAddressStep,
-  onImportClick,
   handleBackClick,
 }: SelectAddressTypeProps) {
-  const handleImportClick = () => {
-    if (onImportClick) {
-      onImportClick();
-    } else {
-      setAddAddressStep('import');
-    }
-  };
 
   return (
-    <div className="space-y-3 px-1 py-2">
-      <div className="relative text-center mb-2">
-        {handleBackClick && (
+    <div className="p-3 flex flex-col h-full min-h-[340px]">
+      {/* Back Button */}
+      {handleBackClick && (
+        <div className="mb-1">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBackClick}
-            className="absolute left-0 top-0 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
+            className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
-        )}
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-          <PlusCircle className="h-5 w-5" />
         </div>
-        <h2 className="text-lg font-bold text-white">Add New Keystore</h2>
-        <p className="text-sm text-gray-300 mt-0.5 mb-1">
+      )}
+
+      {/* Header */}
+      <div className="mb-3">
+        <h2 className="text-base font-semibold text-white mb-1">
+          Add New Keystore
+        </h2>
+        <p className="text-xs text-white/50">
           Choose how you want to create or import your keystore
         </p>
       </div>
 
-      <div className="space-y-2">
+      {/* Options Grid */}
+      <div className="space-y-3 flex-1">
         {/* First row with Vanity and Import */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/5 p-2 hover:border-purple-500/20 transition-colors">
-            <Button
-              variant="ghost"
-              className="flex flex-col items-center justify-center h-16 w-full space-y-1 text-white bg-transparent hover:bg-white/10 hover:text-white transition-all rounded-lg group"
-              onClick={() => setAddAddressStep('vanity')}
-            >
-              <div className="bg-pink-500/20 p-1.5 rounded-full group-hover:bg-pink-500/30 transition-colors">
-                <Sparkles className="h-4 w-4 text-pink-400" />
-              </div>
-              <span className="font-medium">Vanity Address</span>
-            </Button>
-            <p className="text-sm text-gray-400 text-center mt-0.5 px-1 leading-tight">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center justify-center h-28 bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] hover:bg-white/[0.05] transition-all p-3"
+            onClick={() => setAddAddressStep('vanity')}
+          >
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-full mb-2">
+              <Sparkles className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-medium text-sm text-white mb-1">Vanity Address</span>
+            <p className="text-[10px] text-white/50">
               Generate custom patterns
             </p>
-          </div>
+          </Button>
 
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/5 p-2 hover:border-blue-500/20 transition-colors">
-            <Button
-              variant="ghost"
-              className="flex flex-col items-center justify-center h-16 w-full space-y-1 text-white bg-transparent hover:bg-white/10 hover:text-white transition-all rounded-lg group"
-              onClick={handleImportClick}
-            >
-              <div className="bg-blue-500/20 p-1.5 rounded-full group-hover:bg-blue-500/30 transition-colors">
-                <Download className="h-4 w-4 text-blue-400" />
-              </div>
-              <span className="font-medium">Import</span>
-            </Button>
-            <p className="text-sm text-gray-400 text-center mt-0.5 px-1 leading-tight">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center justify-center h-28 bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] hover:bg-white/[0.05] transition-all p-3"
+            onClick={() => setAddAddressStep('import-options')}
+          >
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-full mb-2">
+              <Download className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-medium text-sm text-white mb-1">Import</span>
+            <p className="text-[10px] text-white/50">
               Import existing address
             </p>
-          </div>
+          </Button>
         </div>
 
         {/* Second row with Generate New */}
-        <div className="grid grid-cols-1 gap-3">
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/5 p-2 hover:border-purple-500/20 transition-colors">
-            <Button
-              variant="ghost"
-              className="flex flex-col items-center justify-center h-16 w-full space-y-1 text-white bg-transparent hover:bg-white/10 hover:text-white transition-all rounded-lg group"
-              onClick={() => setAddAddressStep('new')}
-            >
-              <div className="bg-purple-500/20 p-1.5 rounded-full group-hover:bg-purple-500/30 transition-colors">
-                <Key className="h-4 w-4 text-purple-400" />
-              </div>
-              <span className="font-medium">Generate New</span>
-            </Button>
-            <p className="text-sm text-gray-400 text-center mt-0.5 px-1 leading-tight">
-              Create a new Ethereum address
-            </p>
+        <Button
+          variant="ghost"
+          className="flex flex-col items-center justify-center h-28 w-full bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] hover:bg-white/[0.05] transition-all p-3"
+          onClick={() => setAddAddressStep('new')}
+        >
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-full mb-2">
+            <Key className="h-4 w-4 text-white" />
           </div>
-        </div>
+          <span className="font-medium text-sm text-white mb-1">Generate New</span>
+          <p className="text-[10px] text-white/50">
+            Create a new Ethereum address
+          </p>
+        </Button>
       </div>
     </div>
   );

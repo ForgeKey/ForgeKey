@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AddressList } from './address-list';
 import { Address, Keystore } from '@/types/address';
@@ -10,7 +10,6 @@ interface KeystoreViewProps {
   renderAddAddressContent: () => React.ReactNode;
   handleViewPrivateKey: (address: Address) => void;
   handleDeleteAddress: (address: Address) => void;
-  addAddressStep?: string;
 }
 
 export const KeystoreView: React.FC<KeystoreViewProps> = ({
@@ -20,51 +19,32 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   renderAddAddressContent,
   handleViewPrivateKey,
   handleDeleteAddress,
-  addAddressStep,
 }) => {
   const showAddAddressComponent =
     isAddingAddress || selectedKeystore.addresses.length === 0;
 
-  const getTitle = () => {
-    if (!showAddAddressComponent) {
-      return selectedKeystore.name;
-    }
-
-    if (
-      addAddressStep === 'select-keystore' ||
-      addAddressStep === 'import-keystore'
-    ) {
-      return 'Select Keystore';
-    }
-
-    return '';
-  };
-
   return (
-    <div className="p-4">
-      {/* Only show header when viewing keystore or NOT at selection/creation screens */}
-      {(!showAddAddressComponent ||
-        (addAddressStep !== 'select' &&
-          addAddressStep !== 'new' &&
-          addAddressStep !== 'vanity' &&
-          addAddressStep !== 'import' &&
-          addAddressStep !== 'select-keystore' &&
-          addAddressStep !== 'import-keystore' &&
-          showAddAddressComponent)) && (
-        <div className="flex items-center mb-6">
-          <Button
-            variant="ghost"
-            onClick={handleBackClick}
-            className="p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <span className="text-md ml-3 text-white font-medium flex items-center">
-            {getTitle()}
-          </span>
-        </div>
+    <div className="flex flex-col h-full">
+      {/* Back button and workspace title */}
+      {!showAddAddressComponent && (
+        <>
+          <div className="flex items-center mb-2 px-3 pt-2">
+            <Button
+              variant="ghost"
+              onClick={handleBackClick}
+              className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </div>
+          <h1 className="text-base font-bold text-white mb-2 px-3">
+            {selectedKeystore.name}
+          </h1>
+        </>
       )}
-      <div>
+
+
+      <div className="flex-1">
         {showAddAddressComponent ? (
           renderAddAddressContent()
         ) : (

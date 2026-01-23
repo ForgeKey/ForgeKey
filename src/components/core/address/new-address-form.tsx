@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Address } from '@/types/address';
 import { validatePassword } from '@/lib/password-validation';
-import { ChevronLeft, Key } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 type NewAddressFormProps = {
   newAddress: Address;
@@ -30,47 +30,47 @@ export function NewAddressForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="px-1 py-1">
+    <form onSubmit={handleSubmit} className="p-3 flex flex-col h-full min-h-[340px]">
+      {/* Back Button */}
       {handleBackClick && (
-        <div className="relative mb-2">
+        <div className="mb-1">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBackClick}
-            className="absolute left-0 top-0 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
+            className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
       )}
 
-      <div className="text-center mb-3">
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
-          <Key className="h-6 w-6" />
-        </div>
-        <h2 className="text-base font-bold text-white">Generate New Address</h2>
-        <p className="text-xs text-gray-300 mt-0.5 mb-2">
+      {/* Header */}
+      <div className="mb-3">
+        <h2 className="text-base font-semibold text-white mb-1">Generate New Address</h2>
+        <p className="text-xs text-white/50">
           Create a new Ethereum address with a secure password
         </p>
       </div>
 
-      <div className="space-y-3">
-        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/5">
-          <label className="block text-xs text-gray-300 mb-1">
+      {/* Form Fields */}
+      <div className="space-y-3 flex-1">
+        <div>
+          <label className="block text-xs font-medium text-white mb-1.5">
             Address Label
           </label>
           <Input
-            placeholder="Enter a memorable name"
+            placeholder=""
             value={newAddress.label}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewAddress({ ...newAddress, label: e.target.value })
             }
-            className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500 h-8 text-sm"
+            className="bg-white/90 text-gray-900 placeholder:text-gray-400 border-0 h-9 rounded-md text-sm"
           />
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/5">
-          <label className="block text-xs text-gray-300 mb-1">
+        <div>
+          <label className="block text-xs font-medium text-white mb-1.5">
             Secure Password
           </label>
           <PasswordInput
@@ -78,24 +78,27 @@ export function NewAddressForm({
             onChange={(password) =>
               setNewAddress({ ...newAddress, password: password || undefined })
             }
-            placeholder="Create a strong password"
-            className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500 h-8 text-sm"
+            placeholder=""
+            className="bg-white/90 text-gray-900 placeholder:text-gray-400 border-0 h-9 rounded-md text-sm"
           />
           {newAddress.password && !isPasswordValid && (
-            <p className="text-xs text-red-400 mt-1 text-[10px] leading-tight">
+            <p className="text-xs text-red-400 mt-1">
               Password must be at least 8 characters with mixed characters
             </p>
           )}
         </div>
       </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-sm h-9 mt-2"
-        disabled={!newAddress.label || !newAddress.password || !isPasswordValid}
-      >
-        Generate Address
-      </Button>
+      {/* Submit Button - fixed at bottom */}
+      <div className="pt-3">
+        <Button
+          type="submit"
+          className="w-full h-9 text-sm font-medium rounded-md"
+          disabled={!newAddress.label || !newAddress.password || !isPasswordValid}
+        >
+          Generate Address
+        </Button>
+      </div>
     </form>
   );
 }

@@ -1,7 +1,7 @@
 export const Header = () => {
   return (
-    <div className="h-[60px] flex justify-between items-center px-4">
-      <h1 className="text-xl text-white font-bold">ForgeKey</h1>
+    <div className="h-10 flex justify-between items-center px-3">
+      <h1 className="text-sm text-white font-semibold">ForgeKey</h1>
     </div>
   );
 };
