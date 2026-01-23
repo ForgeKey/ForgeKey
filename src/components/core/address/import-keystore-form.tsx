@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PasswordInput } from '@/components/ui/password-input';
 import { Address } from '@/types/address';
 import { ZeroizedString } from '@/lib/zeroized-string';
-import { ChevronLeft, FolderOpen } from 'lucide-react';
+import { useZeroize } from '@/contexts/zeroize-context';
+import { ArrowLeft } from 'lucide-react';
 
 type ImportKeystoreFormProps = {
   newAddress: Address;
@@ -27,11 +27,14 @@ export function ImportKeystoreForm({
   validateKeystorePassword,
   handleBackClick,
 }: ImportKeystoreFormProps) {
+  const { createZeroizedString } = useZeroize();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Local state for password input - not a ZeroizedString until submission
+  const [passwordInput, setPasswordInput] = useState('');
 
   const validateKeystore = async () => {
-    if (!newAddress.label || !newAddress.password) {
+    if (!newAddress.label || !passwordInput) {
       setError('Please provide a password');
       return false;
     }
@@ -39,21 +42,34 @@ export function ImportKeystoreForm({
     setLoading(true);
     setError(null);
 
+    // Create two ZeroizedStrings - one for validation (will be zeroized by API),
+    // one to save for the actual import if validation succeeds
+    const securePasswordForValidation = createZeroizedString(passwordInput);
+    const securePasswordForImport = createZeroizedString(passwordInput);
+    // Clear the plain text password from local state immediately
+    setPasswordInput('');
+
     try {
       // Try to get the address from the keystore to validate the password
       const isValid = await validateKeystorePassword(
         newAddress.label,
-        newAddress.password
+        securePasswordForValidation
       );
 
       if (!isValid) {
+        // Clean up the import password since we won't use it
+        securePasswordForImport.zeroize();
         setError('Invalid password or keystore');
         return false;
       }
 
+      // Store the password in newAddress for the actual import
+      setNewAddress({ ...newAddress, password: securePasswordForImport });
       return true;
     } catch (err) {
       console.error('Error validating keystore:', err);
+      // Clean up the import password since we won't use it
+      securePasswordForImport.zeroize();
       setError('Invalid password or keystore');
       return false;
     } finally {
@@ -70,78 +86,64 @@ export function ImportKeystoreForm({
   };
 
   return (
-    <form onSubmit={handleImport} className="px-1 py-1">
+    <form onSubmit={handleImport} className="p-3 flex flex-col h-full">
+      {/* Back Button */}
       {handleBackClick && (
-        <div className="relative mb-2">
+        <div className="mb-1">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBackClick}
-            className="absolute left-0 top-0 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
+            className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
       )}
 
-      <div className="text-center mb-3">
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-          <FolderOpen className="h-5 w-5" />
-        </div>
-        <h2 className="text-lg font-bold text-white">Import Keystore File</h2>
-        <p className="text-sm text-gray-300 mt-0.5 mb-1">
-          Import an existing encrypted keystore file
+      {/* Header */}
+      <div className="mb-3">
+        <h2 className="text-base font-semibold text-white mb-1">Import your keystore file</h2>
+        <p className="text-xs text-white/50">
+          Enter your password
         </p>
       </div>
 
-      <div className="space-y-3">
-        <div className="bg-white/5 backdrop-blur-sm p-2 rounded-lg border border-white/5">
-          <label className="block text-sm text-gray-300 mb-1">
-            Keystore File
-          </label>
-          <Input
-            placeholder="Keystore file path"
-            value={newAddress.label}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewAddress({ ...newAddress, label: e.target.value })
-            }
-            className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500 h-9 text-sm"
-            disabled={loading}
-          />
-          <p className="text-xs text-gray-400 mt-1">
-            Path to the JSON keystore file
-          </p>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-sm p-2 rounded-lg border border-white/5">
-          <label className="block text-sm text-gray-300 mb-1">
+      {/* Form Fields */}
+      <div className="space-y-2">
+        <div>
+          <label className="block text-xs font-medium text-white mb-1.5">
             Keystore Password
           </label>
-          <PasswordInput
-            value={newAddress.password || null}
-            onChange={(password) =>
-              setNewAddress({ ...newAddress, password: password || undefined })
-            }
-            placeholder="Enter keystore password"
-            className="bg-white/10 border-white/10 text-white placeholder:text-gray-400 focus-visible:ring-purple-500 h-9 text-sm"
-            showRequirements={false}
+          <Input
+            type="password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            placeholder=""
+            className="bg-white/10 text-white placeholder:text-white/40 border border-white/10 h-9 rounded-md text-sm"
           />
         </div>
 
         {error && (
-          <div className="text-red-400 text-sm bg-red-500/10 p-2 rounded-md">
+          <p className="text-xs text-red-400 mt-1">
             {error}
-          </div>
+          </p>
         )}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-sm h-9"
-        disabled={!newAddress.label || !newAddress.password || loading}
-      >
-        {loading ? 'Importing...' : 'Import Keystore'}
-      </Button>
+      {/* Spacer to push button to bottom */}
+      <div className="flex-1" />
+
+      {/* Submit Button - fixed at bottom */}
+      <div className="pt-3 pb-1">
+        <Button
+          type="submit"
+          className="w-full h-9 text-sm font-medium rounded-md"
+          disabled={!newAddress.label || !passwordInput || loading}
+        >
+          {loading ? 'Importing...' : 'Import Keystore'}
+        </Button>
+      </div>
     </form>
   );
 }

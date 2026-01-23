@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronLeft, FolderOpen } from 'lucide-react';
+import { ArrowLeft, ChevronRight } from 'lucide-react';
 
 interface KeystoreSelectProps {
   onKeystoreSelect: (keystoreName: string) => void;
@@ -62,54 +62,52 @@ export function KeystoreSelect({
   };
 
   return (
-    <div className="px-1 py-1">
+    <div className="p-3 flex flex-col h-full">
+      {/* Back Button */}
       {handleBackClick && (
-        <div className="relative mb-2">
+        <div className="mb-1">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBackClick}
-            className="absolute left-0 top-0 p-2 text-white bg-white/5 backdrop-blur-sm rounded-full hover:bg-white/10 hover:text-white transition-colors"
+            className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
       )}
 
-      <div className="text-center mb-3">
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-          <FolderOpen className="h-5 w-5" />
-        </div>
-        <h2 className="text-lg font-bold text-white">Select Keystore File</h2>
-        <p className="text-sm text-gray-300 mt-0.5 mb-1">
+      {/* Header */}
+      <div className="mb-3">
+        <h2 className="text-base font-semibold text-white mb-1">Keystore File</h2>
+        <p className="text-xs text-white/50">
           Choose from available keystore files on your system
         </p>
       </div>
 
+      {/* Keystore List */}
       {loading ? (
-        <div className="text-center py-4 text-gray-300">
+        <div className="text-center py-3 text-white/50 text-sm flex-1">
           Loading keystores...
         </div>
       ) : (
-        <div className="bg-white/5 backdrop-blur-sm p-2 rounded-lg border border-white/5">
-          <label className="block text-sm text-gray-300 mb-1">
-            Available Keystores
-          </label>
-          <ScrollArea className="h-[180px] rounded-md border border-white/10 bg-white/10 p-2">
+        <div className="flex-1">
+          <ScrollArea className="h-[200px]">
             {filteredKeystores.length === 0 ? (
-              <div className="text-center text-gray-400 py-4">
+              <div className="text-center text-white/50 py-3 text-sm">
                 No new keystores available
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {filteredKeystores.map((keystore) => (
                   <Button
                     key={keystore}
                     variant="ghost"
-                    className="w-full justify-between text-left font-normal text-white hover:bg-white/10 transition-colors"
+                    className="w-full justify-between text-left font-normal bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.05] rounded-md h-10 px-3 text-sm"
                     onClick={() => onKeystoreSelect(keystore)}
                   >
-                    {keystore}
+                    <span className="truncate">{keystore}</span>
+                    <ChevronRight className="h-4 w-4 text-white/40 flex-shrink-0" />
                   </Button>
                 ))}
               </div>
