@@ -13,20 +13,14 @@ const nextConfig = {
     unoptimized: true,
   },
   // Configure assetPrefix or else the server won't properly resolve your assets.
-  assetPrefix: isProd ? null : `http://${internalHost}:3000`,
+  assetPrefix: isProd ? undefined : `http://${internalHost}:3000`,
 
-  // Add webpack configuration to handle Node.js modules
-  webpack: (config, { isServer }) => {
-    // If client-side (browser), provide empty module for Node.js modules
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-        os: false,
-      };
-    }
-    return config;
+  // Turbopack configuration (Next.js 16+ default bundler)
+  turbopack: {
+    resolveAlias: {
+      // Use the browser-compatible web version of wasm-zeroize
+      'wasm-zeroize': 'wasm-zeroize/web/wasm_zeroize.js',
+    },
   },
 };
 
