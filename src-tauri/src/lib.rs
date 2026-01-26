@@ -1,4 +1,5 @@
 use log::{error, LevelFilter};
+#[cfg(target_os = "macos")]
 use tauri::ActivationPolicy;
 
 use crate::models::Password;
@@ -6,7 +7,10 @@ use crate::models::Password;
 mod commands;
 mod models;
 mod setup;
+#[cfg(target_os = "macos")]
 mod tray;
+#[cfg(target_os = "linux")]
+mod tray_linux;
 mod utils;
 
 // Note: All password handling is done securely in the command implementations.
@@ -63,8 +67,13 @@ pub fn run() {
       remove_keystore
     ])
     .plugin(tauri_plugin_positioner::init())
-    .plugin(tauri_nspanel::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
+    .plugin(tauri_plugin_process::init())
     .setup(|app| {
+      // Initialize NSPanel plugin on macOS
+      #[cfg(target_os = "macos")]
+      app.handle().plugin(tauri_nspanel::init())?;
+
       // Configure logging based on build profile
       let log_level = if cfg!(debug_assertions) {
         LevelFilter::Debug  // More verbose in debug builds
@@ -82,7 +91,7 @@ pub fn run() {
       if let Err(e) = setup::foundry::check_and_install_foundry() {
         error!("Failed to check/install Foundry: {}", e);
       }
-      
+
       #[cfg(target_os = "macos")]
       {
         // Make the Dock icon invisible first
@@ -92,7 +101,13 @@ pub fn run() {
         // Initialize panel for fullscreen support (must be after plugin init)
         tray::init_panel(app.handle());
       }
-    
+
+      #[cfg(target_os = "linux")]
+      {
+        // Initialize system tray for Linux
+        tray_linux::init_system_tray(app.handle())?;
+      }
+
       Ok(())
     })
     .run(tauri::generate_context!())

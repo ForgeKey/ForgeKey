@@ -17,17 +17,19 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2.5", features = [] }
 
 [dependencies]
-tauri = { version = "2.9", features = [
-  "macos-private-api",
-  "tray-icon",
-  "image-png",
-] }
+tauri = { version = "2.9", features = ["macos-private-api", "tray-icon", "image-png"] }
 tauri-plugin-opener = "2.5"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 log = "0.4"
 tauri-plugin-log = "2.7"
 tauri-plugin-positioner = { version = "2.3", features = ["tray-icon"] }
-tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.1" }
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 dirs = "5.0"
 zeroize = "1.7.0"
+
+# macOS-specific dependencies (macos-private-api enables ActivationPolicy)
+[target.'cfg(target_os = "macos")'.dependencies]
+tauri = { version = "2.9", features = ["macos-private-api", "tray-icon", "image-png"] }
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.1" }
