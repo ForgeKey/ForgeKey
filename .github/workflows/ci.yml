@@ -75,7 +75,8 @@ jobs:
         run: pnpm install
 
       - name: Build Tauri app
-        run: pnpm tauri build ${{ matrix.args }}
+        # Use CI config to skip updater artifact signing (no private key in CI)
+        run: pnpm tauri build ${{ matrix.args }} --config src-tauri/tauri.ci.conf.json
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
