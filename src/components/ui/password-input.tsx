@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { motion } from 'motion/react';
 import { Input } from '@/components/ui/input';
 import {
   validatePassword,
@@ -15,6 +16,7 @@ interface PasswordInputProps {
   placeholder?: string;
   showRequirements?: boolean;
   className?: string;
+  variant?: 'default' | 'dark';
 }
 
 export function PasswordInput({
@@ -23,6 +25,7 @@ export function PasswordInput({
   placeholder = 'Password',
   showRequirements = true,
   className = '',
+  variant = 'dark',
 }: PasswordInputProps) {
   const { createZeroizedString } = useZeroize();
 
@@ -34,7 +37,6 @@ export function PasswordInput({
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Zeroize the old password before creating a new one
     value?.zeroize();
 
     if (e.target.value) {
@@ -44,11 +46,12 @@ export function PasswordInput({
     }
   };
 
-  // Create a progress bar width based on the score
-  const getProgressWidth = (score: number) => {
-    const percentage = ((score + 1) / 5) * 100;
+  const progressWidth = useMemo(() => {
+    const percentage = ((validation.score + 1) / 5) * 100;
     return `${percentage}%`;
-  };
+  }, [validation.score]);
+
+  const colorHex = getColorHex(validation.score);
 
   return (
     <div className="space-y-1.5">
@@ -57,27 +60,36 @@ export function PasswordInput({
         placeholder={placeholder}
         value={value?.getValue() || ''}
         onChange={handleChange}
+        variant={variant}
         className={className}
       />
       {showRequirements && value && value.getValue().length > 0 && (
         <div className="text-xs space-y-1">
           <div className="flex items-center justify-between">
             <p className="text-gray-300">Password strength:</p>
-            <p
+            <motion.p
               className="font-medium"
-              style={{ color: getColorHex(validation.score) }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, color: colorHex }}
+              transition={{ duration: 0.2 }}
             >
               {getScoreText(validation.score)}
-            </p>
+            </motion.p>
           </div>
           <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-300 ease-in-out rounded-full`}
-              style={{
-                width: getProgressWidth(validation.score),
-                backgroundColor: getColorHex(validation.score),
+            <motion.div
+              className="h-full rounded-full"
+              initial={{ width: 0 }}
+              animate={{
+                width: progressWidth,
+                backgroundColor: colorHex,
               }}
-            ></div>
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+              }}
+            />
           </div>
         </div>
       )}
