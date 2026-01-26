@@ -7,7 +7,7 @@ set -euo pipefail
 # Installs the ForgeKey menu bar app for managing Foundry keystores.
 # Supports macOS (ARM64, x86_64) and Linux (x86_64, ARM64)
 
-REPO="saeta-eth/ForgeKey"
+REPO="ForgeKey/ForgeKey"
 INSTALL_DIR="${FORGEKEY_INSTALL_DIR:-}"
 VERSION="${FORGEKEY_VERSION:-latest}"
 

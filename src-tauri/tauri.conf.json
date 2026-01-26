@@ -13,7 +13,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM1MUIzRTc2NUM1Mzk2QTgKUldTb2xsTmNkajRieFgxRy9OM2pWLzVrWXNZMm5vaFdJREVTSzh6V1diZzVzMUxBWHdCR1RkdTEK",
       "endpoints": [
-        "https://github.com/saeta-eth/ForgeKey/releases/latest/download/latest.json"
+        "https://github.com/ForgeKey/ForgeKey/releases/latest/download/latest.json"
       ],
       "windows": {
         "installMode": "passive"
