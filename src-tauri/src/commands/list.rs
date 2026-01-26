@@ -1,6 +1,7 @@
-use std::process::{Command, Stdio};
+use std::process::Command;
 use crate::utils::get_cast_binary;
 use crate::models::Password;
+use crate::pty::{run_with_password, PtyConfig};
 use log::error;
 
 pub fn list_wallets() -> Result<Vec<String>, String> {
@@ -44,30 +45,26 @@ pub fn get_wallet_address(keystore_name: &str, password: &str) -> Result<String,
   // Convert the password to our secure Password type
   let password = Password::new(password);
 
-  // Use --password flag since cast wallet address doesn't support CAST_UNSAFE_PASSWORD env var
-  let output = Command::new(&cast_path)
-    .arg("wallet")
-    .arg("address")
-    .arg("--account")
-    .arg(keystore_name)
-    .arg("--password")
-    .arg(password.as_str())
-    .stdin(Stdio::null())
-    .stdout(Stdio::piped())
-    .stderr(Stdio::piped())
-    .output()
-    .map_err(|e| {
-      let err_msg = format!("Failed to execute cast wallet address command: {}", e);
-      error!("{}", err_msg);
-      err_msg
-    })?;
+  // Use PTY-based password input for security (password not visible in process list)
+  let config = PtyConfig::default(); // Single password prompt
+  let result = run_with_password(
+    &cast_path,
+    &["wallet", "address", "--account", keystore_name],
+    &password,
+    &config,
+  ).map_err(|e| {
+    let err_msg = format!("Failed to execute cast wallet address command: {}", e);
+    error!("{}", err_msg);
+    err_msg
+  })?;
 
-  if !output.status.success() {
-    let err_msg = String::from_utf8_lossy(&output.stderr).to_string();
+  if !result.success() {
+    let err_msg = result.output.clone();
     error!("Failed to get wallet address: {}", err_msg);
     return Err(err_msg);
   }
 
-  let address = String::from_utf8_lossy(&output.stdout).trim().to_string();
+  // Parse the address from the output (trim whitespace and any extra characters)
+  let address = result.output.trim().to_string();
   Ok(address)
 }
