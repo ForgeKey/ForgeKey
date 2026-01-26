@@ -6,7 +6,7 @@ use tauri::{
   AppHandle, Manager, Wry,
 };
 use tauri_nspanel::{
-  tauri_panel, CollectionBehavior, PanelLevel, StyleMask, WebviewWindowExt,
+  tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, WebviewWindowExt,
 };
 use tauri_plugin_positioner::WindowExt;
 
@@ -52,10 +52,17 @@ pub fn init_panel(app_handle: &AppHandle<Wry>) {
       .into(),
   );
 
-  // Required: Attach event handler for proper panel behavior
+  // Attach event handler for proper panel behavior
   let handler = MenuBarPanelEventHandler::new();
   handler.window_did_become_key(|_| {});
-  handler.window_did_resign_key(|_| {});
+
+  // Hide panel when it loses key window status (user clicked outside)
+  let handle = app_handle.clone();
+  handler.window_did_resign_key(move |_| {
+    if let Ok(panel) = handle.get_webview_panel("main") {
+      panel.hide();
+    }
+  });
   panel.set_event_handler(Some(handler.as_ref()));
 
   debug!("Converted window to panel for fullscreen support");
@@ -102,12 +109,23 @@ pub fn init_macos_menu_extra(app: &AppHandle<Wry>) -> tauri::Result<()> {
         return;
       };
 
-      if window.is_visible().unwrap_or(false) {
-        let _ = window.hide();
+      // Try to get panel, fall back to window methods if panel not available
+      if let Ok(panel) = app.get_webview_panel("main") {
+        if panel.is_visible() {
+          panel.hide();
+        } else {
+          let _ = window.move_window(tauri_plugin_positioner::Position::TrayBottomCenter);
+          panel.show_and_make_key();
+        }
       } else {
-        let _ = window.move_window(tauri_plugin_positioner::Position::TrayBottomCenter);
-        let _ = window.show();
-        let _ = window.set_focus();
+        // Fallback to window methods
+        if window.is_visible().unwrap_or(false) {
+          let _ = window.hide();
+        } else {
+          let _ = window.move_window(tauri_plugin_positioner::Position::TrayBottomCenter);
+          let _ = window.show();
+          let _ = window.set_focus();
+        }
       }
     })
     .build(app);
