@@ -27,7 +27,7 @@
         "minimizable": false,
         "resizable": false,
         "shadow": false,
-        "visible": true,
+        "visible": false,
         "transparent": true,
         "theme": "Light"
       }

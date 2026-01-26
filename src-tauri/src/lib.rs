@@ -1,5 +1,6 @@
+use log::{error, LevelFilter};
 use tauri::ActivationPolicy;
-use log::LevelFilter;
+
 use crate::models::Password;
 
 mod commands;
@@ -62,6 +63,7 @@ pub fn run() {
       remove_keystore
     ])
     .plugin(tauri_plugin_positioner::init())
+    .plugin(tauri_nspanel::init())
     .setup(|app| {
       // Configure logging based on build profile
       let log_level = if cfg!(debug_assertions) {
@@ -77,16 +79,18 @@ pub fn run() {
           .build(),
       )?;
 
-      // Check and install Foundry during setup
       if let Err(e) = setup::foundry::check_and_install_foundry() {
-        eprintln!("Failed to check/install Foundry: {}", e);
+        error!("Failed to check/install Foundry: {}", e);
       }
       
       #[cfg(target_os = "macos")]
       {
-        tray::init_macos_menu_extra(app.handle())?;
-        // Make the Dock icon invisible
+        // Make the Dock icon invisible first
         app.set_activation_policy(ActivationPolicy::Accessory);
+        // Initialize tray menu
+        tray::init_macos_menu_extra(app.handle())?;
+        // Initialize panel for fullscreen support (must be after plugin init)
+        tray::init_panel(app.handle());
       }
     
       Ok(())
