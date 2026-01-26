@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { FormPage } from '@/components/layout/form-page';
+import { FormField, FormLabel } from '@/components/ui/form-field';
 
 interface GroupFormProps {
   newGroupName: string;
@@ -30,17 +31,15 @@ export const GroupForm = ({
       submitLabel="Create a New Workspace"
       submitDisabled={!newGroupName.trim()}
     >
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Workspace Name
-        </label>
+      <FormField>
+        <FormLabel>Workspace Name</FormLabel>
         <Input
           placeholder="e.g. Development"
           value={newGroupName}
           onChange={(e) => setNewGroupName(e.target.value)}
           autoFocus
         />
-      </div>
+      </FormField>
     </FormPage>
   );
 };

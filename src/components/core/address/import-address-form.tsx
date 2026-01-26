@@ -1,9 +1,11 @@
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormPage } from '@/components/layout/form-page';
+import { FormField, FormLabel, FormHint, FormError } from '@/components/ui/form-field';
 import { Address } from '@/types/address';
 import { useZeroize } from '@/contexts/zeroize-context';
 import { validatePassword } from '@/lib/password-validation';
+import { PASSWORD_VALIDATION_ERROR } from '@/lib/constants';
 
 type ImportAddressFormProps = {
   newAddress: Address;
@@ -61,10 +63,8 @@ export function ImportAddressForm({
         !isPasswordValid
       }
     >
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Address Label
-        </label>
+      <FormField>
+        <FormLabel>Address Label</FormLabel>
         <Input
           placeholder="e.g. My Wallet"
           value={newAddress.label}
@@ -72,26 +72,20 @@ export function ImportAddressForm({
             setNewAddress({ ...newAddress, label: e.target.value })
           }
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Private Key
-        </label>
+      <FormField>
+        <FormLabel>Private Key</FormLabel>
         <Input
           placeholder="0x..."
           value={newAddress.privateKey?.getValue() ?? ''}
           onChange={handlePrivateKeyChange}
         />
-        <p className="text-xs text-white/50 mt-1">
-          Your private key will be encrypted with your password
-        </p>
-      </div>
+        <FormHint>Your private key will be encrypted with your password</FormHint>
+      </FormField>
 
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Secure Password
-        </label>
+      <FormField>
+        <FormLabel>Secure Password</FormLabel>
         <PasswordInput
           value={newAddress.password || null}
           onChange={(password) =>
@@ -100,11 +94,9 @@ export function ImportAddressForm({
           placeholder=""
         />
         {newAddress.password && !isPasswordValid && (
-          <p className="text-xs text-red-400 mt-1">
-            Password must be at least 8 characters with mixed characters
-          </p>
+          <FormError>{PASSWORD_VALIDATION_ERROR}</FormError>
         )}
-      </div>
+      </FormField>
     </FormPage>
   );
 }

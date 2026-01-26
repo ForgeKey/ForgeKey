@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { FormPage } from '@/components/layout/form-page';
+import { FormField, FormLabel, FormError } from '@/components/ui/form-field';
 import { Address } from '@/types/address';
 import { ZeroizedString } from '@/lib/zeroized-string';
 import { useZeroize } from '@/contexts/zeroize-context';
@@ -82,21 +83,16 @@ export function ImportKeystoreForm({
       submitLabel={loading ? 'Importing...' : 'Import Keystore'}
       submitDisabled={!newAddress.label || !passwordInput || loading}
     >
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Keystore Password
-        </label>
+      <FormField>
+        <FormLabel>Keystore Password</FormLabel>
         <Input
           type="password"
           value={passwordInput}
           onChange={(e) => setPasswordInput(e.target.value)}
           placeholder=""
         />
-      </div>
-
-      {error && (
-        <p className="text-xs text-red-400 mt-1">{error}</p>
-      )}
+        {error && <FormError>{error}</FormError>}
+      </FormField>
     </FormPage>
   );
 }

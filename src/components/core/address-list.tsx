@@ -4,6 +4,7 @@ import { KeyRound, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-button';
 import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
+import { AddressDisplay } from '@/components/ui/address-display';
 import { Address } from '@/types/address';
 import { DeleteAddressDialog } from './delete-address-dialog';
 
@@ -36,11 +37,10 @@ export const AddressList: React.FC<AddressListProps> = ({
                 <div className="text-sm font-semibold text-white mb-0.5">
                   {address.label}
                 </div>
-                <div className="text-xs text-white/70 font-mono break-all">
-                  <span className="font-bold text-white">{address.address.slice(0, 6)}</span>
-                  {address.address.slice(6, -5)}
-                  <span className="font-bold text-white">{address.address.slice(-5)}</span>
-                </div>
+                <AddressDisplay
+                  address={address.address}
+                  className="break-all"
+                />
               </div>
               <div className="flex space-x-1.5 flex-shrink-0">
                 <CopyButton value={address.address} />
@@ -48,7 +48,6 @@ export const AddressList: React.FC<AddressListProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => handleViewPrivateKey(address)}
-                  className="rounded-md bg-transparent hover:bg-white/5 transition-all p-1.5 h-8 w-8"
                 >
                   <KeyRound className="h-4 w-4 text-white/70" />
                 </Button>
@@ -56,7 +55,6 @@ export const AddressList: React.FC<AddressListProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDeleteClick(address)}
-                  className="rounded-md bg-transparent hover:bg-white/5 transition-all p-1.5 h-8 w-8"
                 >
                   <Trash2 className="h-4 w-4 text-white/70" />
                 </Button>

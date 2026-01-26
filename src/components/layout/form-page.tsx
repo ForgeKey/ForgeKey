@@ -2,8 +2,9 @@ import { ReactNode } from 'react';
 import { BackButton } from '@/components/ui/back-button';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
+import { PAGE_MIN_HEIGHT } from '@/lib/constants';
 
-interface FormPageProps {
+export interface FormPageProps {
   title: string;
   description?: string;
   onBack?: () => void;
@@ -25,7 +26,7 @@ export function FormPage({
   className = '',
 }: FormPageProps) {
   const content = (
-    <div className={`p-3 flex flex-col h-full min-h-[340px] ${className}`}>
+    <div className={`p-3 flex flex-col h-full ${PAGE_MIN_HEIGHT} ${className}`}>
       {onBack && (
         <div className="mb-1">
           <BackButton onClick={onBack} />

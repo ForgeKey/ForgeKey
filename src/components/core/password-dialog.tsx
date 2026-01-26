@@ -4,10 +4,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
+import { DialogIconBadge } from '@/components/ui/dialog-icon-badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { FormField, FormLabel, FormError } from '@/components/ui/form-field';
 import { useState, useMemo } from 'react';
 import { Check, Copy, KeyRound, LockIcon, AlertTriangle } from 'lucide-react';
 import { ZeroizedString } from '@/lib/zeroized-string';
@@ -99,21 +100,21 @@ export const PasswordDialog = ({
       <DialogContent className="max-w-xs">
         <>
           <DialogHeader className="space-y-2">
-            <div className="mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center mb-1">
+            <DialogIconBadge>
               {isPrivateKeyRevealed ? (
                 <KeyRound className="h-4 w-4" />
               ) : (
                 <LockIcon className="h-4 w-4" />
               )}
-            </div>
+            </DialogIconBadge>
             <DialogTitle className="text-center text-base">
               {isPrivateKeyRevealed ? 'Private key' : 'Reveal Private Key'}
             </DialogTitle>
           </DialogHeader>
 
           {!isPrivateKeyRevealed && (
-            <div className="py-2">
-              <label className="block text-xs font-medium text-gray-400 mb-1.5">Enter your password</label>
+            <FormField className="py-2">
+              <FormLabel>Enter your password</FormLabel>
               <Input
                 type="password"
                 placeholder=""
@@ -122,9 +123,9 @@ export const PasswordDialog = ({
                 variant="dark"
               />
               {showPrivateKeyError && (
-                <p className="text-red-400 text-xs mt-2">{privateKeyError}</p>
+                <FormError>{privateKeyError}</FormError>
               )}
-            </div>
+            </FormField>
           )}
 
           {isPrivateKeyRevealed && (

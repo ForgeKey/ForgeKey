@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { DialogIconBadge } from '@/components/ui/dialog-icon-badge';
 import { Button } from '@/components/ui/button';
 import { Key, FolderOpen, Download } from 'lucide-react';
 
@@ -25,9 +26,9 @@ export function ImportOptionsDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-xs">
         <DialogHeader className="space-y-2">
-          <div className="mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center mb-1">
+          <DialogIconBadge>
             <Download className="h-4 w-4" />
-          </div>
+          </DialogIconBadge>
           <DialogTitle className="text-center text-base">Import Options</DialogTitle>
           <DialogDescription className="text-center text-xs">
             Choose how you want to import your wallet

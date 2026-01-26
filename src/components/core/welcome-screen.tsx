@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { PAGE_MIN_HEIGHT } from '@/lib/constants';
 import { useNavigation } from '@/hooks/router/use-navigation';
 import { ROUTES } from '@/router/types';
 import Image from 'next/image';
@@ -11,7 +12,7 @@ export const WelcomeScreen = () => {
   };
 
   return (
-    <div className="p-3 flex flex-col h-full min-h-[340px]">
+    <div className={`p-3 flex flex-col h-full ${PAGE_MIN_HEIGHT}`}>
       {/* Content - centered */}
       <div className="flex-1 flex flex-col items-center justify-center space-y-4">
         {/* App Icon */}

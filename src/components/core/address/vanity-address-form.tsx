@@ -1,8 +1,10 @@
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormPage } from '@/components/layout/form-page';
+import { FormField, FormLabel, FormError } from '@/components/ui/form-field';
 import { Address, VanityOpts } from '@/types/address';
 import { validatePassword } from '@/lib/password-validation';
+import { PASSWORD_VALIDATION_ERROR } from '@/lib/constants';
 
 type VanityAddressFormProps = {
   vanityOptions: VanityOpts;
@@ -51,10 +53,8 @@ export function VanityAddressForm({
         (!vanityOptions.starts_with && !vanityOptions.ends_with)
       }
     >
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Address Label
-        </label>
+      <FormField>
+        <FormLabel>Address Label</FormLabel>
         <Input
           placeholder="e.g. My Wallet"
           value={newAddress.label}
@@ -62,13 +62,11 @@ export function VanityAddressForm({
             setNewAddress({ ...newAddress, label: e.target.value })
           }
         />
-      </div>
+      </FormField>
 
       <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="block text-xs font-medium text-white mb-1.5">
-            Start With
-          </label>
+        <FormField>
+          <FormLabel>Start With</FormLabel>
           <Input
             placeholder="e.g. dead"
             value={vanityOptions.starts_with}
@@ -78,27 +76,23 @@ export function VanityAddressForm({
                 starts_with: e.target.value,
               })
             }
-            />
-        </div>
+          />
+        </FormField>
 
-        <div>
-          <label className="block text-xs font-medium text-white mb-1.5">
-            End With
-          </label>
+        <FormField>
+          <FormLabel>End With</FormLabel>
           <Input
             placeholder="e.g. beef"
             value={vanityOptions.ends_with}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setVanityOptions({ ...vanityOptions, ends_with: e.target.value })
             }
-            />
-        </div>
+          />
+        </FormField>
       </div>
 
-      <div>
-        <label className="block text-xs font-medium text-white mb-1.5">
-          Secure Password
-        </label>
+      <FormField>
+        <FormLabel>Secure Password</FormLabel>
         <PasswordInput
           value={newAddress.password || null}
           onChange={(password) =>
@@ -107,11 +101,9 @@ export function VanityAddressForm({
           placeholder=""
         />
         {newAddress.password && !isPasswordValid && (
-          <p className="text-xs text-red-400 mt-1">
-            Password must be at least 8 characters with mixed characters
-          </p>
+          <FormError>{PASSWORD_VALIDATION_ERROR}</FormError>
         )}
-      </div>
+      </FormField>
     </FormPage>
   );
 }
