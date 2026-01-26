@@ -29,25 +29,13 @@ export const Footer: React.FC<FooterProps> = ({
     setIsAddingGroup(true);
   };
 
-  const handleDeleteWorkspace = () => {
-    // TODO: Implement delete workspace functionality
-    console.log('Delete workspace clicked');
-  };
-
   return (
     <div className="p-3 relative flex items-center justify-center gap-2">
       {isKeystoreView && selectedKeystore && selectedKeystore.addresses.length > 0 && (
-        <div className="w-full flex gap-2">
-          <Button
-            onClick={handleDeleteWorkspace}
-            variant="outline"
-            className="flex-1 h-9 rounded-md border border-purple-500/50 bg-transparent text-purple-300 hover:bg-purple-500/10 hover:border-purple-500 transition-all text-sm"
-          >
-            Delete Workspace
-          </Button>
+        <div className="w-full">
           <Button
             onClick={handleAddAddressClick}
-            className="flex-1 h-9 rounded-md text-sm"
+            className="w-full h-9 rounded-md text-sm"
           >
             Add a Keystore
           </Button>

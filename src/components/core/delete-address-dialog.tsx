@@ -35,7 +35,7 @@ export const DeleteAddressDialog = ({
         <DialogFooter className="flex flex-row gap-2 mt-2">
           <Button
             variant="outline"
-            className="flex-1 h-8 text-xs"
+            className="flex-1 h-8 text-xs border border-purple-500/50 bg-transparent text-purple-300 hover:bg-purple-500/10 hover:border-purple-500 transition-all"
             onClick={() => setIsOpen(false)}
           >
             Cancel
