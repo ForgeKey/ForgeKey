@@ -6,6 +6,7 @@ use crate::models::Password;
 
 mod commands;
 mod models;
+mod pty;
 mod setup;
 #[cfg(target_os = "macos")]
 mod tray;
