@@ -109,11 +109,6 @@ export const PasswordDialog = ({
             <DialogTitle className="text-center text-base">
               {isPrivateKeyRevealed ? 'Private key' : 'Reveal Private Key'}
             </DialogTitle>
-            {!isPrivateKeyRevealed && (
-              <DialogDescription className="text-center text-xs">
-                Enter your password
-              </DialogDescription>
-            )}
           </DialogHeader>
 
           {!isPrivateKeyRevealed && (
@@ -124,7 +119,7 @@ export const PasswordDialog = ({
                 placeholder=""
                 value={passwordInput}
                 onChange={handlePasswordChange}
-                className="h-9 bg-white/10 text-white"
+                variant="dark"
               />
               {showPrivateKeyError && (
                 <p className="text-red-400 text-xs mt-2">{privateKeyError}</p>
