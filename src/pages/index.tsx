@@ -1,5 +1,6 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect, Component, ReactNode } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 
 import { Header } from '@/components/core/header';
 import { Footer } from '@/components/core/footer';
@@ -30,6 +31,29 @@ import { useAddressFormCleanup } from '@/hooks/router/use-address-form-cleanup';
 import { useAddressNavigationHandlers } from '@/hooks/address/use-address-navigation-handlers';
 import { ROUTES } from '@/router/types';
 import { useWalletStore } from '@/stores/wallet-store';
+import {
+  slideRightVariants,
+  scaleVariants,
+  fadeInVariants,
+  pageTransition,
+} from '@/lib/animations';
+
+// Route-to-animation mapping for page transitions
+const ROUTE_ANIMATIONS: Record<string, typeof fadeInVariants> = {
+  // Selection/option screens - scale animation
+  [ROUTES.ADDRESS_SELECT_TYPE]: scaleVariants,
+  [ROUTES.ADDRESS_IMPORT_OPTIONS]: scaleVariants,
+  // Form screens - slide from right
+  [ROUTES.ADDRESS_NEW]: slideRightVariants,
+  [ROUTES.ADDRESS_VANITY]: slideRightVariants,
+  [ROUTES.ADDRESS_IMPORT]: slideRightVariants,
+  [ROUTES.ADDRESS_IMPORT_KEYSTORE]: slideRightVariants,
+  [ROUTES.GROUP_CREATE]: slideRightVariants,
+};
+
+function getRouteAnimation(routeName: string): typeof fadeInVariants {
+  return ROUTE_ANIMATIONS[routeName] ?? fadeInVariants;
+}
 
 /**
  * Error boundary for route rendering
@@ -328,7 +352,20 @@ export default function ForgeKeyWallet() {
     <main className="bg-[#0d0f1a] text-foreground shadow-2xl rounded-md overflow-hidden flex flex-col w-[350px] h-[400px] border border-white/5">
       <Header />
       <ScrollArea className="flex-grow">
-        <RouteErrorBoundary>{renderRouterView()}</RouteErrorBoundary>
+        <RouteErrorBoundary>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={nav.currentRoute.name}
+              variants={getRouteAnimation(nav.currentRoute.name)}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+            >
+              {renderRouterView()}
+            </motion.div>
+          </AnimatePresence>
+        </RouteErrorBoundary>
       </ScrollArea>
       {!shouldHideFooter() && (
         <Footer
