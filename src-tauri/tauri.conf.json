@@ -9,6 +9,17 @@
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build"
   },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM1MUIzRTc2NUM1Mzk2QTgKUldTb2xsTmNkajRieFgxRy9OM2pWLzVrWXNZMm5vaFdJREVTSzh6V1diZzVzMUxBWHdCR1RkdTEK",
+      "endpoints": [
+        "https://github.com/saeta-eth/ForgeKey/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  },
   "app": {
     "windows": [
       {
@@ -41,6 +52,7 @@
     "active": true,
     "targets": "all",
     "category": "DeveloperTool",
+    "createUpdaterArtifacts": true,
     "externalBin": [],
     "icon": [
       "icons/32x32.png",
