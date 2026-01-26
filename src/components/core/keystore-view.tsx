@@ -1,5 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { BackButton } from '@/components/ui/back-button';
 import { AddressList } from './address-list';
 import { Address, Keystore } from '@/types/address';
 
@@ -28,14 +27,8 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
       {/* Back button and workspace title */}
       {!showAddAddressComponent && (
         <>
-          <div className="flex items-center mb-2 px-3 pt-2">
-            <Button
-              variant="ghost"
-              onClick={handleBackClick}
-              className="h-8 w-8 p-0 text-white bg-transparent hover:bg-white/10 rounded-full transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center mb-1 px-3 pt-2">
+            <BackButton onClick={handleBackClick} />
           </div>
           <h1 className="text-base font-bold text-white mb-2 px-3">
             {selectedKeystore.name}

@@ -18,7 +18,7 @@ const AddKeystoreForm: React.FC<AddKeystoreFormProps> = ({
   return (
     <div className="space-y-4 mt-4">
       <Input
-        placeholder="New Group Name"
+        placeholder="e.g. Development"
         value={newGroupName}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewGroupName(e.target.value)
