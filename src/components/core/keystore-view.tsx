@@ -22,31 +22,26 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   const showAddAddressComponent =
     isAddingAddress || selectedKeystore.addresses.length === 0;
 
-  return (
-    <div className="flex flex-col h-full">
-      {/* Back button and workspace title */}
-      {!showAddAddressComponent && (
-        <>
-          <div className="flex items-center mb-1 px-3 pt-2">
-            <BackButton onClick={handleBackClick} />
-          </div>
-          <h1 className="text-base font-bold text-white mb-2 px-3">
-            {selectedKeystore.name}
-          </h1>
-        </>
-      )}
+  if (showAddAddressComponent) {
+    return <>{renderAddAddressContent()}</>;
+  }
 
+  return (
+    <div className="flex flex-col h-full p-3">
+      {/* Back button and workspace title */}
+      <div className="flex items-center mb-1">
+        <BackButton onClick={handleBackClick} />
+      </div>
+      <h1 className="text-base font-bold text-white mb-2">
+        {selectedKeystore.name}
+      </h1>
 
       <div className="flex-1">
-        {showAddAddressComponent ? (
-          renderAddAddressContent()
-        ) : (
-          <AddressList
-            addresses={selectedKeystore.addresses}
-            handleViewPrivateKey={handleViewPrivateKey}
-            handleDeleteAddress={handleDeleteAddress}
-          />
-        )}
+        <AddressList
+          addresses={selectedKeystore.addresses}
+          handleViewPrivateKey={handleViewPrivateKey}
+          handleDeleteAddress={handleDeleteAddress}
+        />
       </div>
     </div>
   );

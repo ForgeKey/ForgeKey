@@ -29,7 +29,7 @@ export const AddressList: React.FC<AddressListProps> = ({
 
   return (
     <>
-      <AnimatedList className="space-y-2 px-3">
+      <AnimatedList className="space-y-2">
         {addresses.map((address, index) => (
           <AnimatedListItem key={index}>
             <div className="flex items-center justify-between py-2 border-b border-white/10">
