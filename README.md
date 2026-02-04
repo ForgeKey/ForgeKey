@@ -7,7 +7,7 @@
     <a href="#installation"><img src="https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white" alt="macOS"></a>
     <a href="#installation"><img src="https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black" alt="Linux"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License"></a>
-    <a href="https://github.com/ForgeKey/ForgeKey/releases"><img src="https://img.shields.io/github/v/release/caesareth/ForgeKey" alt="Release"></a>
+    <a href="https://github.com/ForgeKey/ForgeKey/releases"><img src="https://img.shields.io/github/v/release/ForgeKey/ForgeKey" alt="Release"></a>
   </p>
 
   <img src="assets/hero-demo.gif" alt="ForgeKey Demo" width="400">
@@ -52,7 +52,7 @@
 ### Quick Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/caesareth/ForgeKey/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ForgeKey/ForgeKey/main/install.sh | bash
 ```
 
 This will download the latest release for your platform and install it automatically.
