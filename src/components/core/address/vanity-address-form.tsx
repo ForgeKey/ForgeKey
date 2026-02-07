@@ -45,13 +45,7 @@ export function VanityAddressForm({
       description="Generate an address with custom patterns"
       onBack={handleBackClick}
       onSubmit={handleSubmit}
-      submitLabel="Create Vanity Address"
-      submitDisabled={
-        !newAddress.label ||
-        !newAddress.password ||
-        !isPasswordValid ||
-        (!vanityOptions.starts_with && !vanityOptions.ends_with)
-      }
+      formId="vanity-address-form"
     >
       <FormField>
         <FormLabel>Address Label</FormLabel>
@@ -68,7 +62,7 @@ export function VanityAddressForm({
         <FormField>
           <FormLabel>Start With</FormLabel>
           <Input
-            placeholder="e.g. dead"
+            placeholder="e.g. c0de"
             value={vanityOptions.starts_with}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setVanityOptions({
@@ -82,7 +76,7 @@ export function VanityAddressForm({
         <FormField>
           <FormLabel>End With</FormLabel>
           <Input
-            placeholder="e.g. beef"
+            placeholder="e.g. dead"
             value={vanityOptions.ends_with}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setVanityOptions({ ...vanityOptions, ends_with: e.target.value })
