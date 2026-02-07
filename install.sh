@@ -91,9 +91,7 @@ install_macos() {
     local arch="$2"
     local install_dir="${INSTALL_DIR:-/Applications}"
 
-    # Tauri uses base semver (without prerelease suffix) for filenames
     local base_version="${version#v}"
-    base_version="${base_version%%-*}"
     # Map arch names for macOS DMG files (x86_64 -> x64, aarch64 stays aarch64)
     local file_arch="$arch"
     if [ "$arch" = "x86_64" ]; then
@@ -137,9 +135,7 @@ install_deb() {
     local version="$1"
     local arch="$2"
 
-    # Tauri uses base semver (without prerelease suffix) for filenames
     local base_version="${version#v}"
-    base_version="${base_version%%-*}"
     # deb uses amd64 for x86_64
     local file_arch="$arch"
     if [ "$arch" = "x86_64" ]; then
@@ -179,9 +175,7 @@ install_rpm() {
     local version="$1"
     local arch="$2"
 
-    # Tauri uses base semver (without prerelease suffix) for filenames
     local base_version="${version#v}"
-    base_version="${base_version%%-*}"
     # rpm uses x86_64 (not amd64)
     local file_arch="$arch"
     # RPM filename format: ForgeKey-1.0.0-1.x86_64.rpm
@@ -225,9 +219,7 @@ install_appimage() {
     local app_dir="$HOME/.local/share/applications"
     local icon_dir="$HOME/.local/share/icons/hicolor/256x256/apps"
 
-    # Tauri uses base semver (without prerelease suffix) for filenames
     local base_version="${version#v}"
-    base_version="${base_version%%-*}"
     # AppImage uses amd64 for x86_64
     local file_arch="$arch"
     if [ "$arch" = "x86_64" ]; then
