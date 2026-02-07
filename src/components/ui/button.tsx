@@ -3,19 +3,19 @@ import { Slot } from '@radix-ui/react-slot';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 const buttonVariants = tv({
-  base: 'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+  base: 'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none',
   variants: {
     variant: {
       default:
-        'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md hover:opacity-90 hover:shadow-lg',
+        'btn-gradient text-white shadow-md hover:shadow-lg',
       destructive:
-        'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md hover:opacity-90',
+        'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md hover:opacity-90 disabled:opacity-50',
       outline:
-        'border border-white/10 bg-white/5 shadow-sm hover:bg-white/10 text-foreground backdrop-blur-sm',
+        'btn-outline-gradient shadow-sm text-foreground',
       secondary:
-        'bg-white/10 text-foreground shadow-sm hover:bg-white/15 backdrop-blur-sm',
-      ghost: 'hover:bg-white/10 text-foreground backdrop-blur-sm',
-      link: 'text-purple-400 underline-offset-4 hover:underline hover:text-pink-400',
+        'bg-white/10 text-foreground shadow-sm hover:bg-white/15 backdrop-blur-sm disabled:opacity-50',
+      ghost: 'hover:bg-white/10 text-foreground backdrop-blur-sm disabled:opacity-50',
+      link: 'text-purple-400 underline-offset-4 hover:underline hover:text-pink-400 disabled:opacity-50',
     },
     size: {
       default: 'h-9 px-4 py-2',
