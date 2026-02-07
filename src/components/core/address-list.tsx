@@ -6,6 +6,7 @@ import { CopyButton } from '@/components/ui/copy-button';
 import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
 import { AddressDisplay } from '@/components/ui/address-display';
 import { Address } from '@/types/address';
+import { LIST_ITEM_GAP } from '@/lib/constants';
 import { DeleteAddressDialog } from './delete-address-dialog';
 
 interface AddressListProps {
@@ -29,7 +30,7 @@ export const AddressList: React.FC<AddressListProps> = ({
 
   return (
     <>
-      <AnimatedList className="space-y-2">
+      <AnimatedList className={LIST_ITEM_GAP}>
         {addresses.map((address, index) => (
           <AnimatedListItem key={index}>
             <div className="flex items-center justify-between py-2 border-b border-white/10">
