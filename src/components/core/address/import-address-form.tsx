@@ -55,13 +55,7 @@ export function ImportAddressForm({
       description="Import an address using your private key"
       onBack={handleBackClick}
       onSubmit={handleSubmit}
-      submitLabel="Import Address"
-      submitDisabled={
-        !newAddress.label ||
-        !newAddress.privateKey ||
-        !newAddress.password ||
-        !isPasswordValid
-      }
+      formId="import-address-form"
     >
       <FormField>
         <FormLabel>Address Label</FormLabel>

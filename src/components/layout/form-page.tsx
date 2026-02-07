@@ -9,6 +9,7 @@ export interface FormPageProps {
   description?: string;
   onBack?: () => void;
   onSubmit?: (e: React.FormEvent) => void;
+  formId?: string;
   submitLabel?: string;
   submitDisabled?: boolean;
   children: ReactNode;
@@ -20,6 +21,7 @@ export function FormPage({
   description,
   onBack,
   onSubmit,
+  formId,
   submitLabel,
   submitDisabled = false,
   children,
@@ -52,7 +54,7 @@ export function FormPage({
   );
 
   if (onSubmit) {
-    return <form onSubmit={onSubmit}>{content}</form>;
+    return <form id={formId} onSubmit={onSubmit}>{content}</form>;
   }
 
   return content;
