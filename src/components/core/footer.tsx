@@ -17,6 +17,7 @@ export const Footer: React.FC<FooterProps> = ({
   setIsAddingGroup,
 }) => {
   const nav = useNavigation();
+  const isWelcome = useIsRoute(ROUTES.ONBOARDING_WELCOME);
   const isKeystoreView = useIsRoute(ROUTES.KEYSTORE_VIEW);
   const isKeystoreList = useIsRoute(ROUTES.KEYSTORE_LIST);
   const isGroupCreate = useIsRoute(ROUTES.GROUP_CREATE);
@@ -96,6 +97,16 @@ export const Footer: React.FC<FooterProps> = ({
 
   return (
     <div className="p-3 relative flex-shrink-0 flex items-center justify-center gap-2">
+      {isWelcome && (
+        <div className="w-full">
+          <Button
+            onClick={() => nav.navigate({ name: ROUTES.GROUP_CREATE })}
+            className="w-full h-9 rounded-md text-sm"
+          >
+            Get Into
+          </Button>
+        </div>
+      )}
       {isKeystoreView && selectedKeystore && selectedKeystore.addresses.length > 0 && (
         <div className="w-full">
           <Button

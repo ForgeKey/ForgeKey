@@ -1,17 +1,7 @@
-import { Button } from '@/components/ui/button';
 import { AnimatedPage } from '@/components/layout/animated-page';
-import { SUBMIT_TOP_PADDING } from '@/lib/constants';
-import { useNavigation } from '@/hooks/router/use-navigation';
-import { ROUTES } from '@/router/types';
 import Image from 'next/image';
 
 export const WelcomeScreen = () => {
-  const { navigate } = useNavigation();
-
-  const handleGetStarted = () => {
-    navigate({ name: ROUTES.GROUP_CREATE });
-  };
-
   return (
     <AnimatedPage>
       <div className="flex flex-col h-full">
@@ -39,15 +29,6 @@ export const WelcomeScreen = () => {
           </div>
         </div>
 
-        {/* Get Into Button - fixed at bottom */}
-        <div className={`w-full ${SUBMIT_TOP_PADDING}`}>
-          <Button
-            onClick={handleGetStarted}
-            className="w-full rounded-md h-9"
-          >
-            Get Into
-          </Button>
-        </div>
       </div>
     </AnimatedPage>
   );

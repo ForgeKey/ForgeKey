@@ -1,5 +1,5 @@
 import { useNavigation, useRouteParams } from './use-navigation';
-import { shouldHideFooterForRoute } from '@/router/types';
+import { ROUTES, shouldHideFooterForRoute } from '@/router/types';
 import { useWalletStore } from '@/stores/wallet-store';
 
 /**
@@ -53,9 +53,10 @@ export function useRouteHelpers() {
    * @returns true if footer should be hidden, false otherwise
    */
   const shouldHideFooter = (): boolean => {
-    // Hide footer when showing empty keystore screen
+    // Hide footer when showing empty keystore screen (except welcome/group create)
     if (keystores.length === 0) {
-      return true;
+      const route = nav.currentRoute.name;
+      return route !== ROUTES.ONBOARDING_WELCOME && route !== ROUTES.GROUP_CREATE;
     }
     return shouldHideFooterForRoute(nav.currentRoute.name);
   };
