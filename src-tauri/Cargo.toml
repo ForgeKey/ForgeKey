@@ -1,6 +1,6 @@
 [package]
 name = "ForgeKey"
-version = "1.0.0-beta.2"
+version = "1.0.0-beta.3"
 description = "A user-friendly UI for the Foundry Cast Wallet CLI"
 authors = ["Saeta <saetaeth@proton.me>"]
 license = "GNU GPLv3"
