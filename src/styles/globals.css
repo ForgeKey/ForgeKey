@@ -89,6 +89,12 @@
   --chart-5: 340 75% 55%;
 }
 
+html,
+body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 html {
   border-radius: var(--radius);
 }

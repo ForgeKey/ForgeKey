@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <div className="p-3 relative flex items-center justify-center gap-2">
+    <div className="p-3 relative flex-shrink-0 flex items-center justify-center gap-2">
       {isKeystoreView && selectedKeystore && selectedKeystore.addresses.length > 0 && (
         <div className="w-full">
           <Button
