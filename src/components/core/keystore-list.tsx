@@ -1,9 +1,11 @@
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
+import { AnimatedPage } from '@/components/layout/animated-page';
 import { Keystore } from '@/types/address';
 import { Folder, ChevronRight } from 'lucide-react';
 import { cardVariants } from '@/lib/animations';
+import { LIST_ITEM_GAP } from '@/lib/constants';
 
 import { GroupForm } from './group-form';
 
@@ -38,9 +40,9 @@ export const KeystoreList = ({
   }
 
   return (
-    <div className="p-3 flex flex-col">
+    <AnimatedPage>
       <div className="flex flex-col flex-1">
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <h2 className="text-base font-semibold text-white mb-1">
             Your Keystore Workspace
           </h2>
@@ -50,7 +52,7 @@ export const KeystoreList = ({
         </div>
 
         {keystores.length > 0 && (
-          <AnimatedList className="space-y-2 flex-1">
+          <AnimatedList className={`${LIST_ITEM_GAP} flex-1`}>
             {keystores.map((keystore, index) => (
               <AnimatedListItem key={index}>
                 <motion.div
@@ -89,6 +91,6 @@ export const KeystoreList = ({
           </AnimatedList>
         )}
       </div>
-    </div>
+    </AnimatedPage>
   );
 };

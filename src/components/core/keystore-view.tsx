@@ -1,5 +1,5 @@
-import { BackButton } from '@/components/ui/back-button';
 import { AddressList } from './address-list';
+import { AnimatedPage } from '@/components/layout/animated-page';
 import { Address, Keystore } from '@/types/address';
 
 interface KeystoreViewProps {
@@ -27,22 +27,15 @@ export const KeystoreView: React.FC<KeystoreViewProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full p-3">
-      {/* Back button and workspace title */}
-      <div className="flex items-center mb-1">
-        <BackButton onClick={handleBackClick} />
-      </div>
-      <h1 className="text-base font-bold text-white mb-2">
-        {selectedKeystore.name}
-      </h1>
-
-      <div className="flex-1">
-        <AddressList
-          addresses={selectedKeystore.addresses}
-          handleViewPrivateKey={handleViewPrivateKey}
-          handleDeleteAddress={handleDeleteAddress}
-        />
-      </div>
-    </div>
+    <AnimatedPage
+      title={selectedKeystore.name}
+      onBack={handleBackClick}
+    >
+      <AddressList
+        addresses={selectedKeystore.addresses}
+        handleViewPrivateKey={handleViewPrivateKey}
+        handleDeleteAddress={handleDeleteAddress}
+      />
+    </AnimatedPage>
   );
 };
