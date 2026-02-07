@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { BackButton } from '@/components/ui/back-button';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
-import { PAGE_MIN_HEIGHT, PAGE_PADDING, BACK_BUTTON_MARGIN, FORM_FIELD_GAP, SUBMIT_TOP_PADDING } from '@/lib/constants';
+import { PAGE_PADDING, BACK_BUTTON_MARGIN, FORM_FIELD_GAP, SUBMIT_TOP_PADDING } from '@/lib/constants';
 
 export interface FormPageProps {
   title: string;
@@ -28,7 +28,7 @@ export function FormPage({
   className = '',
 }: FormPageProps) {
   const content = (
-    <div className={`${PAGE_PADDING} flex flex-col h-full ${PAGE_MIN_HEIGHT} ${className}`}>
+    <div className={`${PAGE_PADDING} flex flex-col h-full ${className}`}>
       {onBack && (
         <div className={BACK_BUTTON_MARGIN}>
           <BackButton onClick={onBack} />

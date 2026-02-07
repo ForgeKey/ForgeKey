@@ -2,9 +2,6 @@
  * Shared constants used across the application
  */
 
-/** Minimum height for page containers */
-export const PAGE_MIN_HEIGHT = 'min-h-[340px]';
-
 /** Padding for all page-level containers */
 export const PAGE_PADDING = 'p-3';
 
