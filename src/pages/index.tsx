@@ -246,7 +246,7 @@ export default function ForgeKeyWallet() {
           <KeystoreView
             selectedKeystore={selectedKeystore}
             isAddingAddress={false}
-            handleBackClick={nav.goBack}
+            handleBackClick={nav.toKeystoreList}
             renderAddAddressContent={() => null}
             handleViewPrivateKey={handleViewPrivateKey}
             handleDeleteAddress={handleDeleteAddress}

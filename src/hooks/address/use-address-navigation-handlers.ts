@@ -26,6 +26,7 @@ export function useAddressNavigationHandlers(
   const handleAddAddress = async () => {
     await handleAddAddressOriginal();
     if (selectedKeystore) {
+      nav.reset();
       nav.toKeystoreView(selectedKeystore.name);
     }
   };
@@ -37,6 +38,7 @@ export function useAddressNavigationHandlers(
   const handleImportKeystoreAddress = async () => {
     await handleImportKeystoreAddressOriginal();
     if (selectedKeystore) {
+      nav.reset();
       nav.toKeystoreView(selectedKeystore.name);
     }
   };
