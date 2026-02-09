@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { FormField, FormLabel, FormError } from '@/components/ui/form-field';
 import { useState, useMemo } from 'react';
 import { Check, Copy, KeyRound, LockIcon, AlertTriangle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { iconSwapVariants, iconSwapTransition } from '@/lib/animations';
 import { ZeroizedString } from '@/lib/zeroized-string';
 import { useZeroize } from '@/contexts/zeroize-context';
 
@@ -140,11 +142,31 @@ export const PasswordDialog = ({
                   className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
                   title="Copy full key to clipboard"
                 >
-                  {showCopySuccess ? (
-                    <Check className="w-4 h-4 text-green-400" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-white/50 hover:text-white" />
-                  )}
+                  <AnimatePresence mode="wait" initial={false}>
+                    {showCopySuccess ? (
+                      <motion.div
+                        key="check"
+                        variants={iconSwapVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={iconSwapTransition}
+                      >
+                        <Check className="w-4 h-4 text-green-400" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="copy"
+                        variants={iconSwapVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={iconSwapTransition}
+                      >
+                        <Copy className="w-4 h-4 text-white/50 hover:text-white" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </button>
               </div>
 
