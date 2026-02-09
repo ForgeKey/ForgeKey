@@ -112,6 +112,7 @@ body {
 @layer base {
   * {
     border-color: hsl(var(--border));
+    outline: none;
   }
   body {
     background-color: hsl(var(--background));
