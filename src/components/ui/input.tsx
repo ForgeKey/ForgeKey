@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
+import { Eye, EyeOff } from 'lucide-react';
 
 const inputVariants = tv({
   base: 'flex h-9 w-full rounded-md px-3 py-2 text-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
@@ -23,14 +24,34 @@ interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, variant, ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const isPassword = type === 'password';
+
     return (
-      <div className="input-focus-gradient w-full rounded-md">
+      <div className="input-focus-gradient w-full rounded-md relative">
         <input
-          type={type}
-          className={inputVariants({ variant, className })}
+          type={isPassword && showPassword ? 'text' : type}
+          className={inputVariants({
+            variant,
+            className: isPassword ? `pr-9 ${className ?? ''}` : className,
+          })}
           ref={ref}
           {...props}
         />
+        {isPassword && (
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+          >
+            {showPassword ? (
+              <Eye className="h-4 w-4" />
+            ) : (
+              <EyeOff className="h-4 w-4" />
+            )}
+          </button>
+        )}
       </div>
     );
   }
