@@ -68,9 +68,67 @@ pub fn init_panel(app_handle: &AppHandle<Wry>) {
   debug!("Converted window to panel for fullscreen support");
 }
 
+fn show_about_panel() {
+  use objc2::runtime::AnyObject;
+  use objc2::{AnyThread, MainThreadMarker};
+  use objc2_app_kit::{NSApplication, NSImage};
+  use objc2_foundation::{
+    NSDictionary, NSData, NSMutableAttributedString, NSRange, NSString, NSURL,
+  };
+
+  let mtm = unsafe { MainThreadMarker::new_unchecked() };
+  let version = env!("CARGO_PKG_VERSION");
+
+  let icon_bytes = include_bytes!("../icons/128x128@2x.png");
+  let icon_data = NSData::with_bytes(icon_bytes);
+  let icon = NSImage::initWithData(NSImage::alloc(), &icon_data);
+
+  // Build a clickable link for the Credits field
+  let repo_url_str = "https://github.com/ForgeKey/ForgeKey";
+  let link_text = NSString::from_str(repo_url_str);
+  let credits = NSMutableAttributedString::from_nsstring(&link_text);
+  let url = NSURL::URLWithString(&NSString::from_str(repo_url_str));
+  if let Some(url) = url {
+    let link_attr_key = NSString::from_str("NSLink");
+    let range = NSRange::new(0, credits.length());
+    unsafe {
+      credits.addAttribute_value_range(
+        &link_attr_key,
+        &url,
+        range,
+      );
+    }
+  }
+
+  let key_version = NSString::from_str("ApplicationVersion");
+  let key_credits = NSString::from_str("Credits");
+  let key_icon = NSString::from_str("ApplicationIcon");
+  let val_version = NSString::from_str(version);
+
+  let mut keys: Vec<&NSString> = vec![&key_version, &key_credits];
+  let mut values: Vec<&AnyObject> = vec![
+    val_version.as_ref(),
+    credits.as_ref(),
+  ];
+
+  if let Some(ref img) = icon {
+    keys.push(&key_icon);
+    values.push(img.as_ref());
+  }
+
+  let options: objc2::rc::Retained<NSDictionary<NSString, AnyObject>> =
+    NSDictionary::from_slices(&keys, &values);
+  let app = NSApplication::sharedApplication(mtm);
+  unsafe {
+    app.orderFrontStandardAboutPanelWithOptions(&options);
+    app.activate();
+  }
+}
+
 pub fn init_macos_menu_extra(app: &AppHandle<Wry>) -> tauri::Result<()> {
+  let about_i = MenuItem::with_id(app, "about", "About", true, None::<&str>)?;
   let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-  let menu = Menu::with_items(app, &[&quit_i])?;
+  let menu = Menu::with_items(app, &[&about_i, &quit_i])?;
 
   // Hide window when it loses focus
   if let Some(window) = app.get_webview_window("main") {
@@ -87,10 +145,10 @@ pub fn init_macos_menu_extra(app: &AppHandle<Wry>) -> tauri::Result<()> {
     .icon_as_template(true)
     .menu(&menu)
     .show_menu_on_left_click(false)
-    .on_menu_event(|app, event| {
-      if event.id.as_ref() == "quit" {
-        app.exit(0);
-      }
+    .on_menu_event(|app, event| match event.id.as_ref() {
+      "about" => show_about_panel(),
+      "quit" => app.exit(0),
+      _ => {}
     })
     .on_tray_icon_event(|tray, event| {
       let app = tray.app_handle();
