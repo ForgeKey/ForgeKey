@@ -131,6 +131,28 @@ body {
   }
 }
 
+@utility input-focus-gradient {
+  position: relative;
+
+  &:has(input:focus-visible)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(90deg, #9333EA 0%, #D946EF 104.44%);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
 @utility btn-outline-gradient {
   background:
     linear-gradient(#020617, #020617) padding-box,
