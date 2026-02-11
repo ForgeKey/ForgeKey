@@ -29,12 +29,14 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const { createZeroizedString } = useZeroize();
 
+  const safeValue = value && !value.isZeroized() ? value : null;
+
   const validation: PasswordValidationResult = useMemo(() => {
-    if (value) {
-      return validatePassword(value.getValue());
+    if (safeValue) {
+      return validatePassword(safeValue.getValue());
     }
     return { isValid: false, score: 0 };
-  }, [value]);
+  }, [safeValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     value?.zeroize();
@@ -46,11 +48,7 @@ export function PasswordInput({
     }
   };
 
-  const progressWidth = useMemo(() => {
-    const percentage = ((validation.score + 1) / 5) * 100;
-    return `${percentage}%`;
-  }, [validation.score]);
-
+  const progressWidth = `${((validation.score + 1) / 5) * 100}%`;
   const colorHex = getColorHex(validation.score);
 
   return (
@@ -58,12 +56,12 @@ export function PasswordInput({
       <Input
         type="password"
         placeholder={placeholder}
-        value={value?.getValue() || ''}
+        value={safeValue?.getValue() || ''}
         onChange={handleChange}
         variant={variant}
         className={className}
       />
-      {showRequirements && value && value.getValue().length > 0 && (
+      {showRequirements && safeValue && safeValue.getValue().length > 0 && (
         <div className="text-xs space-y-1">
           <div className="flex items-center justify-between">
             <p className="text-gray-300">Password strength:</p>
