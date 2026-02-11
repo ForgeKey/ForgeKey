@@ -2,6 +2,38 @@
 
 All notable changes to ForgeKey are documented in this file.
 
+## [1.0.0-beta.6] - 2026-02-11
+
+### Added
+
+- add git-cliff for automated changelog generation ([dc0264a](https://github.com/ForgeKey/ForgeKey/commit/dc0264a32d863cb1e2923f5373e1dfc454225b03))
+- add changelog pnpm script ([756435a](https://github.com/ForgeKey/ForgeKey/commit/756435acef7fac35cd2f29534bf83607b0939f52))
+- add hex validation and difficulty estimation to vanity address form ([ca0493c](https://github.com/ForgeKey/ForgeKey/commit/ca0493c2b54b3964b5ef54b24c278382c8bc6e46))
+- async vanity generation with loading screen and cancellation support ([eacfcc6](https://github.com/ForgeKey/ForgeKey/commit/eacfcc6fd9af9d1150407417cbf3b0665c3055dc))
+- async vanity generation with loading screen and cancellation support ([4dacc1c](https://github.com/ForgeKey/ForgeKey/commit/4dacc1c3c468df43b74c553f9af4825b992563d7))
+
+### Changed
+
+- update subtitle and hint text colors to neutral-400/neutral-200 ([fb3604e](https://github.com/ForgeKey/ForgeKey/commit/fb3604ea32d8ec0f6f27471bdef31fb9818eb11e))
+- align icon gradients with btn-gradient (#9333EA → #D946EF) ([91399bd](https://github.com/ForgeKey/ForgeKey/commit/91399bd79722985fb716b9fe8c22dcbe3034192d))
+- update ForgeKey header text color to slate-50 ([9439148](https://github.com/ForgeKey/ForgeKey/commit/943914833adcb92b5dc988f631eba3b32528f8fe))
+- update placeholder color to gray-400 and disabled button text to neutral-400 ([a7ed43b](https://github.com/ForgeKey/ForgeKey/commit/a7ed43b3a057ce1cc65345f1f7413a418b4b2573))
+- rename Secure Password label to Password ([86594e6](https://github.com/ForgeKey/ForgeKey/commit/86594e66fa985569ee7cd5b6b492e16b32616bf3))
+- minor dialog and description text adjustments ([5b4703b](https://github.com/ForgeKey/ForgeKey/commit/5b4703b3f2f565bc7e43666f856b532b9b4aac4e))
+- update subtitle and hint text colors to neutral-400/neutral-200 ([e565344](https://github.com/ForgeKey/ForgeKey/commit/e565344f0e90aca5c4a7a50f4f1fff6f4f230c97))
+
+### Documentation
+
+- link CHANGELOG in release body ([59a1e93](https://github.com/ForgeKey/ForgeKey/commit/59a1e931fc8b6fcc7e12d65b7e41ee8f59ae4128))
+- add changelog generation step to release process ([8116285](https://github.com/ForgeKey/ForgeKey/commit/81162854bbec614f86004c70ef2e325086924467))
+
+### Fixed
+
+- prevent workspace screen flash on first launch ([1e456e1](https://github.com/ForgeKey/ForgeKey/commit/1e456e180a539b6303bbe1b610d105f302907f9d))
+- hide close X button when private key is revealed ([fbe513c](https://github.com/ForgeKey/ForgeKey/commit/fbe513c2a49525a0d50507dd25936c4b27f75a60))
+- prevent crash when reading zeroized password during cancel race ([a037755](https://github.com/ForgeKey/ForgeKey/commit/a037755641a1a7e085b149ed2c2a952957317cab))
+- remove unused imports in password-dialog ([059754c](https://github.com/ForgeKey/ForgeKey/commit/059754ce8ba8b0c766ce7efa580bc667c0da93f6))
+
 ## [1.0.0-beta.5] - 2026-02-11
 
 ### Added
