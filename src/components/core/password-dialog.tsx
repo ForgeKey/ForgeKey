@@ -99,99 +99,90 @@ export const PasswordDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-xs">
-        <>
-          <DialogHeader className="space-y-2">
-            <DialogIconBadge>
-              {isPrivateKeyRevealed ? (
-                <KeyRound className="h-4 w-4" />
-              ) : (
-                <LockIcon className="h-4 w-4" />
-              )}
-            </DialogIconBadge>
-            <DialogTitle className="text-center text-base">
-              {isPrivateKeyRevealed ? 'Private key' : 'Reveal Private Key'}
-            </DialogTitle>
-          </DialogHeader>
+      <DialogContent className="max-w-xs" hideCloseButton={isPrivateKeyRevealed}>
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-center text-sm">
+            {isPrivateKeyRevealed ? 'Private key' : 'Reveal Private Key'}
+          </DialogTitle>
+        </DialogHeader>
 
-          {!isPrivateKeyRevealed && (
-            <FormField className="py-2">
-              <FormLabel>Enter your password</FormLabel>
-              <Input
-                type="password"
-                placeholder=""
-                value={passwordInput}
-                onChange={handlePasswordChange}
-                variant="dark"
-              />
-              {showPrivateKeyError && (
-                <FormError>{privateKeyError}</FormError>
-              )}
-            </FormField>
-          )}
+        {!isPrivateKeyRevealed && (
+          <FormField className="py-2">
+            <FormLabel>Enter your password</FormLabel>
+            <Input
+              type="password"
+              placeholder=""
+              value={passwordInput}
+              onChange={handlePasswordChange}
+              variant="dark"
+            />
+            {showPrivateKeyError && (
+              <FormError>{privateKeyError}</FormError>
+            )}
+          </FormField>
+        )}
 
-          {isPrivateKeyRevealed && (
-            <div className="space-y-3">
-              {/* Private key display with copy button */}
-              <div className="flex items-center gap-2 bg-white/5 p-3 rounded-lg border border-white/10">
-                <p className="flex-1 text-xs text-white/90 font-mono break-all">
-                  {maskedPrivateKey}
-                </p>
-                <button
-                  onClick={handleCopy}
-                  className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
-                  title="Copy full key to clipboard"
-                >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {showCopySuccess ? (
-                      <motion.div
-                        key="check"
-                        variants={iconSwapVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={iconSwapTransition}
-                      >
-                        <Check className="w-4 h-4 text-green-400" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="copy"
-                        variants={iconSwapVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={iconSwapTransition}
-                      >
-                        <Copy className="w-4 h-4 text-white/50 hover:text-white" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </button>
-              </div>
-
-              {/* Security warning */}
-              <div className="flex items-start gap-2 text-[10px] text-amber-400/80">
-                <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                <span>Never share your private key. Anyone with it has full control of your wallet.</span>
-              </div>
+        {isPrivateKeyRevealed && (
+          <div className="space-y-3">
+            {/* Private key display with copy button */}
+            <div className="flex items-center gap-2 bg-white/5 p-3 rounded-lg border border-white/10">
+              <p className="flex-1 text-xs text-white/90 font-mono break-all">
+                {maskedPrivateKey}
+              </p>
+              <button
+                onClick={handleCopy}
+                className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
+                title="Copy full key to clipboard"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {showCopySuccess ? (
+                    <motion.div
+                      key="check"
+                      variants={iconSwapVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={iconSwapTransition}
+                    >
+                      <Check className="w-4 h-4 text-green-400" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="copy"
+                      variants={iconSwapVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={iconSwapTransition}
+                    >
+                      <Copy className="w-4 h-4 text-neutral-200 hover:text-white" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
             </div>
-          )}
 
-          <DialogFooter className="mt-1">
-            <Button
-              className="w-full h-9"
-              onClick={() =>
-                isPrivateKeyRevealed
-                  ? handleClose()
-                  : handleSubmit()
-              }
-              disabled={!isPrivateKeyRevealed && !passwordInput}
-            >
-              {isPrivateKeyRevealed ? 'Close' : 'View Private Key'}
-            </Button>
-          </DialogFooter>
-        </>
+            {/* Security warning */}
+            <div className="flex items-start gap-2 text-[10px] text-amber-400/80">
+              <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+              <span>Never share your private key. Anyone with it has full control of your wallet.</span>
+            </div>
+          </div>
+        )}
+
+        <DialogFooter className="mt-1">
+          <Button
+            className="w-full h-9"
+            onClick={() =>
+              isPrivateKeyRevealed
+                ? handleClose()
+                : handleSubmit()
+            }
+            disabled={!isPrivateKeyRevealed && !passwordInput}
+          >
+            {isPrivateKeyRevealed ? 'Close' : 'View Private Key'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
