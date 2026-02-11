@@ -8,7 +8,7 @@ const inputVariants = tv({
     variant: {
       default:
         'bg-white/90 text-gray-900 placeholder:text-gray-400 border border-transparent',
-      dark: 'bg-white/10 text-white placeholder:text-white/40 border border-white/10',
+      dark: 'bg-white/10 text-white placeholder:text-gray-400 border border-white/10',
     },
   },
   defaultVariants: {
