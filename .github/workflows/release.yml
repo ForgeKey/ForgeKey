@@ -90,7 +90,7 @@ jobs:
 
             **Existing users:** The app will automatically notify you when updates are available.
 
-            See [README](https://github.com/ForgeKey/ForgeKey) for more details.
+            See [CHANGELOG](https://github.com/ForgeKey/ForgeKey/blob/main/CHANGELOG.md) for details.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
