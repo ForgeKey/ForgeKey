@@ -29,14 +29,20 @@ The release workflow is triggered by pushing a tag matching `v*`, or manually vi
    - `src-tauri/Cargo.toml` — the `version` field
    - `package.json` — the `version` field
 
-2. **Commit Changes**
+2. **Regenerate Changelog**
 
    ```bash
-   git add src-tauri/tauri.conf.json src-tauri/Cargo.toml package.json
+   pnpm changelog
+   ```
+
+3. **Commit Changes**
+
+   ```bash
+   git add src-tauri/tauri.conf.json src-tauri/Cargo.toml package.json CHANGELOG.md
    git commit -m "chore: bump version to x.y.z"
    ```
 
-3. **Create and Push a Tag**
+4. **Create and Push a Tag**
 
    ```bash
    git tag vx.y.z
@@ -46,11 +52,11 @@ The release workflow is triggered by pushing a tag matching `v*`, or manually vi
 
    Replace `x.y.z` with the actual version number (e.g., `v1.0.0-beta.2`).
 
-4. **Monitor the Build**
+5. **Monitor the Build**
 
    The GitHub Actions workflow will automatically start when you push the tag. Monitor progress in the **Actions** tab of the GitHub repository. The workflow runs three parallel jobs (macOS ARM, macOS Intel, Linux).
 
-5. **Publish the Release**
+6. **Publish the Release**
 
    Once the workflow completes:
 
