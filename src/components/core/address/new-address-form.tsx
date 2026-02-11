@@ -50,7 +50,7 @@ export function NewAddressForm({
       </FormField>
 
       <FormField>
-        <FormLabel>Secure Password</FormLabel>
+        <FormLabel>Password</FormLabel>
         <PasswordInput
           value={newAddress.password || null}
           onChange={(password) =>
