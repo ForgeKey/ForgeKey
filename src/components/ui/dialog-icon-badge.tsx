@@ -2,7 +2,7 @@ import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 const dialogIconBadgeVariants = tv({
-  base: 'mx-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center mb-1',
+  base: 'mx-auto bg-gradient-to-r from-[#9333EA] to-[#D946EF] text-white p-2 rounded-full w-9 h-9 flex items-center justify-center mb-1',
 });
 
 type DialogIconBadgeVariants = VariantProps<typeof dialogIconBadgeVariants>;

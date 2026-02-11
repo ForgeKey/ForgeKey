@@ -72,7 +72,7 @@ export function UpdateDialog() {
         {isDownloading && (
           <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[#9333EA] to-[#D946EF] transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>

@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { Button } from '@/components/ui/button';
 import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
 import { AnimatedPage } from '@/components/layout/animated-page';
 import { Keystore } from '@/types/address';
@@ -46,7 +45,7 @@ export const KeystoreList = ({
           <h2 className="text-base font-semibold text-white mb-1">
             Your Keystore Workspace
           </h2>
-          <p className="text-xs text-white/50 max-w-xs mx-auto leading-relaxed">
+          <p className="text-xs text-neutral-400 max-w-xs mx-auto leading-relaxed">
             Create a Workspace to organize your keystores for each project or environment.
           </p>
         </div>
@@ -60,22 +59,22 @@ export const KeystoreList = ({
                   initial="initial"
                   whileHover="hover"
                   whileTap="tap"
-                  className="bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] overflow-hidden"
+                  className="bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] overflow-hidden hover:bg-white/[0.05] transition-colors"
                 >
-                  <Button
-                    variant="ghost"
-                    className="w-full h-auto justify-between text-left font-normal py-2 px-3 hover:bg-transparent transition-colors rounded-lg"
+                  <button
+                    type="button"
+                    className="flex w-full h-auto justify-between items-center text-left font-normal py-2 px-3 rounded-lg"
                     onClick={() => handleKeystoreClick(keystore)}
                   >
                     <div className="flex items-center gap-2">
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-1.5 rounded-full flex-shrink-0">
+                      <div className="bg-gradient-to-r from-[#9333EA] to-[#D946EF] p-1.5 rounded-full flex-shrink-0">
                         <Folder className="h-4 w-4 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-white truncate">
                           {keystore.name}
                         </p>
-                        <p className="text-[10px] text-white/50">
+                        <p className="text-[10px] text-neutral-400">
                           {keystore.addresses.length}{' '}
                           {keystore.addresses.length === 1
                             ? 'address'
@@ -84,7 +83,7 @@ export const KeystoreList = ({
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-white/40 ml-2 flex-shrink-0" />
-                  </Button>
+                  </button>
                 </motion.div>
               </AnimatedListItem>
             ))}
