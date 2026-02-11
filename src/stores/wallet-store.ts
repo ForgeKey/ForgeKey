@@ -9,6 +9,7 @@ import { ZeroizedString } from '@/lib/zeroized-string';
  */
 export interface WalletStore {
   // State
+  isInitialized: boolean;
   keystores: Keystore[];
   selectedKeystore: Keystore | null;
   isAddingAddress: boolean;
@@ -30,6 +31,7 @@ export interface WalletStore {
   password: ZeroizedString | null;
 
   // Simple setters
+  setIsInitialized: (value: boolean) => void;
   setKeystores: (keystores: Keystore[]) => void;
   setSelectedKeystore: (
     value: Keystore | null | ((prev: Keystore | null) => Keystore | null)
@@ -73,6 +75,7 @@ export interface WalletStore {
  * Initial state values
  */
 const initialState = {
+  isInitialized: false,
   keystores: [],
   selectedKeystore: null,
   isAddingAddress: false,
@@ -103,6 +106,9 @@ export const useWalletStore = create<WalletStore>()(
         ...initialState,
 
         // Simple setters
+        setIsInitialized: (value) =>
+          set({ isInitialized: value }, false, 'setIsInitialized'),
+
         setKeystores: (keystores) => set({ keystores }, false, 'setKeystores'),
 
         setSelectedKeystore: (value) =>
