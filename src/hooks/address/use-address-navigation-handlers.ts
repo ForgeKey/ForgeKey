@@ -13,34 +13,27 @@ import { useWalletStore } from '@/stores/wallet-store';
  * @returns Wrapped handlers that include navigation
  */
 export function useAddressNavigationHandlers(
-  handleAddAddressOriginal: () => Promise<void>,
+  handleAddAddressOriginal: () => Promise<boolean>,
   handleImportKeystoreAddressOriginal: () => Promise<void>
 ) {
   const nav = useNavigation();
   const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
 
-  /**
-   * Wraps add address handler to navigate back after success
-   * Calls the original handler and then navigates to keystore view
-   */
-  const handleAddAddress = async () => {
-    await handleAddAddressOriginal();
+  const navigateToKeystore = () => {
     if (selectedKeystore) {
       nav.reset();
       nav.toKeystoreView(selectedKeystore.name);
     }
   };
 
-  /**
-   * Wraps import keystore address handler to navigate back after success
-   * Calls the original handler and then navigates to keystore view
-   */
+  const handleAddAddress = async () => {
+    const success = await handleAddAddressOriginal();
+    if (success) navigateToKeystore();
+  };
+
   const handleImportKeystoreAddress = async () => {
     await handleImportKeystoreAddressOriginal();
-    if (selectedKeystore) {
-      nav.reset();
-      nav.toKeystoreView(selectedKeystore.name);
-    }
+    navigateToKeystore();
   };
 
   return {
