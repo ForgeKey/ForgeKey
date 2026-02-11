@@ -4,8 +4,8 @@ import { tv, type VariantProps } from 'tailwind-variants';
 const formFieldVariants = tv({
   slots: {
     root: 'space-y-1.5',
-    label: 'block text-xs font-medium text-white',
-    hint: 'text-xs text-white/50 mt-1',
+    label: 'block text-xs font-semibold text-white',
+    hint: 'text-xs text-neutral-200 mt-1',
     error: 'text-xs text-red-400 mt-1',
   },
 });
