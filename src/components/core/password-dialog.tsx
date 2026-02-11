@@ -5,12 +5,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { DialogIconBadge } from '@/components/ui/dialog-icon-badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormField, FormLabel, FormError } from '@/components/ui/form-field';
 import { useState, useMemo } from 'react';
-import { Check, Copy, KeyRound, LockIcon, AlertTriangle } from 'lucide-react';
+import { Check, Copy, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { iconSwapVariants, iconSwapTransition } from '@/lib/animations';
 import { ZeroizedString } from '@/lib/zeroized-string';
