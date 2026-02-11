@@ -7,6 +7,7 @@ name = "ForgeKey"
 version = "1.0.0-beta.5"
 dependencies = [
  "dirs 5.0.1",
+ "libc",
  "log",
  "objc2",
  "objc2-app-kit",
@@ -22,6 +23,7 @@ dependencies = [
  "tauri-plugin-positioner",
  "tauri-plugin-process",
  "tauri-plugin-updater",
+ "tokio",
  "zeroize",
 ]
 
