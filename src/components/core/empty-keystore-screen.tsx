@@ -27,11 +27,11 @@ export const EmptyKeystoreScreen = ({
           </div>
 
           {/* Welcome Text */}
-          <div className="text-center space-y-2 max-w-xs px-3">
-            <h1 className="text-lg font-semibold text-white">
+          <div className="space-y-2 max-w-xs px-3">
+            <h1 className="text-lg font-semibold text-white text-center">
               Your Keystore Workspace
             </h1>
-            <p className="text-xs text-white/60 leading-relaxed">
+            <p className="text-xs text-neutral-400 leading-relaxed text-center">
               Create a Workspace to organize your keystores for each project or environment.
             </p>
           </div>
