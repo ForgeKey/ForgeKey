@@ -14,14 +14,18 @@
 
 ## Features
 
-- **Create New Wallets** — Generate new keypairs instantly
-- **Vanity Addresses** — Custom prefixes and suffixes
-- **Import Existing Keys** — Bring your private keys or keystores
-- **One-Click Copy** — Addresses and keys to clipboard
-- **Cross-Platform** — Menu bar on macOS, system tray on Linux
-- **Auto-Updates** — Built-in updater keeps you current
-- **Menu Bar Native** — Always one click away, never in your way
-- **Foundry-Backed** — Your keys stay in Foundry's secure keystore format
+### Key Management
+- Create, import, and organize wallets by project or environment
+- Generate vanity addresses with custom prefixes and suffixes
+- One-click copy for addresses and private keys
+
+### Developer Experience
+- Menu bar native — always one click away
+- Cross-platform — macOS menu bar, Linux system tray
+- Auto-updates keep you current
+
+### Security
+- Foundry-backed — your keys stay in Foundry's secure keystore format
 
 ## Installation
 
