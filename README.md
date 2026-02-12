@@ -10,39 +10,15 @@
     <a href="https://github.com/ForgeKey/ForgeKey/releases"><img src="https://img.shields.io/github/v/release/ForgeKey/ForgeKey" alt="Release"></a>
   </p>
 
-  <img src="assets/hero-demo.gif" alt="ForgeKey Demo" width="400">
 </div>
 
 ## Features
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="assets/demo-create-wallet.gif" alt="Create Wallet" width="280"><br>
-      <strong>Create New Wallets</strong><br>
-      <sub>Generate new keypairs instantly</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="assets/demo-vanity.gif" alt="Vanity Address" width="280"><br>
-      <strong>Vanity Addresses</strong><br>
-      <sub>Custom prefixes and suffixes</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="assets/demo-import.gif" alt="Import Keys" width="280"><br>
-      <strong>Import Existing Keys</strong><br>
-      <sub>Bring your private keys or keystores</sub>
-    </td>
-    <td align="center">
-      <img src="assets/demo-copy.gif" alt="Quick Copy" width="280"><br>
-      <strong>One-Click Copy</strong><br>
-      <sub>Addresses and keys to clipboard</sub>
-    </td>
-  </tr>
-</table>
-
-- **Cross-Platform** — Native support for macOS and Linux
+- **Create New Wallets** — Generate new keypairs instantly
+- **Vanity Addresses** — Custom prefixes and suffixes
+- **Import Existing Keys** — Bring your private keys or keystores
+- **One-Click Copy** — Addresses and keys to clipboard
+- **Cross-Platform** — Menu bar on macOS, system tray on Linux
 - **Auto-Updates** — Built-in updater keeps you current
 - **Menu Bar Native** — Always one click away, never in your way
 - **Foundry-Backed** — Your keys stay in Foundry's secure keystore format
@@ -65,7 +41,7 @@ Download the latest release for your platform from the [Releases page](https://g
 |----------|----------|
 | macOS (Apple Silicon) | `ForgeKey_x.x.x_aarch64.dmg` |
 | macOS (Intel) | `ForgeKey_x.x.x_x64.dmg` |
-| Linux (x64) | `ForgeKey_x.x.x_amd64.deb` / `.AppImage` |
+| Linux (x64 only) | `ForgeKey_x.x.x_amd64.deb` / `.AppImage` |
 
 ### Prerequisites
 
