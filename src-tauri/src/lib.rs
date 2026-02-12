@@ -6,15 +6,13 @@ use crate::models::Password;
 
 mod commands;
 mod models;
+mod pty;
 mod setup;
 #[cfg(target_os = "macos")]
 mod tray;
 #[cfg(target_os = "linux")]
 mod tray_linux;
 mod utils;
-
-// Note: All password handling is done securely in the command implementations.
-// Passwords are automatically zeroized when no longer needed.
 
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_wallet(address_label: String, password: String) -> Result<String, String> {
@@ -23,14 +21,18 @@ fn create_new_wallet(address_label: String, password: String) -> Result<String, 
 
 #[tauri::command(rename_all = "snake_case")]
 fn import_private_key(private_key: String, address_label: String, password: String) -> Result<String, String> {
-  // Convert password to Password type for better security
   let password = Password::from_string(password);
   commands::import_wallet(private_key, address_label, password)
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn create_vanity_wallet(starts_with: Option<String>, ends_with: Option<String>, address_label: String, password: String) -> Result<String, String> {
-  commands::create_vanity_wallet(starts_with, ends_with, address_label, password)
+async fn create_vanity_wallet(starts_with: Option<String>, ends_with: Option<String>, address_label: String, password: String) -> Result<String, String> {
+  commands::create_vanity_wallet(starts_with, ends_with, address_label, password).await
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn cancel_vanity_wallet() -> Result<(), String> {
+  commands::cancel_vanity_wallet()
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -45,7 +47,6 @@ fn get_wallet_address(keystore_name: String, password: String) -> Result<String,
 
 #[tauri::command(rename_all = "snake_case")]
 fn decrypt_keystore(keystore_name: String, password: String) -> Result<String, String> {
-  // SECURITY: The returned private key should be zeroized by the frontend when no longer needed
   commands::decrypt_keystore(keystore_name, password)
 }
 
@@ -61,6 +62,7 @@ pub fn run() {
       create_new_wallet,
       import_private_key,
       create_vanity_wallet,
+      cancel_vanity_wallet,
       list_wallets,
       get_wallet_address,
       decrypt_keystore,

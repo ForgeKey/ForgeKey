@@ -28,8 +28,7 @@ export const GroupForm = ({
       description="A Workspace helps you organize your keystores by project or environment."
       onBack={handleBackClick}
       onSubmit={handleSubmit}
-      submitLabel="Create a New Workspace"
-      submitDisabled={!newGroupName.trim()}
+      formId="group-create-form"
     >
       <FormField>
         <FormLabel>Workspace Name</FormLabel>

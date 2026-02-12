@@ -37,7 +37,7 @@ export function SelectAddressType({
           <OptionCard
             icon={<Download className="h-4 w-4 text-white" />}
             title="Import"
-            description="Import existing address"
+            description="Import an existing address"
             onClick={() => setAddAddressStep('import-options')}
           />
         </div>

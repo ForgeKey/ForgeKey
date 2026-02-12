@@ -1,7 +1,6 @@
 use serde::Serialize;
 use zeroize::Zeroize;
 use std::ops::Deref;
-use std::collections::HashMap;
 
 #[derive(Serialize)]
 pub struct WalletInfo {
@@ -47,17 +46,6 @@ impl Password {
   /// Get a reference to the underlying string
   pub fn as_str(&self) -> &str {
     &self.inner
-  }
-    
-  /// Execute a function with this password as an environment variable
-  /// This ensures the password remains valid during command execution and is properly zeroized after
-  pub fn with_env<F, T>(&self, env_key: &str, f: F) -> T
-  where
-    F: FnOnce(&HashMap<&str, &str>) -> T,
-  {
-    let mut env_vars = HashMap::new();
-    env_vars.insert(env_key, self.as_str());
-    f(&env_vars)
   }
 }
 

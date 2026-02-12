@@ -4,23 +4,27 @@ import { immer } from 'zustand/middleware/immer';
 import { Address, Keystore, VanityOpts } from '@/types/address';
 import { ZeroizedString } from '@/lib/zeroized-string';
 
+export type AddAddressStep =
+  | 'select'
+  | 'new'
+  | 'vanity'
+  | 'import'
+  | 'select-keystore'
+  | 'import-keystore';
+
 /**
  * Wallet store state interface
  */
 export interface WalletStore {
   // State
+  isInitialized: boolean;
   keystores: Keystore[];
   selectedKeystore: Keystore | null;
   isAddingAddress: boolean;
-  addAddressStep:
-    | 'select'
-    | 'new'
-    | 'vanity'
-    | 'import'
-    | 'select-keystore'
-    | 'import-keystore';
+  addAddressStep: AddAddressStep;
   newAddress: Address;
   vanityOptions: VanityOpts;
+  isGeneratingVanity: boolean;
   isAddingGroup: boolean;
   newGroupName: string;
   isPasswordDialogOpen: boolean;
@@ -30,24 +34,18 @@ export interface WalletStore {
   password: ZeroizedString | null;
 
   // Simple setters
+  setIsInitialized: (value: boolean) => void;
   setKeystores: (keystores: Keystore[]) => void;
   setSelectedKeystore: (
     value: Keystore | null | ((prev: Keystore | null) => Keystore | null)
   ) => void;
   setIsAddingAddress: (value: boolean) => void;
-  setAddAddressStep: (
-    value:
-      | 'select'
-      | 'new'
-      | 'vanity'
-      | 'import'
-      | 'select-keystore'
-      | 'import-keystore'
-  ) => void;
+  setAddAddressStep: (value: AddAddressStep) => void;
   setNewAddress: (value: Address | ((prev: Address) => Address)) => void;
   setVanityOptions: (
     value: VanityOpts | ((prev: VanityOpts) => VanityOpts)
   ) => void;
+  setIsGeneratingVanity: (value: boolean) => void;
   setIsAddingGroup: (value: boolean) => void;
   setNewGroupName: (value: string) => void;
   setSelectedAddressForPrivateKey: (
@@ -73,6 +71,7 @@ export interface WalletStore {
  * Initial state values
  */
 const initialState = {
+  isInitialized: false,
   keystores: [],
   selectedKeystore: null,
   isAddingAddress: false,
@@ -83,6 +82,7 @@ const initialState = {
     ends_with: undefined,
     address_label: '',
   },
+  isGeneratingVanity: false,
   isAddingGroup: false,
   newGroupName: '',
   isPasswordDialogOpen: false,
@@ -103,6 +103,9 @@ export const useWalletStore = create<WalletStore>()(
         ...initialState,
 
         // Simple setters
+        setIsInitialized: (value) =>
+          set({ isInitialized: value }, false, 'setIsInitialized'),
+
         setKeystores: (keystores) => set({ keystores }, false, 'setKeystores'),
 
         setSelectedKeystore: (value) =>
@@ -156,6 +159,9 @@ export const useWalletStore = create<WalletStore>()(
             false,
             'setVanityOptions'
           ),
+
+        setIsGeneratingVanity: (value) =>
+          set({ isGeneratingVanity: value }, false, 'setIsGeneratingVanity'),
 
         setIsAddingGroup: (value) =>
           set({ isAddingGroup: value }, false, 'setIsAddingGroup'),
@@ -275,6 +281,7 @@ export const useWalletStore = create<WalletStore>()(
                 ends_with: undefined,
                 address_label: '',
               },
+              isGeneratingVanity: false,
               isAddingAddress: false,
               addAddressStep: 'select',
             },

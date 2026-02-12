@@ -26,7 +26,7 @@ export const DeleteAddressDialog = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-xs" hideCloseButton>
         <DialogHeader className="space-y-1">
-          <DialogTitle className="text-center text-base">Delete address</DialogTitle>
+          <DialogTitle className="text-center text-sm">Delete address</DialogTitle>
           <DialogDescription className="text-center text-xs">
             You are going to delete this keystore. This action cannot be undone.
           </DialogDescription>

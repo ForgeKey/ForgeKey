@@ -6,8 +6,13 @@ set -euo pipefail
 #
 # Installs the ForgeKey menu bar app for managing Foundry keystores.
 # Supports macOS (ARM64, x86_64) and Linux (x86_64, ARM64)
+#
+# Linux package selection:
+#   - Debian/Ubuntu: .deb package (installed via apt/dpkg)
+#   - Fedora/RHEL/CentOS: .rpm package (installed via dnf/yum)
+#   - Other distros: AppImage (universal, no root required)
 
-REPO="saeta-eth/ForgeKey"
+REPO="ForgeKey/ForgeKey"
 INSTALL_DIR="${FORGEKEY_INSTALL_DIR:-}"
 VERSION="${FORGEKEY_VERSION:-latest}"
 
@@ -41,6 +46,38 @@ detect_arch() {
     esac
 }
 
+# Detect Linux distribution family
+detect_linux_distro() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+            debian|ubuntu|linuxmint|pop|elementary|zorin|kali)
+                echo "debian"
+                ;;
+            fedora|rhel|centos|rocky|alma|ol)
+                echo "redhat"
+                ;;
+            opensuse*|sles)
+                echo "redhat"  # Also uses RPM
+                ;;
+            *)
+                # Check ID_LIKE for derivatives
+                case "$ID_LIKE" in
+                    *debian*|*ubuntu*) echo "debian" ;;
+                    *fedora*|*rhel*)   echo "redhat" ;;
+                    *)                  echo "unknown" ;;
+                esac
+                ;;
+        esac
+    elif [ -f /etc/debian_version ]; then
+        echo "debian"
+    elif [ -f /etc/redhat-release ]; then
+        echo "redhat"
+    else
+        echo "unknown"
+    fi
+}
+
 # Get latest release version from GitHub
 get_latest_version() {
     curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" |
@@ -54,7 +91,13 @@ install_macos() {
     local arch="$2"
     local install_dir="${INSTALL_DIR:-/Applications}"
 
-    local filename="ForgeKey_${version#v}_${arch}.dmg"
+    local base_version="${version#v}"
+    # Map arch names for macOS DMG files (x86_64 -> x64, aarch64 stays aarch64)
+    local file_arch="$arch"
+    if [ "$arch" = "x86_64" ]; then
+        file_arch="x64"
+    fi
+    local filename="ForgeKey_${base_version}_${file_arch}.dmg"
     local url="https://github.com/${REPO}/releases/download/${version}/${filename}"
     local tmpdir=$(mktemp -d)
 
@@ -62,7 +105,9 @@ install_macos() {
     curl -fsSL -o "${tmpdir}/ForgeKey.dmg" "$url" || error "Failed to download: $url"
 
     info "Mounting disk image..."
-    local mount_point=$(hdiutil attach "${tmpdir}/ForgeKey.dmg" -nobrowse -quiet | tail -1 | awk '{print $3}')
+    local mount_output=$(hdiutil attach "${tmpdir}/ForgeKey.dmg" -nobrowse 2>/dev/null)
+    local mount_point=$(echo "$mount_output" | grep -o '/Volumes/[^"]*' | head -1)
+    [ -z "$mount_point" ] && error "Failed to mount disk image"
 
     info "Installing to ${install_dir}..."
     # Remove existing installation
@@ -85,27 +130,106 @@ install_macos() {
     echo "Or find it in your Applications folder."
 }
 
-# Download and install for Linux
-install_linux() {
+# Download and install .deb package (Debian/Ubuntu)
+install_deb() {
+    local version="$1"
+    local arch="$2"
+
+    local base_version="${version#v}"
+    # deb uses amd64 for x86_64
+    local file_arch="$arch"
+    if [ "$arch" = "x86_64" ]; then
+        file_arch="amd64"
+    fi
+    local filename="ForgeKey_${base_version}_${file_arch}.deb"
+    local url="https://github.com/${REPO}/releases/download/${version}/${filename}"
+    local tmpdir=$(mktemp -d)
+
+    info "Downloading ForgeKey ${version} (.deb) for Linux (${arch})..."
+    curl -fsSL -o "${tmpdir}/forgekey.deb" "$url" || error "Failed to download: $url"
+
+    info "Installing package (requires sudo)..."
+    if command -v apt &> /dev/null; then
+        sudo apt install -y "${tmpdir}/forgekey.deb"
+    elif command -v dpkg &> /dev/null; then
+        sudo dpkg -i "${tmpdir}/forgekey.deb"
+        sudo apt-get install -f -y 2>/dev/null || true  # Fix dependencies
+    else
+        error "Neither apt nor dpkg found"
+    fi
+
+    rm -rf "$tmpdir"
+
+    success "ForgeKey installed via package manager"
+    echo ""
+    echo "To start ForgeKey, run:"
+    echo "  forgekey"
+    echo ""
+    echo "Or find it in your application menu."
+    echo ""
+    echo "To uninstall: sudo apt remove forgekey"
+}
+
+# Download and install .rpm package (Fedora/RHEL)
+install_rpm() {
+    local version="$1"
+    local arch="$2"
+
+    local base_version="${version#v}"
+    # rpm uses x86_64 (not amd64)
+    local file_arch="$arch"
+    # RPM filename format: ForgeKey-1.0.0-1.x86_64.rpm
+    local filename="ForgeKey-${base_version}-1.${file_arch}.rpm"
+    local url="https://github.com/${REPO}/releases/download/${version}/${filename}"
+    local tmpdir=$(mktemp -d)
+
+    info "Downloading ForgeKey ${version} (.rpm) for Linux (${arch})..."
+    curl -fsSL -o "${tmpdir}/forgekey.rpm" "$url" || error "Failed to download: $url"
+
+    info "Installing package (requires sudo)..."
+    if command -v dnf &> /dev/null; then
+        sudo dnf install -y "${tmpdir}/forgekey.rpm"
+    elif command -v yum &> /dev/null; then
+        sudo yum install -y "${tmpdir}/forgekey.rpm"
+    elif command -v zypper &> /dev/null; then
+        sudo zypper install -y "${tmpdir}/forgekey.rpm"
+    elif command -v rpm &> /dev/null; then
+        sudo rpm -i "${tmpdir}/forgekey.rpm"
+    else
+        error "No RPM package manager found (dnf, yum, zypper, rpm)"
+    fi
+
+    rm -rf "$tmpdir"
+
+    success "ForgeKey installed via package manager"
+    echo ""
+    echo "To start ForgeKey, run:"
+    echo "  forgekey"
+    echo ""
+    echo "Or find it in your application menu."
+    echo ""
+    echo "To uninstall: sudo dnf remove forgekey (or yum/zypper)"
+}
+
+# Download and install AppImage (fallback for other distros)
+install_appimage() {
     local version="$1"
     local arch="$2"
     local install_dir="${INSTALL_DIR:-$HOME/.local/bin}"
     local app_dir="$HOME/.local/share/applications"
     local icon_dir="$HOME/.local/share/icons/hicolor/256x256/apps"
 
-    # Map arch names for Linux packages
-    local pkg_arch="$arch"
+    local base_version="${version#v}"
+    # AppImage uses amd64 for x86_64
+    local file_arch="$arch"
     if [ "$arch" = "x86_64" ]; then
-        pkg_arch="amd64"
-    elif [ "$arch" = "aarch64" ]; then
-        pkg_arch="arm64"
+        file_arch="amd64"
     fi
-
-    local filename="ForgeKey_${version#v}_${arch}.AppImage"
+    local filename="ForgeKey_${base_version}_${file_arch}.AppImage"
     local url="https://github.com/${REPO}/releases/download/${version}/${filename}"
     local tmpdir=$(mktemp -d)
 
-    info "Downloading ForgeKey ${version} for Linux (${arch})..."
+    info "Downloading ForgeKey ${version} (AppImage) for Linux (${arch})..."
     curl -fsSL -o "${tmpdir}/ForgeKey.AppImage" "$url" || error "Failed to download: $url"
 
     info "Installing to ${install_dir}..."
@@ -163,6 +287,30 @@ EOF
     echo "  ForgeKey"
     echo ""
     echo "Or find it in your application menu."
+    echo ""
+    echo "To uninstall: rm ${install_dir}/ForgeKey ${app_dir}/forgekey.desktop"
+}
+
+# Download and install for Linux (auto-detect best format)
+install_linux() {
+    local version="$1"
+    local arch="$2"
+    local distro=$(detect_linux_distro)
+
+    info "Detected distribution family: ${distro}"
+
+    case "$distro" in
+        debian)
+            install_deb "$version" "$arch"
+            ;;
+        redhat)
+            install_rpm "$version" "$arch"
+            ;;
+        *)
+            warn "Unknown distribution, using AppImage (universal format)"
+            install_appimage "$version" "$arch"
+            ;;
+    esac
 }
 
 main() {

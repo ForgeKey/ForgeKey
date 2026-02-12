@@ -20,13 +20,16 @@ jobs:
           # macOS builds
           - platform: 'macos-latest'
             target: 'aarch64-apple-darwin'
+            args: '--target aarch64-apple-darwin'
             name: 'macOS ARM64'
           - platform: 'macos-latest'
             target: 'x86_64-apple-darwin'
+            args: '--target x86_64-apple-darwin'
             name: 'macOS x64'
           # Linux build
           - platform: 'ubuntu-22.04'
             target: 'x86_64-unknown-linux-gnu'
+            args: '--target x86_64-unknown-linux-gnu --config src-tauri/tauri.linux.conf.json'
             name: 'Linux x64'
 
     runs-on: ${{ matrix.platform }}
@@ -71,21 +74,17 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Build frontend
-        run: pnpm build
-
       - name: Build Tauri app
-        run: |
-          cd src-tauri
-          cargo build --release --target ${{ matrix.target }}
+        # Use CI config to skip updater artifact signing (no private key in CI)
+        run: pnpm tauri build ${{ matrix.args }} --config src-tauri/tauri.ci.conf.json
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: forgekey-${{ matrix.target }}
           path: |
-            src-tauri/target/${{ matrix.target }}/release/ForgeKey
-            src-tauri/target/${{ matrix.target }}/release/forgekey
+            src-tauri/target/${{ matrix.target }}/release/bundle/
+            src-tauri/target/release/bundle/
           if-no-files-found: ignore
 
   # Lint check

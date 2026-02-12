@@ -1,4 +1,3 @@
-import { Download, RefreshCw, Sparkles } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useUpdater, UpdateStatus } from '@/hooks/use-updater';
-import { DialogIconBadge } from '@/components/ui/dialog-icon-badge';
+
 
 function getStatusMessage(status: UpdateStatus, progress: number): string {
   switch (status) {
@@ -42,16 +41,9 @@ export function UpdateDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && dismissUpdate()}>
-      <DialogContent className="max-w-xs" hideCloseButton={isDownloading}>
+      <DialogContent className="max-w-xs" hideCloseButton>
         <DialogHeader className="space-y-1">
-          <DialogIconBadge>
-            {isDownloading ? (
-              <Download className="h-5 w-5 animate-bounce" />
-            ) : (
-              <Sparkles className="h-5 w-5" />
-            )}
-          </DialogIconBadge>
-          <DialogTitle className="text-center text-base">
+          <DialogTitle className="text-center text-sm">
             {isDownloading ? 'Updating...' : 'Update Available'}
           </DialogTitle>
           <DialogDescription className="text-center text-xs">
@@ -60,6 +52,7 @@ export function UpdateDialog() {
             ) : (
               <>
                 A new version of ForgeKey is available.
+                <br />
                 <br />
                 <span className="text-gray-500">{currentVersion}</span>
                 {' → '}
@@ -72,7 +65,7 @@ export function UpdateDialog() {
         {isDownloading && (
           <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[#9333EA] to-[#D946EF] transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -95,7 +88,6 @@ export function UpdateDialog() {
               className="flex-1 h-8 text-xs"
               onClick={downloadAndInstall}
             >
-              <RefreshCw className="h-3 w-3 mr-1.5" />
               Update Now
             </Button>
           </DialogFooter>

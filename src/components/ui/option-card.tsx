@@ -26,11 +26,11 @@ export function OptionCard({
       onClick={onClick}
       className={`flex flex-col items-center justify-center h-28 bg-white/[0.03] backdrop-blur-sm rounded-lg border border-white/[0.08] hover:bg-white/[0.05] transition-colors p-3 ${className}`}
     >
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-full mb-2">
+      <div className="bg-gradient-to-r from-[#9333EA] to-[#D946EF] p-2 rounded-full mb-2">
         {icon}
       </div>
       <span className="font-medium text-sm text-white mb-1">{title}</span>
-      <p className="text-[10px] text-white/50 text-center">{description}</p>
+      <p className="text-[10px] text-neutral-200 text-center">{description}</p>
     </motion.button>
   );
 }

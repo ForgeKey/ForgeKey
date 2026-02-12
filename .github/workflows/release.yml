@@ -80,7 +80,7 @@ jobs:
 
             **Quick install (macOS & Linux):**
             ```bash
-            curl -fsSL https://raw.githubusercontent.com/saeta-eth/ForgeKey/main/install.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/ForgeKey/ForgeKey/main/install.sh | bash
             ```
 
             **Manual download:**
@@ -90,7 +90,7 @@ jobs:
 
             **Existing users:** The app will automatically notify you when updates are available.
 
-            See [README](https://github.com/saeta-eth/ForgeKey) for more details.
+            See [CHANGELOG](https://github.com/ForgeKey/ForgeKey/blob/main/CHANGELOG.md) for details.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

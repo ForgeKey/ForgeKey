@@ -13,6 +13,7 @@ export function useWalletReconciliation() {
   const { reconcileWallets } = useWalletSync();
   const keystores = useWalletStore((state) => state.keystores);
   const setKeystores = useWalletStore((state) => state.setKeystores);
+  const setIsInitialized = useWalletStore((state) => state.setIsInitialized);
   const nav = useNavigation();
   const hasReconciled = useRef(false);
 
@@ -39,6 +40,8 @@ export function useWalletReconciliation() {
         hasReconciled.current = true;
       } catch (error) {
         console.error('Failed to reconcile wallets:', error);
+      } finally {
+        setIsInitialized(true);
       }
     };
 

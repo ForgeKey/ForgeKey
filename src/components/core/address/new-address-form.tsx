@@ -36,8 +36,7 @@ export function NewAddressForm({
       description="Create a new Ethereum address with a secure password"
       onBack={handleBackClick}
       onSubmit={handleSubmit}
-      submitLabel="Generate Address"
-      submitDisabled={!newAddress.label || !newAddress.password || !isPasswordValid}
+      formId="new-address-form"
     >
       <FormField>
         <FormLabel>Address Label</FormLabel>
@@ -51,7 +50,7 @@ export function NewAddressForm({
       </FormField>
 
       <FormField>
-        <FormLabel>Secure Password</FormLabel>
+        <FormLabel>Password</FormLabel>
         <PasswordInput
           value={newAddress.password || null}
           onChange={(password) =>

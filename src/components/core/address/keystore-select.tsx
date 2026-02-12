@@ -51,13 +51,13 @@ export function KeystoreSelect({
       onBack={handleBackClick}
     >
       {loading ? (
-        <div className="text-center py-3 text-white/50 text-sm">
+        <div className="text-center py-3 text-neutral-200 text-sm">
           Loading keystores...
         </div>
       ) : (
         <ScrollArea className="h-[200px]">
           {filteredKeystores.length === 0 ? (
-            <div className="text-center text-white/50 py-3 text-sm">
+            <div className="text-center text-neutral-200 py-3 text-sm">
               No new keystores available
             </div>
           ) : (

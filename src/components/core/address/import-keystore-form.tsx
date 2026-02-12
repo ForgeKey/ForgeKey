@@ -68,6 +68,7 @@ export function ImportKeystoreForm({
 
   async function handleImport(e: React.FormEvent): Promise<void> {
     e.preventDefault();
+    if (loading) return;
     const isValid = await validateKeystore();
     if (isValid) {
       handleAddAddress();
@@ -80,8 +81,7 @@ export function ImportKeystoreForm({
       description="Enter your password"
       onBack={handleBackClick}
       onSubmit={handleImport}
-      submitLabel={loading ? 'Importing...' : 'Import Keystore'}
-      submitDisabled={!newAddress.label || !passwordInput || loading}
+      formId="import-keystore-form"
     >
       <FormField>
         <FormLabel>Keystore Password</FormLabel>

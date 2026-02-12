@@ -105,6 +105,7 @@ export default function ForgeKeyWallet() {
   const routeParams = useRouteParams<{ keystoreId: string }>();
 
   // Zustand store selectors
+  const isInitialized = useWalletStore((state) => state.isInitialized);
   const keystores = useWalletStore((state) => state.keystores);
   const selectedKeystore = useWalletStore((state) => state.selectedKeystore);
   const newAddress = useWalletStore((state) => state.newAddress);
@@ -246,7 +247,7 @@ export default function ForgeKeyWallet() {
           <KeystoreView
             selectedKeystore={selectedKeystore}
             isAddingAddress={false}
-            handleBackClick={nav.goBack}
+            handleBackClick={nav.toKeystoreList}
             renderAddAddressContent={() => null}
             handleViewPrivateKey={handleViewPrivateKey}
             handleDeleteAddress={handleDeleteAddress}
@@ -352,20 +353,22 @@ export default function ForgeKeyWallet() {
     <main className="bg-[#0d0f1a] text-foreground shadow-2xl rounded-md overflow-hidden flex flex-col w-[350px] h-[400px] border border-white/5">
       <Header />
       <ScrollArea className="flex-grow">
-        <RouteErrorBoundary>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={nav.currentRoute.name}
-              variants={getRouteAnimation(nav.currentRoute.name)}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={pageTransition}
-            >
-              {renderRouterView()}
-            </motion.div>
-          </AnimatePresence>
-        </RouteErrorBoundary>
+        {isInitialized ? (
+          <RouteErrorBoundary>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={nav.currentRoute.name}
+                variants={getRouteAnimation(nav.currentRoute.name)}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={pageTransition}
+              >
+                {renderRouterView()}
+              </motion.div>
+            </AnimatePresence>
+          </RouteErrorBoundary>
+        ) : null}
       </ScrollArea>
       {!shouldHideFooter() && (
         <Footer
